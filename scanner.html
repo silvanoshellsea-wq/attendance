@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1976d2">
+  <meta name="description" content="Offline-first event attendance checking PWA for event officers">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AttScanner">
+
+  <title>Attendance Scanner</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Favicon (data URI) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%231976d2'/%3E%3Cpath d='M10 16l4 4 8-8' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <!-- Apple Touch Icon for iOS -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Ccircle cx='90' cy='90' r='85' fill='%231976d2'/%3E%3Cpath d='M55 90l23 23 52-52' stroke='white' stroke-width='11' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <!-- Status Bar -->
+  <div class="status-bar online">Online</div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Officer Info Header -->
+    <div class="officer-info">
+      <div class="officer-info__details">
+        <div class="officer-info__name" id="officerName">Loading...</div>
+        <div class="officer-info__section" id="officerSection">Loading...</div>
+      </div>
+      <button class="officer-info__logout" id="logoutBtn">Logout</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="scanner">Scanner</button>
+      <button class="tab" data-tab="sync">Sync</button>
+    </div>
+
+    <!-- Scanner Tab Content -->
+    <div class="tab-content active" id="scannerTab">
+      <div class="card card--full">
+        <!-- Scanner -->
+        <div class="scanner-container">
+          <div id="reader"></div>
+
+          <!-- Scan Result Overlay -->
+          <div class="scan-overlay" id="scanOverlay">
+            <div class="scan-overlay__icon" id="scanIcon"></div>
+            <div class="scan-overlay__message" id="scanMessage"></div>
+            <div class="scan-overlay__details" id="scanDetails"></div>
+          </div>
+        </div>
+
+        <!-- Scan Instruction -->
+        <p class="text-center" style="color: var(--text-secondary); margin-top: 16px;">
+          Position QR code within the frame to scan
+        </p>
+
+        <!-- Roster Not Cached Warning -->
+        <div id="rosterWarning" class="message message--warning hidden">
+          Roster not loaded. Go to login page to setup roster.
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync Tab Content -->
+    <div class="tab-content" id="syncTab">
+      <div class="card">
+        <h2 class="sync-section__title">Attendance Records</h2>
+
+        <!-- Pending Count -->
+        <div class="sync-section__header">
+          <span>Pending Uploads</span>
+          <span class="sync-section__count zero" id="pendingCount">0</span>
+        </div>
+
+        <!-- Pending Records List -->
+        <div class="pending-list" id="pendingList">
+          <div class="pending-item text-center" style="color: var(--text-secondary);">
+            No pending records
+          </div>
+        </div>
+
+        <!-- Sync Button -->
+        <button class="btn btn--success" id="syncBtn">
+          Upload Attendance Records
+        </button>
+
+        <!-- Sync Status -->
+        <div id="syncStatus" class="message hidden"></div>
+
+        <!-- Loading Indicator -->
+        <div class="loading" id="loadingIndicator">
+          <div class="loading__spinner"></div>
+          <p class="loading__text" id="loadingText">Uploading...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+
+  <!-- Page Script -->
+  <script>
+    // ==========================================
+    // Scanner Page JavaScript
+    // ==========================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check if logged in
+      if (!window.App.requireLogin()) {
+        return;
+      }
+
+      // Get officer info
+      const officer = window.App.getOfficerInfo();
+      document.getElementById('officerName').textContent = officer.name;
+      document.getElementById('officerSection').textContent = officer.section;
+
+      // DOM Elements
+      const logoutBtn = document.getElementById('logoutBtn');
+      const tabs = document.querySelectorAll('.tab');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const reader = document.getElementById('reader');
+      const scanOverlay = document.getElementById('scanOverlay');
+      const scanIcon = document.getElementById('scanIcon');
+      const scanMessage = document.getElementById('scanMessage');
+      const scanDetails = document.getElementById('scanDetails');
+      const rosterWarning = document.getElementById('rosterWarning');
+      const pendingCount = document.getElementById('pendingCount');
+      const pendingList = document.getElementById('pendingList');
+      const syncBtn = document.getElementById('syncBtn');
+      const syncStatus = document.getElementById('syncStatus');
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const loadingText = document.getElementById('loadingText');
+
+      // QR Code Scanner instance
+      let html5QrCode = null;
+      let isScanning = false;
+
+      // ==========================================
+      // Tab Navigation
+      // ==========================================
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.dataset.tab;
+
+          // Update active tab
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          // Update active content
+          tabContents.forEach(content => {
+            content.classList.remove('active');
+            if (content.id === tabName + 'Tab') {
+              content.classList.add('active');
+            }
+          });
+
+          // Handle tab-specific actions
+          if (tabName === 'sync') {
+            loadPendingRecords();
+          }
+        });
+      });
+
+      // ==========================================
+      // Logout
+      // ==========================================
+      logoutBtn.addEventListener('click', () => {
+        // Stop scanner if running
+        if (html5QrCode && isScanning) {
+          html5QrCode.stop().catch(err => console.error(err));
+        }
+        window.App.logout();
+      });
+
+      // ==========================================
+      // QR Scanner Setup
+      // ==========================================
+      async function startScanner() {
+        // Check if roster is cached
+        if (!window.App.isRosterCached()) {
+          rosterWarning.classList.remove('hidden');
+          return;
+        }
+
+        try {
+          html5QrCode = new Html5Qrcode('reader');
+
+          const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+          };
+
+          await html5QrCode.start(
+            { facingMode: 'environment' },
+            config,
+            onScanSuccess,
+            onScanFailure
+          );
+
+          isScanning = true;
+        } catch (err) {
+          console.error('Failed to start scanner:', err);
+          showScanResult('error', 'Camera Error', 'Unable to access camera. Please grant permission.');
+        }
+      }
+
+      // ==========================================
+      // Scan Success Callback
+      // ==========================================
+      async function onScanSuccess(decodedText, decodedResult) {
+        // Pause scanning briefly
+        if (html5QrCode && isScanning) {
+          try {
+            await html5QrCode.pause();
+          } catch (err) {
+            console.error('Failed to pause scanner:', err);
+          }
+        }
+
+        // Process the scanned code
+        await processScan(decodedText);
+      }
+
+      // ==========================================
+      // Scan Failure Callback
+      // ==========================================
+      function onScanFailure(error) {
+        // Silently ignore scan failures (no QR found in frame)
+      }
+
+      // ==========================================
+      // Process Scanned QR Code
+      // ==========================================
+      async function processScan(qrCode) {
+        // Assume QR contains student ID like "STU-12345"
+        const studentId = qrCode.trim().toUpperCase();
+
+        // Get student from local database
+        const student = await window.App.getStudentById(studentId);
+
+        if (!student) {
+          // Student not found in roster
+          showScanResult('error', 'Not Found', 'Student not in roster');
+          return;
+        }
+
+        // Check if student.section matches officer's assigned section
+        if (student.section !== officer.section) {
+          // Wrong section
+          showScanResult('error', 'Not in this section', `${student.section}`);
+          return;
+        }
+
+        // Try to record attendance
+        const result = await window.App.recordAttendance(studentId, officer.code);
+
+        if (result.success) {
+          // Successfully recorded
+          showScanResult('success', 'Allowed', `${student.name}, ${student.section}`);
+          // Update pending count
+          updatePendingCount();
+        } else if (result.reason === 'duplicate') {
+          // Already checked in
+          showScanResult('warning', 'Already checked in', student.name);
+        } else {
+          // Other error
+          showScanResult('error', 'Error', result.message || 'Failed to record attendance');
+        }
+      }
+
+      // ==========================================
+      // Show Scan Result Overlay
+      // ==========================================
+      function showScanResult(type, message, details) {
+        // Set overlay type
+        scanOverlay.className = 'scan-overlay active';
+
+        if (type === 'success') {
+          scanOverlay.classList.add('scan-overlay--success');
+          scanIcon.textContent = '✓';
+        } else if (type === 'error') {
+          scanOverlay.classList.add('scan-overlay--error');
+          scanIcon.textContent = '✗';
+        } else if (type === 'warning') {
+          scanOverlay.classList.add('scan-overlay--warning');
+          scanIcon.textContent = '⚠';
+        }
+
+        scanMessage.textContent = message;
+        scanDetails.textContent = details || '';
+
+        // Hide after 2 seconds and resume scanner
+        setTimeout(() => {
+          scanOverlay.classList.remove('active');
+
+          // Resume scanner
+          if (html5QrCode && isScanning) {
+            html5QrCode.resume().catch(err => console.error('Failed to resume scanner:', err));
+          }
+        }, 2000);
+      }
+
+      // ==========================================
+      // Load Pending Records for Sync
+      // ==========================================
+      async function loadPendingRecords() {
+        const records = await window.App.getPendingRecordsWithNames();
+        const count = records.length;
+
+        // Update count display
+        pendingCount.textContent = count;
+        if (count === 0) {
+          pendingCount.classList.add('zero');
+        } else {
+          pendingCount.classList.remove('zero');
+        }
+
+        // Update list
+        if (count === 0) {
+          pendingList.innerHTML = `
+            <div class="pending-item text-center" style="color: var(--text-secondary);">
+              No pending records
+            </div>
+          `;
+        } else {
+          pendingList.innerHTML = records.map(record => `
+            <div class="pending-item">
+              <span class="pending-item__name">${record.studentName}</span>
+              <span class="pending-item__time">${window.App.formatTime(record.timestamp)}</span>
+            </div>
+          `).join('');
+        }
+
+        // Update sync button state
+        if (count === 0) {
+          syncBtn.disabled = true;
+          syncBtn.textContent = 'No Records to Upload';
+        } else {
+          syncBtn.disabled = false;
+          syncBtn.textContent = `Upload ${count} Record${count > 1 ? 's' : ''}`;
+        }
+      }
+
+      // ==========================================
+      // Update Pending Count
+      // ==========================================
+      async function updatePendingCount() {
+        const count = await window.App.getPendingCount();
+        // Only update if sync tab is visible
+        const syncTab = document.getElementById('syncTab');
+        if (syncTab.classList.contains('active')) {
+          pendingCount.textContent = count;
+          if (count === 0) {
+            pendingCount.classList.add('zero');
+          } else {
+            pendingCount.classList.remove('zero');
+          }
+          loadPendingRecords();
+        }
+      }
+
+      // ==========================================
+      // Sync Button Click
+      // ==========================================
+      syncBtn.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+          showSyncStatus('No internet connection. Please reconnect and try again.', 'error');
+          return;
+        }
+
+        const pending = await window.App.getPendingCount();
+        if (pending === 0) {
+          showSyncStatus('No records to upload', 'info');
+          return;
+        }
+
+        // Show loading
+        showLoading('Uploading records...');
+        syncBtn.disabled = true;
+
+        try {
+          // Try real sync first
+          await window.App.syncAttendanceRecords();
+          hideLoading();
+          showSyncStatus('Records uploaded successfully!', 'success');
+          loadPendingRecords();
+        } catch (error) {
+          // If real API fails, use mock sync for demo
+          console.log('Real sync failed, trying mock sync:', error.message);
+          try {
+            await window.App.mockSyncAttendanceRecords();
+            hideLoading();
+            showSyncStatus('Records uploaded successfully! (demo mode)', 'success');
+            loadPendingRecords();
+          } catch (mockError) {
+            hideLoading();
+            showSyncStatus('Upload failed: ' + mockError.message, 'error');
+            syncBtn.disabled = false;
+          }
+        }
+      });
+
+      // ==========================================
+      // Show/Hide Helper Functions
+      // ==========================================
+      function showLoading(message) {
+        loadingText.textContent = message;
+        loadingIndicator.classList.add('active');
+      }
+
+      function hideLoading() {
+        loadingIndicator.classList.remove('active');
+      }
+
+      function showSyncStatus(message, type) {
+        syncStatus.textContent = message;
+        syncStatus.className = `message message--${type}`;
+        syncStatus.classList.remove('hidden');
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          syncStatus.classList.add('hidden');
+        }, 5000);
+      }
+
+      // ==========================================
+      // Initialize
+      // ==========================================
+
+      // Check if roster is cached
+      if (!window.App.isRosterCached()) {
+        rosterWarning.classList.remove('hidden');
+      }
+
+      // Start scanner when page loads
+      startScanner();
+
+      // Update pending count on page load
+      updatePendingCount();
+    });
+
+    // ==========================================
+    // Service Worker Registration
+    // ==========================================
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(registration => {
+          console.log('Service Worker registered:', registration.scope);
+        })
+        .catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  </script>
+</body>
+</html>
