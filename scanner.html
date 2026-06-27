@@ -9,18 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-    .neo-shadow { box-shadow: 4px 4px 0px #000; }
-    .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
+    .neo-shadow { box-shadow: 4px 4px 0 #000; }
+    .neo-pressed:active { box-shadow: 2px 2px 0 #000; transform: translate(2px, 2px); }
     .scan-line { height: 4px; background: #000; position: absolute; width: 100%; top: 0; animation: scan 3s linear infinite; z-index: 20; }
     @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
-    .hatch { background: repeating-linear-gradient(45deg, #000, #000 2px, transparent 2px, transparent 8px); }
+    .halftone { background-image: radial-gradient(#000 1px, transparent 0); background-size: 8px 8px; opacity: 0.05; }
   </style>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col">
-  <header class="border-b-4 border-black px-6 py-4 flex justify-between items-center">
+<body class="bg-gray-50 text-black min-h-screen flex flex-col">
+
+  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center bg-white">
     <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined">signal_wifi_off</span>
-      <h1 class="font-['Archivo_Narrow'] font-bold text-2xl uppercase">Officer Scan</h1>
+      <span class="material-symbols-outlined text-black">signal_wifi_off</span>
+      <h1 class="font-['Archivo_Narrow'] font-bold text-xl uppercase tracking-tight">Officer Scan</h1>
     </div>
     <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-100">settings</button>
   </header>
@@ -28,100 +29,85 @@
   <main class="flex-grow p-4 flex flex-col items-center">
     <!-- Officer Info -->
     <div class="w-full max-w-md mb-4">
-      <div class="border-4 border-black p-4 flex justify-between items-center bg-gray-100">
+      <div class="border-2 border-black bg-white p-4 flex justify-between items-center">
         <div>
-          <p class="font-['Archivo_Narrow'] font-bold text-xl uppercase" id="officerName">Loading...</p>
-          <p class="font-['Space_Mono'] text-sm" id="officerSection">Loading...</p>
+          <p class="font-['Archivo_Narrow'] font-bold text-lg uppercase" id="officerName">Loading...</p>
+          <p class="font-['Space_Mono'] text-sm text-gray-600" id="officerSection">Loading...</p>
         </div>
-        <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-200" id="logoutBtn">logout</button>
+        <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-100" id="logoutBtn">logout</button>
       </div>
     </div>
 
     <!-- Tabs -->
     <div class="w-full max-w-md flex gap-2 mb-4">
-      <button type="button" class="flex-1 bg-black text-white py-4 font-['Archivo_Narrow'] font-bold text-lg uppercase border-4 border-black" id="scannerTabBtn">
-        <span class="material-symbols-outlined align-middle mr-1">qr_code_scanner</span>
+      <button type="button" class="flex-1 bg-black text-white py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black" id="scannerTabBtn">
         Scanner
       </button>
-      <button type="button" class="flex-1 bg-white text-black py-4 font-['Archivo_Narrow'] font-bold text-lg uppercase border-4 border-black hover:bg-gray-100" id="recordsTabBtn">
-        <span class="material-symbols-outlined align-middle mr-1">history</span>
+      <button type="button" class="flex-1 bg-white text-black py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black hover:bg-gray-100" id="recordsTabBtn">
         Records
       </button>
     </div>
 
     <!-- Scanner Tab -->
     <div id="scannerTab" class="w-full max-w-md">
-      <div class="relative w-full aspect-square border-4 border-black bg-black group overflow-hidden">
+      <div class="relative w-full aspect-square border-2 border-black bg-black group overflow-hidden">
         <div id="reader" class="absolute inset-0"></div>
         <div class="scan-line"></div>
-        <div class="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white m-3"></div>
-        <div class="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white m-3"></div>
-        <div class="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white m-3"></div>
-        <div class="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white m-3"></div>
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div class="w-44 h-44 border-2 border-dashed border-white/50 rounded-lg flex items-center justify-center">
-            <span class="material-symbols-outlined text-white/20 text-6xl">qr_code_2</span>
-          </div>
-        </div>
+        <div class="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-white m-2"></div>
+        <div class="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-white m-2"></div>
+        <div class="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-white m-2"></div>
+        <div class="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-white m-2"></div>
 
         <!-- Success Overlay -->
-        <div id="successOverlay" class="absolute inset-0 bg-white/95 z-30 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity">
-          <div class="border-4 border-black bg-white p-6 neo-shadow">
-            <span class="material-symbols-outlined text-7xl font-bold text-green-600">check_circle</span>
-            <h2 class="font-['Archivo_Narrow'] text-2xl uppercase font-bold mt-2">Allowed</h2>
-            <p id="successDetails" class="font-['Space_Mono'] text-sm mt-2 text-center">Name, Section</p>
+        <div id="successOverlay" class="absolute inset-0 bg-white/95 z-30 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+          <div class="border-2 border-black bg-white p-4 neo-shadow text-center">
+            <span class="material-symbols-outlined text-5xl text-green-600">check_circle</span>
+            <p id="successDetails" class="font-['Archivo_Narrow'] font-bold text-lg mt-2">Allowed</p>
           </div>
         </div>
 
         <!-- Error Overlay -->
-        <div id="errorOverlay" class="absolute inset-0 bg-black/90 z-30 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity">
-          <div class="border-4 border-black bg-white p-6 neo-shadow">
-            <span class="material-symbols-outlined text-7xl font-bold text-red-600">cancel</span>
-            <h2 id="errorTitle" class="font-['Archivo_Narrow'] text-2xl uppercase font-bold mt-2">Access Denied</h2>
-            <p id="errorDetails" class="font-['Space_Mono'] text-sm mt-2 text-center">Details</p>
+        <div id="errorOverlay" class="absolute inset-0 bg-black/90 z-30 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+          <div class="border-2 border-white bg-black p-4 text-center">
+            <span class="material-symbols-outlined text-5xl text-white">cancel</span>
+            <p id="errorTitle" class="font-['Archivo_Narrow'] font-bold text-lg text-white mt-2">Denied</p>
+            <p id="errorDetails" class="font-['Space_Mono'] text-xs text-gray-400 mt-1"></p>
           </div>
         </div>
       </div>
 
-      <p class="text-center mt-4 font-['Space_Mono'] text-sm text-gray-600">Position QR code within the frame</p>
+      <p class="text-center mt-3 font-['Space_Mono'] text-xs text-gray-500">Position QR code in frame</p>
 
-      <div id="rosterWarning" class="hidden mt-4 p-3 bg-yellow-100 border-4 border-yellow-600 font-['Inter'] font-bold text-sm text-center">
-        Roster not loaded. Go to login to setup.
+      <div id="rosterWarning" class="hidden mt-3 p-2 bg-yellow-100 border border-yellow-600 font-['Inter'] text-xs text-center">
+        Roster not loaded
       </div>
     </div>
 
     <!-- Records Tab -->
     <div id="recordsTab" class="w-full max-w-md hidden">
-      <div class="border-4 border-black bg-white p-4">
+      <div class="border-2 border-black bg-white p-4">
         <div class="flex justify-between items-center mb-3">
-          <span class="font-['Archivo_Narrow'] font-bold text-lg uppercase">Pending Uploads</span>
-          <span id="pendingCount" class="bg-black text-white px-4 py-1 font-['Archivo_Narrow'] font-bold text-xl">0</span>
+          <span class="font-['Archivo_Narrow'] font-bold text-sm uppercase">Pending</span>
+          <span id="pendingCount" class="bg-black text-white px-3 py-1 font-['Archivo_Narrow'] font-bold">0</span>
         </div>
-        <div id="pendingList" class="border-4 border-black max-h-48 overflow-y-auto">
-          <div class="p-4 text-center font-['Space_Mono'] text-sm text-gray-600">No pending records</div>
+        <div id="pendingList" class="border border-black max-h-40 overflow-y-auto text-sm">
+          <div class="p-3 text-center text-gray-500">No records</div>
         </div>
-        <button type="button" id="syncBtn" class="w-full mt-4 bg-black text-white border-4 border-black p-4 font-['Archivo_Narrow'] font-bold text-lg uppercase flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors neo-pressed">
-          <span class="material-symbols-outlined">cloud_upload</span>
-          Upload Records
+        <button type="button" id="syncBtn" class="w-full mt-3 bg-black text-white border-2 border-black py-2 font-['Archivo_Narrow'] text-sm uppercase hover:bg-white hover:text-black transition-colors">
+          Upload
         </button>
-        <div id="syncStatus" class="hidden mt-3 p-3 border-4 border-black font-['Inter'] font-bold text-sm text-center"></div>
+        <div id="syncStatus" class="hidden mt-2 p-2 border border-black text-xs text-center"></div>
       </div>
     </div>
   </main>
 
-  <!-- Bottom Nav - Solid Black Background -->
-  <nav style="position: fixed; bottom: 0; left: 0; width: 100%; height: 64px; background-color: #000000; border-top: 4px solid #000000; display: flex; z-index: 9999;">
-    <a href="scanner.html" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; gap: 4px;">
-      <span class="material-symbols-outlined">qr_code_scanner</span>
-      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Scanner</span>
+  <!-- Bottom Nav -->
+  <nav class="fixed bottom-0 left-0 w-full flex h-14 border-t-2 border-black bg-white z-50">
+    <a href="scanner.html" class="flex-1 flex items-center justify-center bg-black text-white font-['Inter'] text-xs uppercase font-bold">
+      Scanner
     </a>
-    <a href="records.html" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; border-left: 4px solid white; border-right: 4px solid white; gap: 4px;">
-      <span class="material-symbols-outlined">history</span>
-      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Records</span>
-    </a>
-    <a href="#" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; gap: 4px;">
-      <span class="material-symbols-outlined">account_circle</span>
-      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Profile</span>
+    <a href="records.html" class="flex-1 flex items-center justify-center bg-white text-black font-['Inter'] text-xs uppercase font-bold border-l-2 border-black hover:bg-gray-50">
+      Records
     </a>
   </nav>
 
@@ -176,67 +162,41 @@
         loadPendingRecords();
       });
 
-      logoutBtn.addEventListener('click', function() {
-        stopScanner();
-        window.App.logout();
-      });
+      logoutBtn.addEventListener('click', function() { stopScanner(); window.App.logout(); });
 
-      async function startScanner() {
-        if (!window.App.isRosterCached()) {
-          rosterWarning.classList.remove('hidden');
-          return;
-        }
+      function startScanner() {
+        if (!window.App.isRosterCached()) { rosterWarning.classList.remove('hidden'); return; }
         rosterWarning.classList.add('hidden');
-
-        if (html5QrCode && !isScanning) {
-          try { await html5QrCode.resume(); isScanning = true; } catch(e) { startScannerNew(); }
-          return;
-        }
+        if (html5QrCode && !isScanning) { try { html5QrCode.resume(); isScanning = true; } catch(e) { startScannerNew(); } return; }
         startScannerNew();
       }
 
       async function startScannerNew() {
         try {
           html5QrCode = new Html5Qrcode('reader');
-          var config = { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 };
-          await html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess, function() {});
+          await html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 200, height: 200 } }, onScanSuccess, function() {});
           isScanning = true;
-        } catch(err) {
-          showError('Camera Error', 'Unable to access camera');
-        }
+        } catch(err) { showError('Camera Error', 'Cannot access camera'); }
       }
 
-      function stopScanner() {
-        if (html5QrCode && isScanning) {
-          html5QrCode.stop().catch(function() {});
-          isScanning = false;
-        }
-      }
+      function stopScanner() { if (html5QrCode && isScanning) { html5QrCode.stop().catch(function() {}); isScanning = false; } }
 
       async function onScanSuccess(text) {
-        if (html5QrCode && isScanning) {
-          try { await html5QrCode.pause(); } catch(e) {}
-        }
+        if (html5QrCode && isScanning) try { await html5QrCode.pause(); } catch(e) {}
         await processScan(text.trim().toUpperCase());
       }
 
       async function processScan(studentId) {
         var student = await window.App.getStudentById(studentId);
         if (!student) { showError('Not Found', 'Student not in roster'); return; }
-        if (student.section !== officer.section) { showError('Not In Section', student.section); return; }
-
+        if (student.section !== officer.section) { showError('Wrong Section', student.section); return; }
         var result = await window.App.recordAttendance(studentId, officer.code);
-        if (result.success) {
-          showSuccess('Allowed', student.name + ', ' + student.section);
-          updatePendingCount();
-        } else if (result.reason === 'duplicate') {
-          showError('Already Checked In', student.name);
-        } else {
-          showError('Error', result.message || 'Failed');
-        }
+        if (result.success) { showSuccess(student.name + ' - ' + student.section); updatePendingCount(); }
+        else if (result.reason === 'duplicate') { showError('Already In', student.name); }
+        else { showError('Error', 'Failed to record'); }
       }
 
-      function showSuccess(msg, details) {
+      function showSuccess(details) {
         successDetails.textContent = details;
         successOverlay.style.opacity = '1';
         successOverlay.style.pointerEvents = 'auto';
@@ -247,8 +207,8 @@
         }, 2000);
       }
 
-      function showError(msg, details) {
-        errorTitle.textContent = msg;
+      function showError(title, details) {
+        errorTitle.textContent = title;
         errorDetails.textContent = details;
         errorOverlay.style.opacity = '1';
         errorOverlay.style.pointerEvents = 'auto';
@@ -263,66 +223,45 @@
         var records = await window.App.getPendingRecordsWithNames();
         var count = records.length;
         pendingCount.textContent = count;
-
         if (count === 0) {
-          pendingList.innerHTML = '<div class="p-4 text-center font-[\'Space_Mono\'] text-sm text-gray-600">No pending records</div>';
+          pendingList.innerHTML = '<div class="p-3 text-center text-gray-500">No records</div>';
           syncBtn.disabled = true;
-          syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
           pendingList.innerHTML = records.map(function(r) {
-            return '<div class="flex justify-between items-center p-3 border-b-4 border-black"><span class="font-[\'Archivo_Narrow\'] font-bold text-base uppercase">' + r.studentName + '</span><span class="font-[\'Space_Mono\'] text-xs">' + window.App.formatTime(r.timestamp) + '</span></div>';
+            return '<div class="flex justify-between p-2 border-b border-black"><span class="font-bold uppercase">' + r.studentName + '</span><span class="text-gray-500">' + window.App.formatTime(r.timestamp) + '</span></div>';
           }).join('');
           syncBtn.disabled = false;
-          syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');
         }
       }
 
       async function updatePendingCount() {
         var count = await window.App.getPendingCount();
-        if (!recordsTab.classList.contains('hidden')) {
-          pendingCount.textContent = count;
-          loadPendingRecords();
-        }
+        if (!recordsTab.classList.contains('hidden')) loadPendingRecords();
       }
 
       syncBtn.addEventListener('click', async function() {
-        if (!navigator.onLine) { showSyncStatus('No internet connection', false); return; }
+        if (!navigator.onLine) { showSyncStatus('No internet', false); return; }
         var pending = await window.App.getPendingCount();
-        if (pending === 0) { showSyncStatus('No records to upload', true); return; }
-
-        syncBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Uploading...';
+        if (pending === 0) { showSyncStatus('No records', true); return; }
+        syncBtn.textContent = 'Uploading...';
         syncBtn.disabled = true;
-
-        try {
-          await window.App.syncAttendanceRecords();
-          showSyncStatus('Records uploaded!', true);
-        } catch(e) {
-          try {
-            await window.App.mockSyncAttendanceRecords();
-            showSyncStatus('Uploaded (demo)', true);
-          } catch(e2) {
-            showSyncStatus('Upload failed', false);
-          }
-        }
+        try { await window.App.syncAttendanceRecords(); showSyncStatus('Uploaded!', true); }
+        catch(e) { try { await window.App.mockSyncAttendanceRecords(); showSyncStatus('Done (demo)', true); } catch(e2) { showSyncStatus('Failed', false); } }
         loadPendingRecords();
-        syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload Records';
+        syncBtn.textContent = 'Upload';
         syncBtn.disabled = false;
       });
 
-      function showSyncStatus(msg, isSuccess) {
+      function showSyncStatus(msg, ok) {
         syncStatus.textContent = msg;
-        syncStatus.className = isSuccess
-          ? 'mt-3 p-3 border-4 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm text-center'
-          : 'mt-3 p-3 border-4 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-center text-red-800';
+        syncStatus.className = ok ? 'mt-2 p-2 border border-black bg-green-100 text-xs text-center' : 'mt-2 p-2 border border-red-600 bg-red-100 text-xs text-center text-red-800';
         syncStatus.classList.remove('hidden');
-        setTimeout(function() { syncStatus.classList.add('hidden'); }, 5000);
+        setTimeout(function() { syncStatus.classList.add('hidden'); }, 3000);
       }
 
-      if (!window.App.isRosterCached()) { rosterWarning.classList.remove('hidden'); }
+      if (!window.App.isRosterCached()) rosterWarning.classList.remove('hidden');
       startScanner();
     });
-
-    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
   </script>
 </body>
 </html>
