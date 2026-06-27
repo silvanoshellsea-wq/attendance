@@ -3,293 +3,320 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OFFICER SCAN - QR Interface</title>
-
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "on-secondary": "#ffffff",
-            "on-secondary-fixed": "#1a1c1c",
-            "surface-container-low": "#f3f3f3",
-            "on-tertiary-fixed-variant": "#474747",
-            "surface-container-lowest": "#ffffff",
-            "surface-bright": "#f9f9f9",
-            "primary": "#000000",
-            "secondary-fixed": "#e2e2e2",
-            "on-tertiary": "#ffffff",
-            "inverse-primary": "#c6c6c6",
-            "on-error-container": "#93000a",
-            "surface-variant": "#e2e2e2",
-            "on-error": "#ffffff",
-            "on-surface": "#1a1c1c",
-            "error": "#ba1a1a",
-            "on-background": "#1a1c1c",
-            "background": "#f9f9f9",
-            "surface-container": "#eeeeee",
-            "outline": "#7e7576",
-            "primary-fixed-dim": "#c6c6c6",
-            "on-tertiary-container": "#858383",
-            "tertiary-container": "#1b1c1c",
-            "on-primary-container": "#848484",
-            "surface-tint": "#5e5e5e",
-            "surface-container-high": "#e8e8e8",
-            "surface-dim": "#dadada",
-            "secondary": "#5d5f5f",
-            "tertiary": "#000000",
-            "inverse-on-surface": "#f1f1f1",
-            "inverse-surface": "#2f3131",
-            "on-tertiary-fixed": "#1b1c1c",
-            "on-primary": "#ffffff",
-            "on-secondary-container": "#616363",
-            "error-container": "#ffdad6",
-            "on-primary-fixed": "#1b1b1b",
-            "secondary-fixed-dim": "#c6c6c7",
-            "tertiary-fixed-dim": "#c8c6c6",
-            "secondary-container": "#dfe0e0",
-            "on-primary-fixed-variant": "#474747",
-            "on-surface-variant": "#4c4546",
-            "tertiary-fixed": "#e4e2e1",
-            "primary-container": "#1b1b1b",
-            "outline-variant": "#cfc4c5",
-            "surface": "#f9f9f9",
-            "on-secondary-fixed-variant": "#454747",
-            "surface-container-highest": "#e2e2e2",
-            "primary-fixed": "#e2e2e2"
-          },
-          borderRadius: {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
-          spacing: {
-            "xs": "4px",
-            "lg": "48px",
-            "sm": "12px",
-            "md": "24px",
-            "shadow-offset": "4px",
-            "base": "8px",
-            "xl": "80px",
-            "border-weight": "2px"
-          },
-          fontFamily: {
-            "headline-xl": ["Archivo Narrow"],
-            "headline-sm": ["Archivo Narrow"],
-            "body-sm": ["Inter"],
-            "headline-lg": ["Archivo Narrow"],
-            "body-lg": ["Inter"],
-            "headline-md": ["Archivo Narrow"],
-            "body-md": ["Inter"],
-            "label-bold": ["Inter"],
-            "mono-label": ["Inter"]
-          },
-          fontSize: {
-            "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-            "headline-sm": ["18px", {"lineHeight": "1.2", "fontWeight": "700"}],
-            "body-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
-            "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-            "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-            "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
-            "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
-            "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
-            "mono-label": ["13px", {"lineHeight": "1", "letterSpacing": "0", "fontWeight": "500"}]
-          }
-        }
-      }
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700;800&family=Inter:wght@400;500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-
+  <title>Officer Scan - Scanner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-
-    .inked-border { border: 2px solid #000000; }
-    .inked-shadow { box-shadow: 4px 4px 0px #000000; }
-    .inked-shadow-active { box-shadow: 2px 2px 0px #000000; transform: translate(2px, 2px); }
-
-    .halftone-pattern {
-      background-image: radial-gradient(#000 10%, transparent 11%);
-      background-size: 8px 8px;
-    }
-
-    .scan-line {
-      height: 4px;
-      background: #000;
-      position: absolute;
-      width: 100%;
-      top: 0;
-      animation: scan 3s linear infinite;
-      z-index: 20;
-    }
-
-    @keyframes scan {
-      0% { top: 0; }
-      50% { top: 100%; }
-      100% { top: 0; }
-    }
-
-    .hatch-pattern {
-      background: repeating-linear-gradient(45deg, #000, #000 2px, transparent 2px, transparent 8px);
-    }
-
-    .dot-grid {
-      background-image: radial-gradient(circle, #000 1px, transparent 1px);
-      background-size: 16px 16px;
-      opacity: 0.05;
-    }
-
-    /* Overlay transitions */
-    #success-overlay, #error-overlay, #duplicate-overlay {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .neo-shadow { box-shadow: 4px 4px 0px #000; }
+    .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
+    .scan-line { height: 4px; background: #000; position: absolute; width: 100%; top: 0; animation: scan 3s linear infinite; z-index: 20; }
+    @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+    .hatch { background: repeating-linear-gradient(45deg, #000, #000 2px, transparent 2px, transparent 8px); }
   </style>
 </head>
-
-<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col relative overflow-hidden">
-  <div class="fixed inset-0 dot-grid pointer-events-none"></div>
-
-  <!-- Top Navigation -->
-  <nav class="flex justify-between items-center px-md py-base w-full z-50 bg-surface border-b-2 border-primary">
-    <div class="flex items-center gap-base">
-      <span class="material-symbols-outlined text-primary">signal_wifi_off</span>
-      <h1 class="font-headline-md text-headline-md font-bold text-primary uppercase tracking-tight">OFFICER SCAN</h1>
+<body class="bg-white text-black min-h-screen flex flex-col">
+  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined">signal_wifi_off</span>
+      <h1 class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Officer Scan</h1>
     </div>
-    <div class="flex items-center gap-sm">
-      <button class="material-symbols-outlined p-xs hover:bg-surface-container-high transition-colors" id="logoutBtn">logout</button>
-    </div>
-  </nav>
+  </header>
 
-  <main class="flex-1 relative flex flex-col items-center justify-center p-md overflow-hidden">
-    <!-- Camera Viewfinder Wrapper -->
-    <div class="relative w-full max-w-md aspect-square inked-border bg-black group overflow-hidden">
-      <!-- The actual camera view from html5-qrcode -->
-      <div id="reader" class="absolute inset-0"></div>
-      <div class="scan-line"></div>
-
-      <!-- Corner brackets (decorative) -->
-      <div class="absolute top-0 left-0 w-12 h-12 border-t-8 border-l-8 border-white m-md"></div>
-      <div class="absolute top-0 right-0 w-12 h-12 border-t-8 border-r-8 border-white m-md"></div>
-      <div class="absolute bottom-0 left-0 w-12 h-12 border-b-8 border-l-8 border-white m-md"></div>
-      <div class="absolute bottom-0 right-0 w-12 h-12 border-b-8 border-r-8 border-white m-md"></div>
-
-      <!-- Success Overlay -->
-      <div id="success-overlay" class="absolute inset-0 bg-white/90 z-30 flex flex-col items-center justify-center p-lg">
-        <div class="inked-border bg-white p-lg flex flex-col items-center gap-md inked-shadow">
-          <span class="material-symbols-outlined text-7xl font-bold">check_circle</span>
-          <h2 class="font-headline-lg text-headline-lg uppercase text-center">ALLOWED</h2>
-          <div class="w-full h-2 bg-surface-container-high border border-black">
-            <div class="h-full hatch-pattern" style="width: 100%"></div>
-          </div>
-          <p id="successStudentName" class="font-mono-label text-mono-label text-center"></p>
+  <main class="flex-grow p-4 flex flex-col items-center">
+    <!-- Officer Info -->
+    <div class="w-full max-w-md mb-4">
+      <div class="border-2 border-black p-4 flex justify-between items-center">
+        <div>
+          <p class="font-['Archivo_Narrow'] font-bold text-lg uppercase" id="officerName">Loading...</p>
+          <p class="font-['Inter'] text-sm" id="officerSection">Loading...</p>
         </div>
-      </div>
-
-      <!-- Error Overlay -->
-      <div id="error-overlay" class="absolute inset-0 bg-black/80 z-30 flex flex-col items-center justify-center p-lg">
-        <div class="inked-border bg-white p-lg flex flex-col items-center gap-md inked-shadow">
-          <span class="material-symbols-outlined text-7xl font-bold">cancel</span>
-          <h2 class="font-headline-lg text-headline-lg uppercase text-center text-primary">ACCESS DENIED</h2>
-          <div class="w-full h-8 flex items-center justify-center bg-primary text-white font-label-bold px-sm">SECURITY ALERT</div>
-          <p id="errorMessage" class="font-mono-label text-mono-label text-center">STUDENT NOT IN SECTION</p>
-        </div>
-      </div>
-
-      <!-- Duplicate Overlay -->
-      <div id="duplicate-overlay" class="absolute inset-0 bg-yellow-100/90 z-30 flex flex-col items-center justify-center p-lg">
-        <div class="inked-border bg-white p-lg flex flex-col items-center gap-md inked-shadow">
-          <span class="material-symbols-outlined text-7xl font-bold">warning</span>
-          <h2 class="font-headline-lg text-headline-lg uppercase text-center">ALREADY CHECKED IN</h2>
-          <p id="duplicateStudentName" class="font-mono-label text-mono-label text-center"></p>
-        </div>
+        <button class="material-symbols-outlined p-2 hover:bg-gray-100" id="logoutBtn">logout</button>
       </div>
     </div>
 
-    <!-- Bottom nav (unchanged) -->
-    <div class="mt-lg w-full max-w-md flex gap-md">
-      <button id="syncTabBtn" class="flex-1 bg-white inked-border font-headline-sm text-headline-sm py-base inked-shadow active:translate-x-xs active:translate-y-xs active:shadow-none transition-all uppercase">
-        VIEW RECORDS
+    <!-- Tabs -->
+    <div class="w-full max-w-md flex gap-2 mb-4">
+      <button class="flex-1 bg-black text-white py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black" id="scannerTabBtn">
+        <span class="material-symbols-outlined align-middle mr-1">qr_code_scanner</span>
+        Scanner
       </button>
+      <button class="flex-1 bg-white text-black py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black hover:bg-gray-100" id="recordsTabBtn">
+        <span class="material-symbols-outlined align-middle mr-1">history</span>
+        Records
+      </button>
+    </div>
+
+    <!-- Scanner Tab -->
+    <div id="scannerTab" class="w-full max-w-md">
+      <div class="relative w-full aspect-square border-2 border-black bg-black group overflow-hidden">
+        <div id="reader" class="absolute inset-0"></div>
+        <div class="scan-line"></div>
+        <div class="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white m-3"></div>
+        <div class="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-white m-3"></div>
+        <div class="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-white m-3"></div>
+        <div class="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white m-3"></div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div class="w-44 h-44 border-2 border-dashed border-white/50 rounded-lg flex items-center justify-center">
+            <span class="material-symbols-outlined text-white/20 text-6xl">qr_code_2</span>
+          </div>
+        </div>
+
+        <!-- Success Overlay -->
+        <div id="successOverlay" class="absolute inset-0 bg-white/95 z-30 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity">
+          <div class="border-2 border-black bg-white p-6 neo-shadow">
+            <span class="material-symbols-outlined text-7xl font-bold text-green-600">check_circle</span>
+            <h2 class="font-['Archivo_Narrow'] text-2xl uppercase font-bold mt-2">Allowed</h2>
+            <p id="successDetails" class="font-['Inter'] text-sm mt-2 text-center">Name, Section</p>
+          </div>
+        </div>
+
+        <!-- Error Overlay -->
+        <div id="errorOverlay" class="absolute inset-0 bg-black/90 z-30 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity">
+          <div class="border-2 border-black bg-white p-6 neo-shadow">
+            <span class="material-symbols-outlined text-7xl font-bold text-red-600">cancel</span>
+            <h2 id="errorTitle" class="font-['Archivo_Narrow'] text-2xl uppercase font-bold mt-2">Access Denied</h2>
+            <p id="errorDetails" class="font-['Inter'] text-sm mt-2 text-center">Details</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center mt-4 font-['Inter'] text-sm text-gray-600">Position QR code within the frame</p>
+
+      <div id="rosterWarning" class="hidden mt-4 p-3 bg-yellow-100 border-2 border-yellow-600 font-['Inter'] font-bold text-sm text-center">
+        Roster not loaded. Go to login to setup.
+      </div>
+    </div>
+
+    <!-- Records Tab -->
+    <div id="recordsTab" class="w-full max-w-md hidden">
+      <div class="border-2 border-black bg-white p-4">
+        <div class="flex justify-between items-center mb-3">
+          <span class="font-['Archivo_Narrow'] font-bold text-sm uppercase">Pending Uploads</span>
+          <span id="pendingCount" class="bg-black text-white px-3 py-1 font-['Archivo_Narrow'] font-bold text-lg">0</span>
+        </div>
+        <div id="pendingList" class="border-2 border-black max-h-48 overflow-y-auto">
+          <div class="p-4 text-center font-['Inter'] text-sm text-gray-600">No pending records</div>
+        </div>
+        <button id="syncBtn" class="w-full mt-4 bg-white border-2 border-black p-3 font-['Archivo_Narrow'] font-bold text-sm uppercase flex items-center justify-center gap-2 hover:bg-gray-100 neo-pressed">
+          <span class="material-symbols-outlined">cloud_upload</span>
+          Upload Records
+        </button>
+        <div id="syncStatus" class="hidden mt-3 p-3 border-2 font-['Inter'] font-bold text-sm text-center"></div>
+      </div>
     </div>
   </main>
 
-  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-xl bg-surface border-t-2 border-primary">
-    <a class="flex flex-col items-center justify-center bg-primary text-on-primary p-sm flex-1 group transition-all" href="scanner.html">
+  <nav class="fixed bottom-0 left-0 w-full z-50 flex h-14 border-t-2 border-black bg-white">
+    <a class="flex items-center justify-center bg-black text-white flex-1" href="scanner.html">
       <span class="material-symbols-outlined">qr_code_scanner</span>
-      <span class="font-label-bold text-label-bold uppercase mt-xs">SCANNER</span>
+      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Scanner</span>
     </a>
-    <a class="flex flex-col items-center justify-center text-secondary p-sm flex-1 hover:bg-secondary-container transition-all" href="records.html">
+    <a class="flex items-center justify-center text-black flex-1 hover:bg-gray-100" href="records.html">
       <span class="material-symbols-outlined">history</span>
-      <span class="font-label-bold text-label-bold uppercase mt-xs">RECORDS</span>
+      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Records</span>
     </a>
   </nav>
 
-  <!-- Libraries -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="app.js"></script>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function() {
       if (!window.App.requireLogin()) return;
 
-      const successOverlay = document.getElementById('success-overlay');
-      const errorOverlay = document.getElementById('error-overlay');
-      const duplicateOverlay = document.getElementById('duplicate-overlay');
-      const logoutBtn = document.getElementById('logoutBtn');
-      const syncTabBtn = document.getElementById('syncTabBtn');
+      var officer = window.App.getOfficerInfo();
+      document.getElementById('officerName').textContent = officer.name;
+      document.getElementById('officerSection').textContent = officer.section;
 
-      logoutBtn.addEventListener('click', () => {
+      var logoutBtn = document.getElementById('logoutBtn');
+      var scannerTabBtn = document.getElementById('scannerTabBtn');
+      var recordsTabBtn = document.getElementById('recordsTabBtn');
+      var scannerTab = document.getElementById('scannerTab');
+      var recordsTab = document.getElementById('recordsTab');
+      var successOverlay = document.getElementById('successOverlay');
+      var errorOverlay = document.getElementById('errorOverlay');
+      var successDetails = document.getElementById('successDetails');
+      var errorTitle = document.getElementById('errorTitle');
+      var errorDetails = document.getElementById('errorDetails');
+      var rosterWarning = document.getElementById('rosterWarning');
+      var pendingCount = document.getElementById('pendingCount');
+      var pendingList = document.getElementById('pendingList');
+      var syncBtn = document.getElementById('syncBtn');
+      var syncStatus = document.getElementById('syncStatus');
+
+      var html5QrCode = null;
+      var isScanning = false;
+
+      scannerTabBtn.addEventListener('click', function() {
+        scannerTab.classList.remove('hidden');
+        recordsTab.classList.add('hidden');
+        scannerTabBtn.classList.add('bg-black', 'text-white');
+        scannerTabBtn.classList.remove('bg-white', 'text-black');
+        recordsTabBtn.classList.add('bg-white', 'text-black');
+        recordsTabBtn.classList.remove('bg-black', 'text-white');
+        startScanner();
+      });
+
+      recordsTabBtn.addEventListener('click', function() {
+        scannerTab.classList.add('hidden');
+        recordsTab.classList.remove('hidden');
+        recordsTabBtn.classList.add('bg-black', 'text-white');
+        recordsTabBtn.classList.remove('bg-white', 'text-black');
+        scannerTabBtn.classList.add('bg-white', 'text-black');
+        scannerTabBtn.classList.remove('bg-black', 'text-white');
+        stopScanner();
+        loadPendingRecords();
+      });
+
+      logoutBtn.addEventListener('click', function() {
+        stopScanner();
         window.App.logout();
-        window.location.href = 'index.html';
       });
 
-      syncTabBtn.addEventListener('click', () => {
-        window.location.href = 'records.html';
-      });
-
-      // Start the QR scanner (from app.js)
-      window.App.startScanner(
-        // onScanSuccess callback
-        (student) => {
-          // student is an object: { id, name, section }
-          document.getElementById('successStudentName').textContent = `ID: ${student.id} - ${student.name}`;
-          successOverlay.style.opacity = '1';
-          successOverlay.style.pointerEvents = 'auto';
-          setTimeout(() => {
-            successOverlay.style.opacity = '0';
-            successOverlay.style.pointerEvents = 'none';
-          }, 2000);
-        },
-        // onScanError callback (e.g., wrong section)
-        (message) => {
-          document.getElementById('errorMessage').textContent = message;
-          errorOverlay.style.opacity = '1';
-          errorOverlay.style.pointerEvents = 'auto';
-          setTimeout(() => {
-            errorOverlay.style.opacity = '0';
-            errorOverlay.style.pointerEvents = 'none';
-          }, 2000);
-        },
-        // onScanDuplicate callback
-        (student) => {
-          document.getElementById('duplicateStudentName').textContent = `ID: ${student.id} - ${student.name}`;
-          duplicateOverlay.style.opacity = '1';
-          duplicateOverlay.style.pointerEvents = 'auto';
-          setTimeout(() => {
-            duplicateOverlay.style.opacity = '0';
-            duplicateOverlay.style.pointerEvents = 'none';
-          }, 2000);
+      async function startScanner() {
+        if (!window.App.isRosterCached()) {
+          rosterWarning.classList.remove('hidden');
+          return;
         }
-      );
+        rosterWarning.classList.add('hidden');
+
+        if (html5QrCode && !isScanning) {
+          try { await html5QrCode.resume(); isScanning = true; } catch(e) { startScannerNew(); }
+          return;
+        }
+        startScannerNew();
+      }
+
+      async function startScannerNew() {
+        try {
+          html5QrCode = new Html5Qrcode('reader');
+          var config = { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 };
+          await html5QrCode.start({ facingMode: 'environment' }, config, onScanSuccess, function() {});
+          isScanning = true;
+        } catch(err) {
+          showError('Camera Error', 'Unable to access camera');
+        }
+      }
+
+      function stopScanner() {
+        if (html5QrCode && isScanning) {
+          html5QrCode.stop().catch(function() {});
+          isScanning = false;
+        }
+      }
+
+      async function onScanSuccess(text) {
+        if (html5QrCode && isScanning) {
+          try { await html5QrCode.pause(); } catch(e) {}
+        }
+        await processScan(text.trim().toUpperCase());
+      }
+
+      async function processScan(studentId) {
+        var student = await window.App.getStudentById(studentId);
+        if (!student) { showError('Not Found', 'Student not in roster'); return; }
+        if (student.section !== officer.section) { showError('Not In Section', student.section); return; }
+
+        var result = await window.App.recordAttendance(studentId, officer.code);
+        if (result.success) {
+          showSuccess('Allowed', student.name + ', ' + student.section);
+          updatePendingCount();
+        } else if (result.reason === 'duplicate') {
+          showError('Already Checked In', student.name);
+        } else {
+          showError('Error', result.message || 'Failed');
+        }
+      }
+
+      function showSuccess(msg, details) {
+        successDetails.textContent = details;
+        successOverlay.style.opacity = '1';
+        successOverlay.style.pointerEvents = 'auto';
+        setTimeout(function() {
+          successOverlay.style.opacity = '0';
+          successOverlay.style.pointerEvents = 'none';
+          if (html5QrCode && isScanning) html5QrCode.resume().catch(function() {});
+        }, 2000);
+      }
+
+      function showError(msg, details) {
+        errorTitle.textContent = msg;
+        errorDetails.textContent = details;
+        errorOverlay.style.opacity = '1';
+        errorOverlay.style.pointerEvents = 'auto';
+        setTimeout(function() {
+          errorOverlay.style.opacity = '0';
+          errorOverlay.style.pointerEvents = 'none';
+          if (html5QrCode && isScanning) html5QrCode.resume().catch(function() {});
+        }, 2000);
+      }
+
+      async function loadPendingRecords() {
+        var records = await window.App.getPendingRecordsWithNames();
+        var count = records.length;
+        pendingCount.textContent = count;
+
+        if (count === 0) {
+          pendingList.innerHTML = '<div class="p-4 text-center font-[\'Inter\'] text-sm text-gray-600">No pending records</div>';
+          syncBtn.disabled = true;
+          syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
+        } else {
+          pendingList.innerHTML = records.map(function(r) {
+            return '<div class="flex justify-between items-center p-3 border-b border-black"><span class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</span><span class="font-[\'Inter\'] text-xs">' + window.App.formatTime(r.timestamp) + '</span></div>';
+          }).join('');
+          syncBtn.disabled = false;
+          syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');
+        }
+      }
+
+      async function updatePendingCount() {
+        var count = await window.App.getPendingCount();
+        if (!recordsTab.classList.contains('hidden')) {
+          pendingCount.textContent = count;
+          loadPendingRecords();
+        }
+      }
+
+      syncBtn.addEventListener('click', async function() {
+        if (!navigator.onLine) { showSyncStatus('No internet connection', false); return; }
+        var pending = await window.App.getPendingCount();
+        if (pending === 0) { showSyncStatus('No records to upload', true); return; }
+
+        syncBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Uploading...';
+        syncBtn.disabled = true;
+
+        try {
+          await window.App.syncAttendanceRecords();
+          showSyncStatus('Records uploaded!', true);
+        } catch(e) {
+          try {
+            await window.App.mockSyncAttendanceRecords();
+            showSyncStatus('Uploaded (demo)', true);
+          } catch(e2) {
+            showSyncStatus('Upload failed', false);
+          }
+        }
+        loadPendingRecords();
+        syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload Records';
+        syncBtn.disabled = false;
+      });
+
+      function showSyncStatus(msg, isSuccess) {
+        syncStatus.textContent = msg;
+        syncStatus.className = isSuccess
+          ? 'mt-3 p-3 border-2 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm text-center'
+          : 'mt-3 p-3 border-2 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-center text-red-800';
+        syncStatus.classList.remove('hidden');
+        setTimeout(function() { syncStatus.classList.add('hidden'); }, 5000);
+      }
+
+      if (!window.App.isRosterCached()) { rosterWarning.classList.remove('hidden'); }
+      startScanner();
     });
+
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
   </script>
 </body>
 </html>

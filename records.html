@@ -4,309 +4,144 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Officer Scan - Records</title>
-
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "on-secondary": "#ffffff",
-            "on-secondary-fixed": "#1a1c1c",
-            "surface-container-low": "#f3f3f3",
-            "on-tertiary-fixed-variant": "#474747",
-            "surface-container-lowest": "#ffffff",
-            "surface-bright": "#f9f9f9",
-            "primary": "#000000",
-            "secondary-fixed": "#e2e2e2",
-            "on-tertiary": "#ffffff",
-            "inverse-primary": "#c6c6c6",
-            "on-error-container": "#93000a",
-            "surface-variant": "#e2e2e2",
-            "on-error": "#ffffff",
-            "on-surface": "#1a1c1c",
-            "error": "#ba1a1a",
-            "on-background": "#1a1c1c",
-            "background": "#f9f9f9",
-            "surface-container": "#eeeeee",
-            "outline": "#7e7576",
-            "primary-fixed-dim": "#c6c6c6",
-            "on-tertiary-container": "#858383",
-            "tertiary-container": "#1b1c1c",
-            "on-primary-container": "#848484",
-            "surface-tint": "#5e5e5e",
-            "surface-container-high": "#e8e8e8",
-            "surface-dim": "#dadada",
-            "secondary": "#5d5f5f",
-            "tertiary": "#000000",
-            "inverse-on-surface": "#f1f1f1",
-            "inverse-surface": "#2f3131",
-            "on-tertiary-fixed": "#1b1c1c",
-            "on-primary": "#ffffff",
-            "on-secondary-container": "#616363",
-            "error-container": "#ffdad6",
-            "on-primary-fixed": "#1b1b1b",
-            "secondary-fixed-dim": "#c6c6c7",
-            "tertiary-fixed-dim": "#c8c6c6",
-            "secondary-container": "#dfe0e0",
-            "on-primary-fixed-variant": "#474747",
-            "on-surface-variant": "#4c4546",
-            "tertiary-fixed": "#e4e2e1",
-            "primary-container": "#1b1b1b",
-            "outline-variant": "#cfc4c5",
-            "surface": "#f9f9f9",
-            "on-secondary-fixed-variant": "#454747",
-            "surface-container-highest": "#e2e2e2",
-            "primary-fixed": "#e2e2e2"
-          },
-          borderRadius: {
-            "DEFAULT": "0.25rem",
-            "lg": "0.5rem",
-            "xl": "0.75rem",
-            "full": "9999px"
-          },
-          spacing: {
-            "xs": "4px",
-            "lg": "48px",
-            "sm": "12px",
-            "md": "24px",
-            "shadow-offset": "4px",
-            "base": "8px",
-            "xl": "80px",
-            "border-weight": "2px"
-          },
-          fontFamily: {
-            "headline-xl": ["Archivo Narrow"],
-            "headline-sm": ["Archivo Narrow"],
-            "body-sm": ["Inter"],
-            "headline-lg": ["Archivo Narrow"],
-            "body-lg": ["Inter"],
-            "headline-md": ["Archivo Narrow"],
-            "body-md": ["Inter"],
-            "label-bold": ["Inter"],
-            "mono-label": ["Inter"]
-          },
-          fontSize: {
-            "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-            "headline-sm": ["18px", {"lineHeight": "1.2", "fontWeight": "700"}],
-            "body-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
-            "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
-            "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
-            "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
-            "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
-            "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
-            "mono-label": ["13px", {"lineHeight": "1", "letterSpacing": "0", "fontWeight": "500"}]
-          }
-        }
-      }
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700;800&family=Inter:wght@400;500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: middle;
-    }
-
-    .halftone-bg {
-      background-image: radial-gradient(#000 1px, transparent 0);
-      background-size: 8px 8px;
-      opacity: 0.1;
-    }
-
-    .hatch-pattern {
-      background: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 2px, transparent 2px, transparent 8px);
-    }
-
-    .neo-brutalist-shadow { box-shadow: 4px 4px 0px #000000; }
-    .neo-brutalist-shadow-hover:hover { box-shadow: 6px 6px 0px #000000; transform: translate(-2px, -2px); }
-    .neo-brutalist-active:active { box-shadow: 2px 2px 0px #000000; transform: translate(2px, 2px); }
-
-    .boxed-label {
-      position: relative;
-    }
-    .boxed-label::after {
-      content: attr(data-label);
-      position: absolute;
-      top: -12px;
-      left: 12px;
-      background: white;
-      padding: 0 4px;
-      font-family: 'Inter', sans-serif;
-      font-weight: 700;
-      font-size: 10px;
-      text-transform: uppercase;
-      border: 2px solid black;
-    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .neo-shadow { box-shadow: 4px 4px 0px #000; }
+    .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
+    .hatch { background: repeating-linear-gradient(45deg, #000, #000 2px, transparent 2px, transparent 8px); }
   </style>
 </head>
-
-<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden">
-
-  <!-- Top App Bar -->
-  <header class="flex justify-between items-center px-md py-base w-full z-50 bg-surface border-b-2 border-primary fixed top-0 h-16">
-    <div class="flex items-center gap-sm">
-      <span class="material-symbols-outlined text-primary">signal_wifi_off</span>
-      <h1 class="font-headline-md text-headline-md font-bold text-primary uppercase tracking-tight">OFFICER SCAN</h1>
+<body class="bg-white text-black min-h-screen flex flex-col">
+  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined">signal_wifi_off</span>
+      <h1 class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Officer Scan</h1>
     </div>
-    <div class="flex items-center gap-md">
-      <button id="refreshBtn" class="material-symbols-outlined p-xs hover:bg-surface-container-high transition-colors active:translate-y-px">refresh</button>
-    </div>
+    <button class="material-symbols-outlined p-2 hover:bg-gray-100" id="refreshBtn">refresh</button>
   </header>
 
-  <main class="pt-20 pb-24 px-md max-w-4xl mx-auto">
-    <!-- Sync Status Section -->
-    <section class="mt-md mb-lg">
-      <div class="border-2 border-black p-md bg-white neo-brutalist-shadow flex flex-col md:flex-row items-center justify-between gap-md relative overflow-hidden">
-        <div class="halftone-bg absolute inset-0 pointer-events-none"></div>
-        <div class="relative z-10">
-          <h2 class="font-headline-sm text-headline-sm uppercase mb-xs">Connectivity Hub</h2>
-          <p class="font-body-sm text-on-surface-variant">Scanner currently operating in offline mode. Records cached locally.</p>
+  <main class="p-4 pb-20 max-w-md mx-auto">
+    <!-- Sync Status -->
+    <div class="border-2 border-black p-4 bg-white neo-shadow mb-6">
+      <div class="flex justify-between items-center mb-3">
+        <div>
+          <h2 class="font-['Archivo_Narrow'] font-bold uppercase">Connectivity Hub</h2>
+          <p class="font-['Inter'] text-sm text-gray-600">Records cached locally</p>
         </div>
-        <div class="flex items-center gap-md relative z-10">
-          <div class="flex flex-col items-center">
-            <span class="font-label-bold text-label-bold text-primary mb-xs uppercase">Pending</span>
-            <div class="bg-primary text-on-primary font-headline-lg text-headline-lg px-md py-sm border-2 border-black inline-block" id="pendingCount">0</div>
+        <div class="flex items-center gap-3">
+          <div class="text-center">
+            <span class="font-['Inter'] font-bold text-xs block mb-1">PENDING</span>
+            <span id="pendingCount" class="bg-black text-white font-['Archivo_Narrow'] text-2xl px-4 py-1 border-2 border-black">0</span>
           </div>
-          <button id="syncBtn" class="bg-white border-2 border-black p-md font-headline-sm text-headline-sm uppercase flex items-center gap-sm neo-brutalist-shadow neo-brutalist-shadow-hover neo-brutalist-active transition-all group">
-            <span class="material-symbols-outlined">cloud_upload</span>
-            UPLOAD RECORDS
-          </button>
         </div>
       </div>
-    </section>
-
-    <!-- Search -->
-    <div class="mb-md flex gap-sm">
-      <div class="flex-1 border-2 border-black bg-white p-sm relative boxed-label" data-label="Search Student">
-        <input id="searchInput" class="w-full border-none focus:ring-0 p-0 text-headline-sm font-headline-sm bg-transparent placeholder-outline-variant" placeholder="TYPE NAME..." type="text"/>
-      </div>
+      <button id="syncBtn" class="w-full bg-white border-2 border-black p-3 font-['Archivo_Narrow'] font-bold text-sm uppercase flex items-center justify-center gap-2 hover:bg-gray-100 neo-pressed">
+        <span class="material-symbols-outlined">cloud_upload</span>
+        Upload Records
+      </button>
     </div>
 
-    <!-- Attendance Records List -->
+    <!-- Records List -->
     <div class="border-2 border-black bg-white">
-      <div class="border-b-2 border-black p-sm bg-surface-container-highest flex justify-between items-center">
-        <span class="font-label-bold text-label-bold uppercase">Recent Activity</span>
-        <span class="font-label-bold text-label-bold uppercase" id="currentDate">Today</span>
+      <div class="border-b-2 border-black p-3 bg-gray-100 flex justify-between items-center">
+        <span class="font-['Inter'] font-bold text-xs uppercase">Recent Activity</span>
+        <span class="font-['Inter'] font-bold text-xs uppercase" id="currentDate">Today</span>
       </div>
       <div id="recordsList" class="divide-y-2 divide-black">
-        <!-- Dynamic content injected here -->
+        <div class="p-4 text-center font-['Inter'] text-sm text-gray-600">No pending records</div>
       </div>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="my-lg h-4 halftone-bg border-y-2 border-black"></div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-      <div class="border-2 border-black p-md bg-white">
-        <p class="font-label-bold text-label-bold uppercase text-on-surface-variant mb-sm">Total Scanned</p>
-        <p class="font-headline-lg text-headline-lg" id="totalScanned">0</p>
-        <div class="h-2 w-full bg-surface-container mt-md border border-black relative">
-          <div class="h-full hatch-pattern absolute left-0 top-0 border-r border-black" id="scannedBar" style="width: 0%"></div>
-        </div>
+    <!-- Summary -->
+    <div class="grid grid-cols-3 gap-3 mt-6">
+      <div class="border-2 border-black p-3 bg-white">
+        <p class="font-['Inter'] font-bold text-xs uppercase text-gray-600 mb-1">Total</p>
+        <p id="totalScanned" class="font-['Archivo_Narrow'] text-2xl">0</p>
       </div>
-      <div class="border-2 border-black p-md bg-white">
-        <p class="font-label-bold text-label-bold uppercase text-on-surface-variant mb-sm">Last Upload</p>
-        <p class="font-headline-lg text-headline-lg" id="lastUpload">Never</p>
-        <p class="font-body-sm text-on-surface-variant mt-sm" id="batchNum">Batch #--</p>
+      <div class="border-2 border-black p-3 bg-white">
+        <p class="font-['Inter'] font-bold text-xs uppercase text-gray-600 mb-1">Last Upload</p>
+        <p id="lastUpload" class="font-['Archivo_Narrow'] text-lg">Never</p>
       </div>
-      <div class="border-2 border-black p-md bg-white">
-        <p class="font-label-bold text-label-bold uppercase text-on-surface-variant mb-sm">Storage</p>
-        <p class="font-headline-lg text-headline-lg" id="storage">--</p>
-        <p class="font-body-sm text-on-surface-variant mt-sm">Device: ScanPad Pro</p>
+      <div class="border-2 border-black p-3 bg-white">
+        <p class="font-['Inter'] font-bold text-xs uppercase text-gray-600 mb-1">Storage</p>
+        <p id="storage" class="font-['Archivo_Narrow'] text-lg">--</p>
       </div>
     </div>
   </main>
 
-  <!-- Bottom Nav -->
-  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-20 bg-surface border-t-2 border-primary">
-    <a class="flex flex-col items-center justify-center text-secondary p-sm w-full hover:bg-secondary-container transition-colors active:translate-x-xs active:translate-y-xs" href="scanner.html">
+  <nav class="fixed bottom-0 left-0 w-full z-50 flex h-14 border-t-2 border-black bg-white">
+    <a class="flex items-center justify-center text-black flex-1 hover:bg-gray-100" href="scanner.html">
       <span class="material-symbols-outlined">qr_code_scanner</span>
-      <span class="font-label-bold text-label-bold uppercase mt-xs">SCANNER</span>
+      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Scanner</span>
     </a>
-    <a class="flex flex-col items-center justify-center bg-primary text-on-primary p-sm w-full transition-colors active:translate-x-xs active:translate-y-xs" href="records.html">
+    <a class="flex items-center justify-center bg-black text-white flex-1" href="records.html">
       <span class="material-symbols-outlined">history</span>
-      <span class="font-label-bold text-label-bold uppercase mt-xs">RECORDS</span>
+      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Records</span>
     </a>
   </nav>
 
-  <!-- Sync Status Toast -->
-  <div id="syncStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black font-bold text-sm"></div>
+  <div id="syncStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black font-['Inter'] font-bold text-sm"></div>
 
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="app.js"></script>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function() {
       if (!window.App.requireLogin()) return;
 
-      const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      document.getElementById('currentDate').textContent = `Today - ${today}`;
+      var today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      document.getElementById('currentDate').textContent = 'Today - ' + today;
 
-      const pendingCount = document.getElementById('pendingCount');
-      const recordsList = document.getElementById('recordsList');
-      const syncBtn = document.getElementById('syncBtn');
-      const syncStatus = document.getElementById('syncStatus');
-      const totalScanned = document.getElementById('totalScanned');
-      const scannedBar = document.getElementById('scannedBar');
-      const lastUpload = document.getElementById('lastUpload');
-      const batchNum = document.getElementById('batchNum');
-      const storage = document.getElementById('storage');
-      const refreshBtn = document.getElementById('refreshBtn');
-      const searchInput = document.getElementById('searchInput');
+      var pendingCount = document.getElementById('pendingCount');
+      var recordsList = document.getElementById('recordsList');
+      var syncBtn = document.getElementById('syncBtn');
+      var syncStatus = document.getElementById('syncStatus');
+      var totalScanned = document.getElementById('totalScanned');
+      var lastUpload = document.getElementById('lastUpload');
+      var storage = document.getElementById('storage');
+      var refreshBtn = document.getElementById('refreshBtn');
 
       async function loadRecords() {
-        const records = await window.App.getPendingRecordsWithNames();
-        const count = records.length;
+        var records = await window.App.getPendingRecordsWithNames();
+        var count = records.length;
         pendingCount.textContent = count;
 
         if (count === 0) {
-          recordsList.innerHTML = '<div class="p-md text-center text-on-surface-variant font-mono-label">No pending records</div>';
+          recordsList.innerHTML = '<div class="p-4 text-center font-[\'Inter\'] text-sm text-gray-600">No pending records</div>';
           syncBtn.disabled = true;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
-          recordsList.innerHTML = records.map(r => `
-            <div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors group">
-              <div>
-                <p class="font-headline-sm uppercase font-bold">${r.studentName}</p>
-                <div class="flex items-center gap-sm mt-xs">
-                  <span class="material-symbols-outlined text-sm">schedule</span>
-                  <span class="font-mono-label text-xs">${window.App.formatTime(r.timestamp)}</span>
-                </div>
-              </div>
-              <div class="hatch-pattern border-2 border-black px-sm py-xs">
-                <span class="font-label-bold text-label-bold uppercase">WAITING</span>
-              </div>
-            </div>
-          `).join('');
+          recordsList.innerHTML = records.map(function(r) {
+            return '<div class="p-4 flex justify-between items-center hover:bg-gray-50"><div><p class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</p><span class="font-[\'Inter\'] text-xs text-gray-500">' + window.App.formatTime(r.timestamp) + '</span></div><div class="hatch border border-black px-2 py-1"><span class="font-[\'Inter\'] font-bold text-xs uppercase">Waiting</span></div></div>';
+          }).join('');
           syncBtn.disabled = false;
-          syncBtn.innerHTML = `<span class="material-symbols-outlined">cloud_upload</span> Upload ${count} Record${count > 1 ? 's' : ''}`;
+          syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');
         }
 
-        const allRecords = await window.App.db.outbox.toArray();
+        var allRecords = await window.App.db.outbox.toArray();
         totalScanned.textContent = allRecords.length;
-        scannedBar.style.width = Math.min(allRecords.length * 0.7, 100) + '%';
       }
 
-      syncBtn.addEventListener('click', async () => {
-        const count = await window.App.getPendingCount();
+      syncBtn.addEventListener('click', async function() {
+        var count = await window.App.getPendingCount();
         if (count === 0) return;
+
         syncBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Uploading...';
         syncBtn.disabled = true;
 
         try {
           await window.App.syncAttendanceRecords();
-          showStatus('Records uploaded successfully!', true);
-          const now = new Date();
+          showStatus('Records uploaded!', true);
+          var now = new Date();
           lastUpload.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-          batchNum.textContent = `Batch #${Math.floor(Math.random() * 9000) + 1000}`;
-        } catch (e) {
+        } catch(e) {
           try {
             await window.App.mockSyncAttendanceRecords();
-            showStatus('Records uploaded (demo mode)!', true);
-          } catch (e2) {
-            showStatus('Upload failed: ' + e2.message, false);
+            showStatus('Uploaded (demo)', true);
+          } catch(e2) {
+            showStatus('Upload failed', false);
           }
         }
 
@@ -318,58 +153,26 @@
       function showStatus(msg, isSuccess) {
         syncStatus.textContent = msg;
         syncStatus.className = isSuccess
-          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black bg-green-100 font-bold text-sm'
-          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-red-600 bg-red-100 font-bold text-sm text-red-800';
+          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm'
+          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-red-800';
         syncStatus.classList.remove('hidden');
-        setTimeout(() => syncStatus.classList.add('hidden'), 5000);
+        setTimeout(function() { syncStatus.classList.add('hidden'); }, 5000);
       }
 
       refreshBtn.addEventListener('click', loadRecords);
 
       if (navigator.storage && navigator.storage.estimate) {
-        navigator.storage.estimate().then(estimate => {
-          const percent = Math.round((estimate.usage / estimate.quota) * 100);
-          storage.textContent = percent + '%';
+        navigator.storage.estimate().then(function(estimate) {
+          storage.textContent = Math.round((estimate.usage / estimate.quota) * 100) + '%';
         });
       } else {
         storage.textContent = '12%';
       }
 
-      searchInput.addEventListener('input', async (e) => {
-        const query = e.target.value.toLowerCase();
-        const records = await window.App.getPendingRecordsWithNames();
-        const filtered = query
-          ? records.filter(r => r.studentName.toLowerCase().includes(query))
-          : records;
-
-        if (filtered.length === 0) {
-          recordsList.innerHTML = '<div class="p-md text-center text-on-surface-variant font-mono-label">No matching records</div>';
-        } else {
-          recordsList.innerHTML = filtered.map(r => `
-            <div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors group">
-              <div>
-                <p class="font-headline-sm uppercase font-bold">${r.studentName}</p>
-                <div class="flex items-center gap-sm mt-xs">
-                  <span class="material-symbols-outlined text-sm">schedule</span>
-                  <span class="font-mono-label text-xs">${window.App.formatTime(r.timestamp)}</span>
-                </div>
-              </div>
-              <div class="hatch-pattern border-2 border-black px-sm py-xs">
-                <span class="font-label-bold text-label-bold uppercase">WAITING</span>
-              </div>
-            </div>
-          `).join('');
-        }
-      });
-
       loadRecords();
     });
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('SW registered:', reg.scope))
-        .catch(err => console.error('SW failed:', err));
-    }
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
   </script>
 </body>
 </html>
