@@ -153,7 +153,7 @@ async function fetchRosterFromServer() {
  */
 async function saveRosterToDb(roster) {
   await db.students.clear(); // Clear existing data
-  await db.students.bulkAdd(roster);
+  await db.students.bulkPut(roster);
   localStorage.setItem('rosterCached', 'true');
 }
 
@@ -258,16 +258,55 @@ function extractStudentsFromWorkbook(workbook, file) {
 }
 
 /**
+ * Read a file as ArrayBuffer with a FileReader fallback for broader browser support.
+ * @param {File} file
+ * @returns {Promise<ArrayBuffer|Uint8Array|string>}
+ */
+async function readFileContents(file) {
+  if (file.arrayBuffer) {
+    return await file.arrayBuffer();
+  }
+
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Unable to read file.'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+/**
+ * Parse a CSV file into an array of objects using the first row as headers.
+ * @param {string} text
+ * @returns {Array<object>}
+ */
+function parseCsvText(text) {
+  const rows = [];
+  const lines = text.split(/\r?\n/).filter((line) => line.trim() !== '');
+  if (!lines.length) {
+    return rows;
+  }
+
+  const headers = lines[0].split(',').map((header) => header.trim().replace(/^"|"$/g, ''));
+  lines.slice(1).forEach((line) => {
+    const values = line.split(',').map((value) => value.trim().replace(/^"|"$/g, ''));
+    const record = {};
+    headers.forEach((header, index) => {
+      record[header] = values[index] || '';
+    });
+    rows.push(record);
+  });
+
+  return rows;
+}
+
+/**
  * Import one or more Excel files as roster data.
  * Each file is treated as one section and the file name becomes the section name.
  * @param {FileList|Array} files
  * @returns {Promise<object>}
  */
 async function importRosterFromFiles(files) {
-  if (typeof XLSX === 'undefined') {
-    throw new Error('Excel support is not available in this browser.');
-  }
-
   const selectedFiles = Array.from(files || []);
   if (selectedFiles.length === 0) {
     throw new Error('Select at least one Excel file to import.');
@@ -281,9 +320,26 @@ async function importRosterFromFiles(files) {
       continue;
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    const studentsFromFile = extractStudentsFromWorkbook(workbook, file);
+    const fileName = file.name.toLowerCase();
+    let studentsFromFile = [];
+
+    if (fileName.endsWith('.csv')) {
+      const text = await file.text();
+      const rows = parseCsvText(text);
+      studentsFromFile = rows.map((row, index) => ({
+        id: row['Student ID'] || row['student id'] || row.id || '',
+        name: row['Student Name'] || row['student name'] || row.name || '',
+        section: row['Section'] || row.section || row.class || ''
+      })).filter((student) => student.id || student.name);
+    } else {
+      if (typeof XLSX === 'undefined') {
+        throw new Error('Excel support is not available in this browser.');
+      }
+
+      const fileContents = await readFileContents(file);
+      const workbook = XLSX.read(fileContents, { type: 'array' });
+      studentsFromFile = extractStudentsFromWorkbook(workbook, file);
+    }
 
     if (!studentsFromFile.length) {
       throw new Error(`No student rows were found in ${file.name}.`);
