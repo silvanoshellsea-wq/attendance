@@ -114,7 +114,8 @@
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
           recordsList.innerHTML = records.map(function(r) {
-            return '<div class="p-4 flex justify-between items-center hover:bg-gray-50"><div><p class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</p><span class="font-[\'Inter\'] text-xs text-gray-500">' + window.App.formatTime(r.timestamp) + '</span></div><div class="hatch border border-black px-2 py-1"><span class="font-[\'Inter\'] font-bold text-xs uppercase">Waiting</span></div></div>';
+            var sectionText = r.studentSection ? ' | ' + r.studentSection : ' | Section Not Found';
+            return '<div class="p-4 flex justify-between items-center hover:bg-gray-50"><div><p class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</p><span class="font-[\'Inter\'] text-xs text-gray-500">' + window.App.formatTime(r.timestamp) + sectionText + '</span></div><div class="hatch border border-black px-2 py-1"><span class="font-[\'Inter\'] font-bold text-xs uppercase">Waiting</span></div></div>';
           }).join('');
           syncBtn.disabled = false;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');

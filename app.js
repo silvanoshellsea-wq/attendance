@@ -170,6 +170,75 @@ function normalizeHeader(value) {
     .trim();
 }
 
+const HEADER_ALIASES = {
+  studentId: ['student id', 'studentid', 'student number', 'student no', 'studentno', 'studentnr', 'id'],
+  studentName: ['student name', 'name', 'full name', 'fullname', 'student'],
+  section: ['section']
+};
+
+/**
+ * Normalize a student identifier for reliable lookup.
+ * @param {string|number} value
+ * @returns {string}
+ */
+function normalizeStudentId(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+/**
+ * Check whether a value looks like a student ID.
+ * @param {string|number} value
+ * @returns {boolean}
+ */
+function looksLikeStudentId(value) {
+  const text = String(value || '').trim();
+  return /\b\d{2,4}-\d{3,5}\b/.test(text) || /^\d{4,8}$/.test(text) || /^\d{2,4}[a-z]?\d{2,4}$/i.test(text);
+}
+
+/**
+ * Check whether a value looks like a section label.
+ * @param {string|number} value
+ * @returns {boolean}
+ */
+function looksLikeSection(value) {
+  const text = String(value || '').trim().toUpperCase();
+  return /^(SECTION|SEC)[-_\s]?[A-Z0-9]+$/.test(text) || /^[A-Z]{2,6}\d{1,2}[A-Z]?$/.test(text) || /^(BS|CS|IT|ENG|ART|SCI|MATH)[A-Z0-9-]+$/.test(text);
+}
+
+/**
+ * Find the first non-empty value from a row based on a list of possible header aliases.
+ * @param {object} row
+ * @param {string[]} aliases
+ * @returns {string}
+ */
+function findRowValue(row, aliases) {
+  const normalizedRow = row || {};
+  for (const alias of aliases) {
+    const candidate = normalizedRow[alias];
+    if (candidate !== undefined && candidate !== null && String(candidate).trim() !== '') {
+      return String(candidate).trim();
+    }
+  }
+  return '';
+}
+
+function mapRowToNormalizedObject(row) {
+  const normalized = {};
+  Object.keys(row || {}).forEach((key) => {
+    normalized[normalizeHeader(key)] = row[key];
+  });
+  return normalized;
+}
+
+function hasRecognizedHeaders(row) {
+  const normalized = Object.keys(row || {}).map((key) => normalizeHeader(key));
+  const knownFields = ['student id', 'studentid', 'student number', 'id', 'student name', 'name', 'section', 'program'];
+  return normalized.some((key) => knownFields.includes(key));
+}
+
 /**
  * Infer a section name from a student ID when the ID encodes it.
  * Examples: A-1001, B1002, SEC-A-1003, SECTIONB1004.
@@ -226,21 +295,40 @@ function extractStudentsFromWorkbook(workbook, file) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
 
-    const rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false, blankrows: false }) || [];
+    let rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false, blankrows: false }) || [];
+
+    if (!rows.length || !hasRecognizedHeaders(rows[0])) {
+      const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }) || [];
+      const headerRowIndex = rawRows.findIndex((row) => Array.isArray(row) && row.some((cell) => {
+        const text = String(cell || '').trim().toLowerCase();
+        return ['student', 'name', 'id', 'section', 'number', 'program'].some((keyword) => text.includes(keyword));
+      }));
+
+      if (headerRowIndex >= 0) {
+        const headerRow = rawRows[headerRowIndex];
+        const dataRows = rawRows.slice(headerRowIndex + 1);
+        rows = dataRows.map((row) => {
+          const record = {};
+          headerRow.forEach((header, index) => {
+            record[String(header || '').trim()] = row[index] || '';
+          });
+          return record;
+        });
+      }
+    }
+
+    const headersRecognized = rows.length && hasRecognizedHeaders(rows[0]);
 
     rows.forEach((row, index) => {
-      const normalizedRow = {};
-      Object.keys(row).forEach((key) => {
-        normalizedRow[normalizeHeader(key)] = row[key];
-      });
+      const normalizedRow = mapRowToNormalizedObject(row);
+      const rowValues = Object.values(row)
+        .filter((value) => value !== undefined && value !== null && String(value).trim() !== '')
+        .map((value) => String(value).trim());
 
-      const idValue = [normalizedRow['student id'], normalizedRow.id, normalizedRow['studentid'], normalizedRow['roll no'], normalizedRow['roll number'], normalizedRow['roll'], normalizedRow['student number']]
-        .find((value) => value !== undefined && value !== null && String(value).trim() !== '');
-      const nameValue = [normalizedRow.name, normalizedRow['student name'], normalizedRow['full name'], normalizedRow['student'], normalizedRow['fullname']]
-        .find((value) => value !== undefined && value !== null && String(value).trim() !== '');
-      const sectionValue = [normalizedRow.section, normalizedRow.class, normalizedRow.batch, normalizedRow.group]
-        .find((value) => value !== undefined && value !== null && String(value).trim() !== '');
-      const inferredSection = inferSectionFromStudentId(idValue, fallbackSection);
+      const idValue = findRowValue(normalizedRow, HEADER_ALIASES.studentId) || rowValues.find(looksLikeStudentId) || '';
+      const nameValue = findRowValue(normalizedRow, HEADER_ALIASES.studentName) || rowValues.find((value) => !looksLikeStudentId(value) && !looksLikeSection(value) && value.length > 2) || '';
+      const sectionValue = findRowValue(normalizedRow, HEADER_ALIASES.section) || '';
+      const inferredSection = inferSectionFromStudentId(idValue, '');
 
       if (!nameValue && !idValue) {
         return;
@@ -249,7 +337,7 @@ function extractStudentsFromWorkbook(workbook, file) {
       students.push({
         id: String(idValue || `${fallbackSection}-${index + 1}`).trim(),
         name: String(nameValue || 'Unnamed Student').trim(),
-        section: String(inferredSection || sectionValue || fallbackSection).trim()
+        section: String(sectionValue || inferredSection).trim()
       });
     });
   });
@@ -433,8 +521,27 @@ async function getStudentById(studentId) {
   }
 
   const allStudents = await db.students.toArray();
-  const normalizedInputLower = normalizedInput.toLowerCase();
-  return allStudents.find(student => String(student.id || '').trim().toLowerCase() === normalizedInputLower) || null;
+  const normalizedInputValue = normalizeStudentId(normalizedInput);
+  const fallbackMatches = allStudents.filter((student) => {
+    const candidateId = normalizeStudentId(student.id);
+    const candidateAlt = normalizeStudentId(student.name);
+    const candidateSection = normalizeStudentId(student.section);
+    return candidateId === normalizedInputValue || candidateId.includes(normalizedInputValue) || normalizedInputValue.includes(candidateId) || candidateAlt.includes(normalizedInputValue) || candidateSection.includes(normalizedInputValue);
+  });
+
+  if (fallbackMatches.length > 0) {
+    return fallbackMatches[0];
+  }
+
+  return null;
+}
+
+/**
+ * Return all cached students for debugging.
+ * @returns {Promise<Array>}
+ */
+async function debugGetAllStudents() {
+  return await db.students.toArray();
 }
 
 // ==========================================
@@ -675,6 +782,7 @@ if (typeof window !== 'undefined') {
     importRosterFromFiles,
     loadDemoRoster,
     getAllStudents,
+    debugGetAllStudents,
     getStudentById,
     recordAttendance,
     getPendingRecords,

@@ -241,12 +241,41 @@
           // Fall through to manual parsing
         }
 
-        var segments = trimmed.split(/\s*\|\s*|\s*,\s*|\s{2,}/);
-        if (segments.length >= 3) {
+        var normalizedText = trimmed.replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
+        var bracketMatch = normalizedText.match(/\[(.*?)\]/);
+        var parenthesisMatch = normalizedText.match(/\((.*?)\)/);
+        var idMatch = normalizedText.match(/\b(\d{2,4}-\d{3,5})\b/);
+
+        var inferredId = '';
+        if (bracketMatch && bracketMatch[1]) {
+          inferredId = bracketMatch[1].trim();
+        } else if (parenthesisMatch && parenthesisMatch[1]) {
+          inferredId = parenthesisMatch[1].trim();
+        } else if (idMatch && idMatch[1]) {
+          inferredId = idMatch[1].trim();
+        }
+
+        var namePart = normalizedText;
+        if (bracketMatch) {
+          namePart = normalizedText.split('[')[0].trim();
+        } else if (parenthesisMatch) {
+          namePart = normalizedText.split('(')[0].trim();
+        }
+
+        var programPart = '';
+        if (bracketMatch) {
+          var afterBracket = normalizedText.substring(normalizedText.indexOf(']') + 1).trim();
+          programPart = afterBracket.replace(/^[-:]/, '').trim();
+        } else if (idMatch) {
+          var afterId = normalizedText.substring(normalizedText.indexOf(idMatch[1]) + idMatch[1].length).trim();
+          programPart = afterId.replace(/^[-:]/, '').trim();
+        }
+
+        if (inferredId || programPart || namePart) {
           return {
-            studentId: String(segments[1] || '').trim(),
-            name: String(segments[0] || '').trim(),
-            program: String(segments[2] || '').trim()
+            studentId: inferredId,
+            name: namePart,
+            program: programPart
           };
         }
 
@@ -264,20 +293,18 @@
 
         var student = await window.App.getStudentById(studentId);
         if (!student) {
+          var debugStudents = await window.App.debugGetAllStudents();
+          console.log('Roster debug:', debugStudents);
           showError('Section Not Found', 'Missing ID: ' + studentId);
-          return;
-        }
-
-        if (student.section !== officer.section) {
-          showError('Not In Section', student.section);
           return;
         }
 
         var result = await window.App.recordAttendance(student.id, officer.code);
         if (result.success) {
           var name = payload.name || student.name || 'Unknown Student';
+          var sectionDisplay = student.section ? student.section : 'Section Not Found';
           var programText = payload.program ? '<div class="text-xs mt-1">' + escapeHtml(payload.program) + '</div>' : '';
-          showSuccess('Allowed', '<div class="font-[\'Inter\'] font-bold text-sm">' + escapeHtml(name) + '</div><div class="font-mono text-sm mt-1">' + escapeHtml(student.id + ' | ' + student.section) + '</div>' + programText);
+          showSuccess('Allowed', '<div class="font-[\'Inter\'] font-bold text-sm">' + escapeHtml(name) + '</div><div class="font-mono text-sm mt-1">' + escapeHtml(student.id + ' | ' + sectionDisplay) + '</div>' + programText);
           updatePendingCount();
         } else if (result.reason === 'duplicate') {
           showError('Already Checked In', student.name);
@@ -320,7 +347,8 @@
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
           pendingList.innerHTML = records.map(function(r) {
-            return '<div class="flex justify-between items-center p-3 border-b border-black"><span class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</span><span class="font-[\'Inter\'] text-xs">' + window.App.formatTime(r.timestamp) + '</span></div>';
+            var sectionText = r.studentSection ? ' | ' + r.studentSection : '';
+            return '<div class="flex justify-between items-center p-3 border-b border-black"><div><span class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</span><div class="font-[\'Inter\'] text-xs text-gray-600">' + window.App.formatTime(r.timestamp) + sectionText + '</div></div></div>';
           }).join('');
           syncBtn.disabled = false;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');
