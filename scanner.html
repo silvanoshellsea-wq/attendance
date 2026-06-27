@@ -347,8 +347,9 @@
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
           pendingList.innerHTML = records.map(function(r) {
-            var sectionText = r.studentSection ? ' | ' + r.studentSection : '';
-            return '<div class="flex justify-between items-center p-3 border-b border-black"><div><span class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + r.studentName + '</span><div class="font-[\'Inter\'] text-xs text-gray-600">' + window.App.formatTime(r.timestamp) + sectionText + '</div></div></div>';
+            var studentLabel = r.studentName || r.studentId || 'Unknown Student';
+            var sectionText = r.studentSection ? ' | ' + r.studentSection : ' | Section Not Found';
+            return '<div class="flex justify-between items-center p-3 border-b border-black"><div><span class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + studentLabel + '</span><div class="font-[\'Inter\'] text-xs text-gray-600">' + window.App.formatTime(r.timestamp) + sectionText + '</div></div></div>';
           }).join('');
           syncBtn.disabled = false;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');

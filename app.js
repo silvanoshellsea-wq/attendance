@@ -573,8 +573,11 @@ async function recordAttendance(studentId, officerCode) {
   }
 
   // Record the attendance
+  const student = await getStudentById(studentId);
   const record = {
     studentId,
+    studentName: student ? student.name : '',
+    studentSection: student ? student.section : '',
     officerCode,
     timestamp,
     synced: false
@@ -607,18 +610,32 @@ async function getPendingCount() {
  */
 async function getPendingRecordsWithNames() {
   const records = await getPendingRecords();
-  const recordsWithNames = [];
+  return records.map((record) => ({
+    ...record,
+    studentName: record.studentName || 'Unknown',
+    studentSection: record.studentSection || 'Unknown'
+  }));
+}
 
-  for (const record of records) {
-    const student = await getStudentById(record.studentId);
-    recordsWithNames.push({
-      ...record,
-      studentName: student ? student.name : 'Unknown',
-      studentSection: student ? student.section : 'Unknown'
-    });
-  }
+/**
+ * Get all attendance records, including synced and pending.
+ * @returns {Promise<Array>}
+ */
+async function getAllAttendanceRecords() {
+  return await db.outbox.toArray();
+}
 
-  return recordsWithNames;
+/**
+ * Get all attendance records with student lookup metadata.
+ * @returns {Promise<Array>}
+ */
+async function getAllAttendanceRecordsWithNames() {
+  const records = await getAllAttendanceRecords();
+  return records.map((record) => ({
+    ...record,
+    studentName: record.studentName || 'Unknown',
+    studentSection: record.studentSection || 'Unknown'
+  }));
 }
 
 /**
@@ -788,6 +805,8 @@ if (typeof window !== 'undefined') {
     getPendingRecords,
     getPendingCount,
     getPendingRecordsWithNames,
+    getAllAttendanceRecords,
+    getAllAttendanceRecordsWithNames,
     syncAttendanceRecords,
     mockSyncAttendanceRecords,
     formatTime,
