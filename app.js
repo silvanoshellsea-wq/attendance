@@ -100,6 +100,14 @@ function logout() {
 }
 
 /**
+ * Get database reference
+ * @returns {Dexie}
+ */
+function getDb() {
+  return db;
+}
+
+/**
  * Require login - redirect if not logged in
  */
 function requireLogin() {
@@ -344,30 +352,11 @@ async function mockSyncAttendanceRecords() {
 // ==========================================
 
 /**
- * Update online/offline status indicator
- */
-function updateOnlineStatus() {
-  const statusBar = document.querySelector('.status-bar');
-  if (!statusBar) return;
-
-  if (navigator.onLine) {
-    statusBar.classList.remove('offline');
-    statusBar.classList.add('online');
-    statusBar.textContent = 'Online';
-  } else {
-    statusBar.classList.remove('online');
-    statusBar.classList.add('offline');
-    statusBar.textContent = 'Offline';
-  }
-}
-
-/**
  * Initialize online/offline event listeners
  */
 function initOnlineStatusListener() {
-  updateOnlineStatus();
-  window.addEventListener('online', updateOnlineStatus);
-  window.addEventListener('offline', updateOnlineStatus);
+  window.addEventListener('online', () => window.dispatchEvent(new Event('network-online')));
+  window.addEventListener('offline', () => window.dispatchEvent(new Event('network-offline')));
 }
 
 // ==========================================
@@ -444,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
 if (typeof window !== 'undefined') {
   window.App = {
     db,
+    getDb,
     config: CONFIG,
     isLoggedIn,
     getOfficerInfo,
