@@ -1,235 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Officer Scan - Login</title>
-  
-  <!-- Tailwind config MUST be defined BEFORE the CDN script -->
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#000000",
-            surface: "#ffffff",
-            "surface-container-low": "#f3f3f3",
-            "on-primary": "#ffffff",
-            "on-surface": "#1a1c1c",
-            "on-surface-variant": "#4c4546",
-            outline: "#7e7576",
-            secondary: "#5d5f5f",
-            "secondary-container": "#dfe0e0"
-          },
-          fontFamily: {
-            "headline-md": ["Archivo Narrow"],
-            "headline-xl": ["Archivo Narrow"],
-            "headline-sm": ["Archivo Narrow"],
-            "body-md": ["Inter"],
-            "body-lg": ["Inter"],
-            "body-sm": ["Inter"],
-            "label-bold": ["Inter"],
-            "mono-label": ["Inter"]
-          },
-          fontSize: {
-            "headline-xl": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" }],
-            "headline-sm": ["18px", { lineHeight: "1.2", fontWeight: "700" }]
-          }
-        }
-      }
-    }
-  </script>
-  
-  <!-- Now load Tailwind CDN (it reads the config above) -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700;800&family=Inter:wght@400;500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet">
-  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: middle;
-    }
-
-    .neo-shadow {
-      box-shadow: 4px 4px 0px 0px #000000;
-    }
-
-    .neo-shadow-sm {
-      box-shadow: 2px 2px 0px 0px #000000;
-    }
-
-    .neo-shadow-hover:hover {
-      box-shadow: 6px 6px 0px 0px #000000;
-      transform: translate(-2px, -2px);
-    }
-
-    .neo-pressed:active {
-      box-shadow: 2px 2px 0px 0px #000000;
-      transform: translate(2px, 2px);
-    }
-
-    .halftone-bg {
-      background-image: radial-gradient(#000 1px, transparent 0);
-      background-size: 8px 8px;
-      opacity: 0.05;
-    }
-
-    .hatch-pattern {
-      background: repeating-linear-gradient(45deg, #000, #000 1px, transparent 1px, transparent 10px);
-    }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .neo-shadow { box-shadow: 4px 4px 0px #000; }
+    .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
   </style>
 </head>
-<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col selection:bg-primary selection:text-on-primary">
-  <!-- Top App Bar -->
-  <header class="w-full top-0 flex justify-between items-center px-6 py-4 z-50 bg-surface border-b-2 border-primary">
-    <div class="font-headline-md font-bold text-primary uppercase tracking-tight">Officer Scan</div>
+<body class="bg-white text-black min-h-screen flex flex-col">
+  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center">
+    <div class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Officer Scan</div>
     <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">signal_wifi_off</span>
-      <span class="font-label-bold text-xs uppercase">Offline Mode</span>
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL'1">signal_wifi_off</span>
+      <span class="font-['Inter'] text-xs font-bold uppercase">Offline Mode</span>
     </div>
   </header>
 
-  <main class="flex-grow w-full flex flex-col items-center justify-center p-6 gap-6 relative">
-    <div class="absolute inset-0 halftone-bg -z-10"></div>
-
-    <!-- Left: Branding (hidden on mobile) -->
-    <div class="hidden md:flex flex-col w-1/2 max-w-md space-y-4">
-      <div class="border-2 border-primary bg-white p-6 neo-shadow relative overflow-hidden">
-        <h2 class="font-headline-xl text-4xl uppercase mb-4">Security Protocol</h2>
-        <p class="text-lg leading-relaxed mb-4">
-          Access restricted to authorized personnel. Ensure your terminal is secured before proceeding.
-        </p>
-        <div class="flex items-center gap-2 p-3 border-2 border-primary bg-surface-container-low">
-          <span class="material-symbols-outlined">info</span>
-          <span class="font-mono-label text-sm">VERSION 4.2.0-STABLE</span>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 gap-4">
-        <div class="border-2 border-primary bg-white p-4 flex flex-col items-center text-center">
-          <span class="material-symbols-outlined text-5xl mb-2">qr_code_scanner</span>
-          <span class="font-bold text-xs uppercase">Fast Scan</span>
-        </div>
-        <div class="border-2 border-primary bg-white p-4 flex flex-col items-center text-center">
-          <span class="material-symbols-outlined text-5xl mb-2">encrypted</span>
-          <span class="font-bold text-xs uppercase">Secure PIN</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right: Login Form -->
+  <main class="flex-grow flex items-center justify-center p-6">
     <div class="w-full max-w-sm">
-      <div class="border-2 border-primary bg-white p-6 neo-shadow-hover transition-all duration-200">
-        <h1 class="text-2xl uppercase mb-6 border-b-2 border-primary pb-3 flex items-center gap-2">
-          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lock_open</span>
+      <div class="border-2 border-black p-6">
+        <h1 class="text-2xl font-['Archivo_Narrow'] uppercase mb-6 border-b-2 border-black pb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL'1">lock_open</span>
           Officer Login
         </h1>
 
         <form id="loginForm" class="space-y-5">
-          <!-- Officer Code -->
           <div class="relative">
-            <input class="peer w-full border-2 border-primary p-4 text-lg focus:border-[3px] focus:outline-none transition-all" id="officerCode" placeholder=" " type="text" />
-            <label class="absolute left-4 top-4 font-bold text-xs uppercase text-outline pointer-events-none transition-all duration-200 peer-focus:-translate-y-5 peer-focus:scale-90 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-translate-y-5 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1" for="officerCode">
-              Officer Code
-            </label>
+            <input class="w-full border-2 border-black p-4 text-lg focus:border-[3px] focus:outline-none" id="officerCode" placeholder="Officer Code" type="text">
           </div>
-
-          <!-- PIN -->
           <div class="relative">
-            <input class="peer w-full border-2 border-primary p-4 text-lg focus:border-[3px] focus:outline-none transition-all" id="pin" placeholder=" " type="password" />
-            <label class="absolute left-4 top-4 font-bold text-xs uppercase text-outline pointer-events-none transition-all duration-200 peer-focus:-translate-y-5 peer-focus:scale-90 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-translate-y-5 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1" for="pin">
-              PIN Code
-            </label>
+            <input class="w-full border-2 border-black p-4 text-lg focus:border-[3px] focus:outline-none" id="pin" placeholder="PIN Code" type="password">
           </div>
-
-          <!-- Login Button -->
-          <button type="submit" class="w-full bg-primary text-white text-lg uppercase py-4 border-[3px] border-primary neo-shadow neo-pressed hover:bg-white hover:text-primary transition-colors flex items-center justify-center gap-2">
+          <button type="submit" class="w-full bg-black text-white text-lg font-['Archivo_Narrow'] uppercase py-4 border-2 border-black neo-shadow neo-pressed hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2">
             Login
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </form>
 
-        <!-- Error Message -->
-        <div id="loginError" class="hidden mt-4 p-3 bg-red-100 border-2 border-red-600 text-red-800 font-bold text-sm text-center">
+        <div id="loginError" class="hidden mt-4 p-3 bg-red-100 border-2 border-red-600 font-['Inter'] font-bold text-sm text-center">
           Invalid officer code or PIN
         </div>
 
-        <!-- Demo Hint -->
-        <div class="mt-4 p-3 bg-surface-container-low border border-primary font-mono-label text-xs">
+        <div class="mt-4 p-3 bg-gray-100 border font-['Inter'] text-xs">
           <strong>Demo:</strong> Code: OFFICER123, PIN: 0000
         </div>
 
-        <!-- Roster Setup -->
-        <div class="mt-6 border-t-2 border-primary pt-4">
+        <div class="mt-6 border-t-2 border-black pt-4">
           <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined">database</span>
-            <h3 class="font-bold text-xs uppercase">Roster Setup</h3>
+            <h3 class="font-['Inter'] font-bold text-xs uppercase">Roster Setup</h3>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button type="button" id="setupRosterBtn" class="flex items-center justify-center gap-2 border-2 border-primary p-3 font-bold text-xs uppercase hover:bg-surface-container-low transition-colors neo-pressed active:shadow-none">
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" id="setupRosterBtn" class="flex items-center justify-center gap-2 border-2 border-black p-3 font-['Inter'] font-bold text-xs uppercase hover:bg-gray-100 neo-pressed">
               <span class="material-symbols-outlined">download</span>
-              Download List
+              Download
             </button>
-            <button type="button" id="loadDemoBtn" class="flex items-center justify-center gap-2 border-2 border-primary p-3 font-bold text-xs uppercase hover:bg-surface-container-low transition-colors neo-pressed active:shadow-none">
+            <button type="button" id="loadDemoBtn" class="flex items-center justify-center gap-2 border-2 border-black p-3 font-['Inter'] font-bold text-xs uppercase hover:bg-gray-100 neo-pressed">
               <span class="material-symbols-outlined">play_circle</span>
               Load Demo
             </button>
           </div>
         </div>
       </div>
-
-      <!-- Status -->
-      <div class="mt-4 flex justify-between items-center px-2">
-        <div class="flex items-center gap-2">
-          <div class="w-3 h-3 bg-primary rounded-full"></div>
-          <span class="font-mono-label text-xs uppercase">Terminal Ready</span>
-        </div>
-        <span class="font-mono-label text-xs text-outline uppercase">ID: 882-901</span>
-      </div>
     </div>
   </main>
 
-  <!-- Roster Status Message -->
-  <div id="rosterStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-primary font-bold text-sm"></div>
+  <div id="rosterStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black font-['Inter'] font-bold text-sm"></div>
 
-  <!-- Loading -->
-  <div id="loadingIndicator" class="hidden fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center">
-    <div class="bg-white border-2 border-primary p-6 neo-shadow">
-      <div class="material-symbols-outlined text-5xl animate-spin mb-4">sync</div>
-      <p id="loadingText" class="font-bold text-lg uppercase">Loading...</p>
+  <div id="loadingIndicator" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div class="bg-white border-2 border-black p-6 neo-shadow">
+      <div class="material-symbols-outlined text-5xl animate-spin">sync</div>
+      <p id="loadingText" class="font-['Inter'] font-bold text-lg uppercase mt-4">Loading...</p>
     </div>
   </div>
 
-  <!-- Libraries -->
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="app.js"></script>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Check if already logged in
+    document.addEventListener('DOMContentLoaded', function() {
       if (window.App.isLoggedIn()) {
         window.location.href = 'scanner.html';
         return;
       }
 
-      // DOM Elements
-      const loginForm = document.getElementById('loginForm');
-      const loginError = document.getElementById('loginError');
-      const setupRosterBtn = document.getElementById('setupRosterBtn');
-      const loadDemoBtn = document.getElementById('loadDemoBtn');
-      const rosterStatus = document.getElementById('rosterStatus');
-      const loadingIndicator = document.getElementById('loadingIndicator');
-      const loadingText = document.getElementById('loadingText');
+      var loginForm = document.getElementById('loginForm');
+      var loginError = document.getElementById('loginError');
+      var setupRosterBtn = document.getElementById('setupRosterBtn');
+      var loadDemoBtn = document.getElementById('loadDemoBtn');
+      var rosterStatus = document.getElementById('rosterStatus');
+      var loadingIndicator = document.getElementById('loadingIndicator');
+      var loadingText = document.getElementById('loadingText');
 
-      // Login
-      loginForm.addEventListener('submit', (e) => {
+      loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const officerCode = document.getElementById('officerCode').value.trim();
-        const pin = document.getElementById('pin').value.trim();
+        var officerCode = document.getElementById('officerCode').value.trim();
+        var pin = document.getElementById('pin').value.trim();
 
         if (!officerCode || !pin) {
           showLoginError('Please enter both officer code and PIN');
@@ -255,17 +126,15 @@
       document.getElementById('officerCode').addEventListener('input', hideLoginError);
       document.getElementById('pin').addEventListener('input', hideLoginError);
 
-      // Show roster status
       function showRosterStatus(msg, isSuccess) {
         rosterStatus.textContent = msg;
         rosterStatus.className = isSuccess
-          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-primary bg-green-100 font-bold text-sm text-green-800'
-          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-red-600 bg-red-100 font-bold text-sm text-red-800';
+          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm'
+          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-red-800';
         rosterStatus.classList.remove('hidden');
-        setTimeout(() => rosterStatus.classList.add('hidden'), 5000);
+        setTimeout(function() { rosterStatus.classList.add('hidden'); }, 5000);
       }
 
-      // Loading
       function showLoading(msg) {
         loadingText.textContent = msg;
         loadingIndicator.classList.remove('hidden');
@@ -275,17 +144,16 @@
         loadingIndicator.classList.add('hidden');
       }
 
-      // Setup Roster
-      setupRosterBtn.addEventListener('click', async () => {
+      setupRosterBtn.addEventListener('click', async function() {
         hideLoginError();
         try {
-          showLoading('Connecting to server...');
+          showLoading('Connecting...');
           setupRosterBtn.disabled = true;
-          await window.App.setupRoster((progress) => { loadingText.textContent = progress; });
+          await window.App.setupRoster(function(p) { loadingText.textContent = p; });
           hideLoading();
-          showRosterStatus('Roster downloaded successfully!', true);
+          showRosterStatus('Roster downloaded!', true);
           if (window.App.isLoggedIn()) {
-            setTimeout(() => window.location.href = 'scanner.html', 1000);
+            setTimeout(function() { window.location.href = 'scanner.html'; }, 1000);
           }
         } catch (error) {
           hideLoading();
@@ -295,11 +163,10 @@
         }
       });
 
-      // Load Demo
-      loadDemoBtn.addEventListener('click', async () => {
+      loadDemoBtn.addEventListener('click', async function() {
         hideLoginError();
         try {
-          showLoading('Loading demo roster...');
+          showLoading('Loading demo...');
           loadDemoBtn.disabled = true;
           await window.App.loadDemoRoster();
           hideLoading();
@@ -312,17 +179,13 @@
         }
       });
 
-      // Check roster status
       if (window.App.isRosterCached()) {
-        showRosterStatus('Roster is available offline', true);
+        showRosterStatus('Roster available offline', true);
       }
     });
 
-    // Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('SW registered:', reg.scope))
-        .catch(err => console.error('SW failed:', err));
+      navigator.serviceWorker.register('sw.js');
     }
   </script>
 </body>
