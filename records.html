@@ -5,85 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Officer Scan - Records</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700&family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .neo-shadow { box-shadow: 4px 4px 0px #000; }
     .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
-    .hatch { background: repeating-linear-gradient(45deg, #000, #000 2px, transparent 2px, transparent 8px); }
   </style>
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col">
-  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center">
+  <header class="border-b-4 border-black px-6 py-4 flex justify-between items-center">
     <div class="flex items-center gap-2">
       <span class="material-symbols-outlined">signal_wifi_off</span>
-      <h1 class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Officer Scan</h1>
+      <h1 class="font-['Archivo_Narrow'] font-bold text-2xl uppercase">Officer Scan</h1>
     </div>
-    <button class="material-symbols-outlined p-2 hover:bg-gray-100" id="refreshBtn">refresh</button>
+    <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-100" id="refreshBtn">refresh</button>
   </header>
 
-  <main class="p-4 pb-20 max-w-md mx-auto">
+  <main class="p-4 pb-20 max-w-3xl mx-auto">
     <!-- Sync Status -->
-    <div class="border-2 border-black p-4 bg-white neo-shadow mb-6">
+    <div class="border-4 border-black p-4 bg-white neo-shadow mb-6">
       <div class="flex justify-between items-center mb-3">
         <div>
-          <h2 class="font-['Archivo_Narrow'] font-bold uppercase">Connectivity Hub</h2>
+          <h2 class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Connectivity Hub</h2>
           <p class="font-['Inter'] text-sm text-gray-600">Records cached locally</p>
         </div>
         <div class="flex items-center gap-3">
           <div class="text-center">
             <span class="font-['Inter'] font-bold text-xs block mb-1">PENDING</span>
-            <span id="pendingCount" class="bg-black text-white font-['Archivo_Narrow'] text-2xl px-4 py-1 border-2 border-black">0</span>
+            <span id="pendingCount" class="bg-black text-white font-['Archivo_Narrow'] text-2xl px-4 py-1 border-4 border-black">0</span>
           </div>
         </div>
       </div>
-      <button id="syncBtn" class="w-full bg-white border-2 border-black p-3 font-['Archivo_Narrow'] font-bold text-sm uppercase flex items-center justify-center gap-2 hover:bg-gray-100 neo-pressed">
+      <button type="button" id="syncBtn" class="w-full bg-black text-white border-4 border-black p-4 font-['Archivo_Narrow'] font-bold text-lg uppercase flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors neo-pressed">
         <span class="material-symbols-outlined">cloud_upload</span>
         Upload Records
       </button>
     </div>
 
-    <!-- Records List -->
-    <div class="border-2 border-black bg-white">
-      <div class="border-b-2 border-black p-3 bg-gray-100 flex justify-between items-center">
-        <span class="font-['Inter'] font-bold text-xs uppercase">Recent Activity</span>
-        <span class="font-['Inter'] font-bold text-xs uppercase" id="currentDate">Today</span>
+    <!-- Filters -->
+    <div class="border-4 border-black bg-gray-100 p-4 mb-4 flex flex-wrap gap-3 items-end">
+      <div class="flex-grow">
+        <label class="font-['Inter'] font-bold text-xs uppercase block mb-1">Search</label>
+        <input type="text" id="searchInput" class="w-full border-2 border-black p-3 font-['Space_Mono'] text-sm uppercase" placeholder="TYPE NAME...">
       </div>
-      <div id="recordsList" class="divide-y-2 divide-black">
-        <div class="p-4 text-center font-['Inter'] text-sm text-gray-600">No pending records</div>
+      <div class="w-32">
+        <label class="font-['Inter'] font-bold text-xs uppercase block mb-1">Year</label>
+        <select id="yearFilter" class="w-full border-2 border-black p-3 font-['Space_Mono'] text-sm bg-white">
+          <option value="">ALL</option>
+          <option value="10">Year 10</option>
+          <option value="11">Year 11</option>
+          <option value="12">Year 12</option>
+        </select>
+      </div>
+      <div class="w-32">
+        <label class="font-['Inter'] font-bold text-xs uppercase block mb-1">Section</label>
+        <select id="sectionFilter" class="w-full border-2 border-black p-3 font-['Space_Mono'] text-sm bg-white">
+          <option value="">ALL</option>
+          <option value="ALPHA">Alpha</option>
+          <option value="BRAVO">Bravo</option>
+          <option value="CHARLIE">Charlie</option>
+        </select>
       </div>
     </div>
 
-    <!-- Summary -->
+    <!-- Records List -->
+    <div class="border-4 border-black bg-white">
+      <div class="border-b-4 border-black p-3 bg-gray-100 flex justify-between items-center">
+        <span class="font-['Inter'] font-bold text-sm uppercase">Recent Activity</span>
+        <span class="font-['Inter'] font-bold text-sm uppercase" id="currentDate">Today</span>
+      </div>
+      <div id="recordsList" class="divide-y-4 divide-black max-h-96 overflow-y-auto">
+        <div class="p-8 text-center font-['Space_Mono'] text-sm text-gray-500">No records found</div>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
     <div class="grid grid-cols-3 gap-3 mt-6">
-      <div class="border-2 border-black p-3 bg-white">
-        <p class="font-['Inter'] font-bold text-xs uppercase text-gray-600 mb-1">Total</p>
-        <p id="totalScanned" class="font-['Archivo_Narrow'] text-2xl">0</p>
+      <div class="border-4 border-black p-3 bg-white">
+        <p class="font-['Space_Mono'] text-xs uppercase text-gray-600 mb-1">Total Scanned</p>
+        <p id="totalScanned" class="font-['Archivo_Narrow'] text-3xl">0</p>
       </div>
-      <div class="border-2 border-black p-3 bg-white">
-        <p class="font-['Inter'] font-bold text-xs uppercase text-gray-600 mb-1">Last Upload</p>
-        <p id="lastUpload" class="font-['Archivo_Narrow'] text-lg">Never</p>
+      <div class="border-4 border-black p-3 bg-white">
+        <p class="font-['Space_Mono'] text-xs uppercase text-gray-600 mb-1">Last Upload</p>
+        <p id="lastUpload" class="font-['Archivo_Narrow'] text-xl">Never</p>
       </div>
-      <div class="border-2 border-black p-3 bg-white">
-        <p class="font-['Inter'] font-bold text-xs uppercase text-gray-600 mb-1">Storage</p>
-        <p id="storage" class="font-['Archivo_Narrow'] text-lg">--</p>
+      <div class="border-4 border-black p-3 bg-white">
+        <p class="font-['Space_Mono'] text-xs uppercase text-gray-600 mb-1">Storage</p>
+        <p id="storage" class="font-['Archivo_Narrow'] text-xl">--</p>
       </div>
     </div>
   </main>
 
-  <nav class="fixed bottom-0 left-0 w-full z-50 flex h-14 border-t-2 border-black bg-white">
-    <a class="flex items-center justify-center text-black flex-1 hover:bg-gray-100" href="scanner.html">
+  <!-- Bottom Nav - Solid Black Background -->
+  <nav style="position: fixed; bottom: 0; left: 0; width: 100%; height: 64px; background-color: #000000; border-top: 4px solid #000000; display: flex; z-index: 9999;">
+    <a href="scanner.html" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; gap: 4px;">
       <span class="material-symbols-outlined">qr_code_scanner</span>
-      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Scanner</span>
+      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Scanner</span>
     </a>
-    <a class="flex items-center justify-center bg-black text-white flex-1" href="records.html">
+    <a href="records.html" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; border-left: 4px solid white; border-right: 4px solid white; gap: 4px;">
       <span class="material-symbols-outlined">history</span>
-      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Records</span>
+      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Records</span>
+    </a>
+    <a href="#" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; gap: 4px;">
+      <span class="material-symbols-outlined">account_circle</span>
+      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Profile</span>
     </a>
   </nav>
 
-  <div id="syncStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black font-['Inter'] font-bold text-sm"></div>
+  <div id="syncStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-3 border-4 border-black font-['Inter'] font-bold text-base"></div>
 
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="app.js"></script>
@@ -102,27 +132,55 @@
       var lastUpload = document.getElementById('lastUpload');
       var storage = document.getElementById('storage');
       var refreshBtn = document.getElementById('refreshBtn');
+      var searchInput = document.getElementById('searchInput');
+      var yearFilter = document.getElementById('yearFilter');
+      var sectionFilter = document.getElementById('sectionFilter');
 
       async function loadRecords() {
         var pendingRecords = await window.App.getPendingRecordsWithNames();
         var pendingCountValue = pendingRecords.length;
         pendingCount.textContent = pendingCountValue;
 
-        var records = await window.App.getAllAttendanceRecordsWithNames();
-        var allCount = records.length;
+        var allRecords = await window.App.db.outbox.toArray();
+        var allCount = allRecords.length;
 
         if (allCount === 0) {
-          recordsList.innerHTML = '<div class="p-4 text-center font-[\'Inter\'] text-sm text-gray-600">No attendance records</div>';
+          recordsList.innerHTML = '<div class="p-8 text-center font-[\'Space_Mono\'] text-sm text-gray-500">No records found</div>';
           syncBtn.disabled = true;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
-          recordsList.innerHTML = records.map(function(r) {
-            var studentLabel = r.studentName || r.studentId || 'Unknown Student';
-            var sectionText = r.studentSection ? ' | ' + r.studentSection : ' | Section Not Found';
-            var statusLabel = r.synced ? 'Uploaded' : 'Pending';
-            var statusClass = r.synced ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
-            return '<div class="p-4 flex justify-between items-center hover:bg-gray-50"><div><p class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + studentLabel + '</p><span class="font-[\'Inter\'] text-xs text-gray-500">' + window.App.formatTime(r.timestamp) + sectionText + '</span></div><div class="px-2 py-1 rounded ' + statusClass + ' font-[\'Inter\'] font-bold text-[10px] uppercase">' + statusLabel + '</div></div>';
-          }).join('');
+          var recordsWithNames = [];
+          for (var i = 0; i < allRecords.length; i++) {
+            var r = allRecords[i];
+            var student = await window.App.getStudentById(r.studentId);
+            recordsWithNames.push({
+              studentName: student ? student.name : r.studentId,
+              studentSection: student ? student.section : 'Unknown',
+              timestamp: r.timestamp,
+              synced: r.synced
+            });
+          }
+
+          var search = searchInput.value.toLowerCase();
+          var year = yearFilter.value;
+          var section = sectionFilter.value;
+
+          var filtered = recordsWithNames.filter(function(r) {
+            var matchSearch = !search || r.studentName.toLowerCase().includes(search);
+            var matchSection = !section || r.studentSection === section;
+            return matchSearch && matchSection;
+          });
+
+          if (filtered.length === 0) {
+            recordsList.innerHTML = '<div class="p-8 text-center font-[\'Space_Mono\'] text-sm text-gray-500">No matching records</div>';
+          } else {
+            recordsList.innerHTML = filtered.map(function(r) {
+              var statusClass = r.synced ? 'bg-green-100 border-green-600' : 'bg-yellow-100 border-yellow-600';
+              var statusText = r.synced ? 'SYNCED' : 'WAITING';
+              return '<div class="p-4 flex justify-between items-center hover:bg-gray-50"><div><p class="font-[\'Archivo_Narrow\'] font-bold text-lg uppercase">' + r.studentName + '</p><span class="font-[\'Space_Mono\'] text-xs text-gray-500">' + window.App.formatTime(r.timestamp) + ' | ' + r.studentSection + '</span></div><div class="border-2 ' + statusClass + ' px-3 py-1 font-[\'Inter\'] font-bold text-xs uppercase">' + statusText + '</div></div>';
+            }).join('');
+          }
+
           syncBtn.disabled = pendingCountValue === 0;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + pendingCountValue + ' Record' + (pendingCountValue > 1 ? 's' : '');
         }
@@ -139,13 +197,13 @@
 
         try {
           await window.App.syncAttendanceRecords();
-          showStatus('Records uploaded!', true);
+          showStatus('Records uploaded successfully!', true);
           var now = new Date();
           lastUpload.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         } catch(e) {
           try {
             await window.App.mockSyncAttendanceRecords();
-            showStatus('Uploaded (demo)', true);
+            showStatus('Uploaded (demo mode)', true);
           } catch(e2) {
             showStatus('Upload failed', false);
           }
@@ -159,13 +217,16 @@
       function showStatus(msg, isSuccess) {
         syncStatus.textContent = msg;
         syncStatus.className = isSuccess
-          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm'
-          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-red-800';
+          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 border-4 border-black bg-green-100 font-[\'Inter\'] font-bold text-lg'
+          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 border-4 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-lg text-red-800';
         syncStatus.classList.remove('hidden');
         setTimeout(function() { syncStatus.classList.add('hidden'); }, 5000);
       }
 
       refreshBtn.addEventListener('click', loadRecords);
+      searchInput.addEventListener('input', loadRecords);
+      yearFilter.addEventListener('change', loadRecords);
+      sectionFilter.addEventListener('change', loadRecords);
 
       if (navigator.storage && navigator.storage.estimate) {
         navigator.storage.estimate().then(function(estimate) {

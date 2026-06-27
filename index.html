@@ -1,96 +1,205 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Officer Scan - Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OFFICER SCAN – TERMINAL ACCESS</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&family=Inter:wght@400;700&family=Space+Mono&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary": "#ffffff",
+            "inverse-on-surface": "#f1f1f1",
+            "surface-dim": "#dadada",
+            "on-primary-fixed-variant": "#474747",
+            "on-error": "#ffffff",
+            "outline": "#7e7576",
+            "tertiary": "#000000",
+            "on-secondary-container": "#636565",
+            "primary-fixed": "#e2e2e2",
+            "surface": "#f9f9f9",
+            "surface-container-highest": "#e2e2e2",
+            "on-tertiary-fixed": "#1b1b1b",
+            "primary-fixed-dim": "#c6c6c6",
+            "on-surface": "#1b1b1b",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed": "#1a1c1c",
+            "secondary-fixed-dim": "#c6c7c6",
+            "on-tertiary-container": "#848484",
+            "inverse-surface": "#303030",
+            "on-tertiary-fixed-variant": "#474747",
+            "on-secondary": "#ffffff",
+            "surface-tint": "#5e5e5e",
+            "tertiary-fixed": "#e2e2e2",
+            "on-primary-fixed": "#1b1b1b",
+            "surface-bright": "#f9f9f9",
+            "error-container": "#ffdad6",
+            "secondary-container": "#e2e3e2",
+            "primary-container": "#1b1b1b",
+            "on-surface-variant": "#4c4546",
+            "surface-container": "#eeeeee",
+            "surface-container-low": "#f3f3f3",
+            "error": "#ba1a1a",
+            "secondary": "#5d5f5f",
+            "primary": "#000000",
+            "outline-variant": "#cfc4c5",
+            "tertiary-fixed-dim": "#c6c6c6",
+            "surface-container-high": "#e8e8e8",
+            "surface-variant": "#e2e2e2",
+            "on-background": "#1b1b1b",
+            "on-error-container": "#93000a",
+            "background": "#f9f9f9",
+            "tertiary-container": "#1b1b1b",
+            "on-primary-container": "#848484",
+            "on-secondary-fixed-variant": "#454747",
+            "inverse-primary": "#c6c6c6",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed": "#e2e3e2"
+          },
+          borderRadius: { DEFAULT: "0px", lg: "0px", xl: "0px", full: "9999px" },
+          spacing: {
+            "container-padding": "24px",
+            "base": "8px",
+            "md": "24px",
+            "border-width": "4px",
+            "lg": "48px"
+          },
+          fontFamily: {
+            "mono-label": ["Space Mono"],
+            "headline-xl": ["Archivo Narrow"],
+            "headline-md": ["Archivo Narrow"],
+            "headline-lg": ["Archivo Narrow"],
+            "body-md": ["Inter"],
+            "label-bold": ["Inter"]
+          },
+          fontSize: {
+            "mono-label": ["12px", { lineHeight: "1.4", letterSpacing: "0.05em", fontWeight: "400" }],
+            "headline-xl": ["48px", { lineHeight: "1.1", letterSpacing: "0.02em", fontWeight: "700" }],
+            "headline-md": ["24px", { lineHeight: "1.2", letterSpacing: "0.02em", fontWeight: "700" }],
+            "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "0.02em", fontWeight: "700" }],
+            "body-md": ["16px", { lineHeight: "1.5", letterSpacing: "0px", fontWeight: "400" }],
+            "label-bold": ["14px", { lineHeight: "1.4", letterSpacing: "0.05em", fontWeight: "700" }]
+          }
+        }
+      }
+    }
+  </script>
   <style>
+    .neo-shadow { box-shadow: 4px 4px 0px #000000; }
+    .neo-shadow-active:active { box-shadow: 0px 0px 0px #000000; transform: translate(4px, 4px); }
+    .hatch-pattern {
+      background-image: repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%);
+      background-size: 10px 10px;
+    }
+    .terminal-grid {
+      background-image: radial-gradient(circle, #00000011 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
-    .neo-shadow { box-shadow: 4px 4px 0px #000; }
-    .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
   </style>
 </head>
-<body class="bg-white text-black min-h-screen flex flex-col">
-  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center">
-    <div class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Officer Scan</div>
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined" style="font-variation-settings:'FILL'1">signal_wifi_off</span>
-      <span class="font-['Inter'] text-xs font-bold uppercase">Offline Mode</span>
+<body class="bg-background text-on-background font-body-md min-h-screen terminal-grid">
+
+  <!-- TopAppBar -->
+  <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-md py-base bg-background border-b-4 border-primary">
+    <div class="flex items-center gap-base">
+      <span class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">OFFICER SCAN</span>
+    </div>
+    <div class="flex items-center gap-md">
+      <span class="material-symbols-outlined text-primary">signal_wifi_off</span>
+      <span class="font-mono-label text-mono-label uppercase">OFFLINE</span>
     </div>
   </header>
 
-  <main class="flex-grow flex items-center justify-center p-6">
-    <div class="w-full max-w-sm">
-      <div class="border-2 border-black p-6">
-        <h1 class="text-2xl font-['Archivo_Narrow'] uppercase mb-6 border-b-2 border-black pb-3 flex items-center gap-2">
-          <span class="material-symbols-outlined" style="font-variation-settings:'FILL'1">lock_open</span>
-          Officer Login
-        </h1>
+  <main class="flex flex-col items-center justify-center min-h-screen p-md pt-32 pb-24">
+    <!-- Login Container -->
+    <div class="w-full max-w-md bg-surface border-4 border-primary neo-shadow flex flex-col">
+      <!-- Header Section -->
+      <div class="bg-primary px-base py-3 flex justify-between items-center">
+        <span class="text-on-primary font-headline-md text-headline-md uppercase tracking-widest">TERMINAL ACCESS</span>
+        <span class="material-symbols-outlined text-on-primary">lock_open</span>
+      </div>
 
-        <form id="loginForm" class="space-y-5">
-          <div class="relative">
-            <input class="w-full border-2 border-black p-4 text-lg focus:border-[3px] focus:outline-none" id="officerCode" placeholder="Officer Code" type="text">
-          </div>
-          <div class="relative">
-            <input class="w-full border-2 border-black p-4 text-lg focus:border-[3px] focus:outline-none" id="pin" placeholder="PIN Code" type="password">
-          </div>
-          <button type="submit" class="w-full bg-black text-white text-lg font-['Archivo_Narrow'] uppercase py-4 border-2 border-black neo-shadow neo-pressed hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2">
-            Login
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-        </form>
+      <!-- Login Form -->
+      <form id="loginForm" class="p-md space-y-md">
+        <div class="flex flex-col space-y-1">
+          <label class="font-label-bold text-label-bold text-primary uppercase">OFFICER CODE</label>
+          <input id="officerCode" class="w-full h-12 bg-surface-container-lowest border-4 border-primary px-3 font-mono-label focus:bg-surface focus:outline-none transition-colors" placeholder="REF-000-000" type="text" />
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label class="font-label-bold text-label-bold text-primary uppercase">SECURE PIN</label>
+          <input id="pin" class="w-full h-12 bg-surface-container-lowest border-4 border-primary px-3 font-mono-label focus:bg-surface focus:outline-none transition-colors" placeholder="••••••••" type="password" />
+        </div>
+        <button type="submit" class="w-full bg-primary text-on-primary border-4 border-primary h-14 font-headline-md text-headline-md uppercase flex items-center justify-center gap-base neo-shadow-active transition-all">
+          <span>LOGIN</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+        <div id="loginError" class="hidden mt-2 p-3 bg-error-container border-4 border-error font-label-bold text-label-bold text-on-error-container text-center">Invalid officer code or PIN</div>
+      </form>
 
-        <div id="loginError" class="hidden mt-4 p-3 bg-red-100 border-2 border-red-600 font-['Inter'] font-bold text-sm text-center">
-          Invalid officer code or PIN
+      <!-- Divider -->
+      <div class="h-1 bg-primary w-full"></div>
+
+      <!-- Roster Sync -->
+      <div class="p-md bg-surface-container-low">
+        <div class="flex items-center gap-2 mb-base">
+          <span class="material-symbols-outlined text-secondary">database</span>
+          <h3 class="font-label-bold text-label-bold uppercase">ROSTER SYNC</h3>
         </div>
 
-        <div class="mt-4 p-3 bg-gray-100 border font-['Inter'] text-xs">
-          <strong>Demo:</strong> Code: OFFICER123, PIN: 0000
-        </div>
+        <label class="block border-4 border-primary p-3 mb-3 font-label-bold text-label-bold uppercase cursor-pointer hover:bg-surface-container">
+          <span class="block mb-2">Upload Excel files</span>
+          <input id="rosterFilesInput" type="file" accept=".xlsx,.xls,.csv" multiple class="block w-full text-sm font-normal" />
+        </label>
 
-        <div class="mt-6 border-t-2 border-black pt-4">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="material-symbols-outlined">database</span>
-            <h3 class="font-['Inter'] font-bold text-xs uppercase">Roster Setup</h3>
-          </div>
-
-          <label class="block border-2 border-black p-3 mb-3 font-['Inter'] font-bold text-xs uppercase">
-            <span class="block mb-2">Upload Excel files for each section</span>
-            <input id="rosterFilesInput" type="file" accept=".xlsx,.xls,.csv" multiple class="block w-full text-sm font-normal">
-          </label>
-
-          <button type="button" id="uploadRosterBtn" class="w-full flex items-center justify-center gap-2 border-2 border-black p-3 mb-2 font-['Inter'] font-bold text-xs uppercase hover:bg-gray-100 neo-pressed">
-            <span class="material-symbols-outlined">upload_file</span>
-            Import Excel Files
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" id="uploadRosterBtn" class="bg-surface-container-lowest border-4 border-primary py-2 px-base font-label-bold text-label-bold uppercase hover:bg-surface-container-high transition-colors active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">upload_file</span> Import
           </button>
+          <button type="button" id="setupRosterBtn" class="bg-surface-container-lowest border-4 border-primary py-2 px-base font-label-bold text-label-bold uppercase hover:bg-surface-container-high transition-colors active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">download</span> Get
+          </button>
+          <button type="button" id="loadDemoBtn" class="bg-surface-container-lowest border-4 border-primary py-2 px-base font-label-bold text-label-bold uppercase hover:bg-surface-container-high transition-colors active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">play_circle</span> Demo
+          </button>
+        </div>
+        <div id="rosterStatus" class="hidden mt-3 p-3 border-4 font-label-bold text-label-bold text-center"></div>
+      </div>
+    </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" id="setupRosterBtn" class="flex items-center justify-center gap-2 border-2 border-black p-3 font-['Inter'] font-bold text-xs uppercase hover:bg-gray-100 neo-pressed">
-              <span class="material-symbols-outlined">download</span>
-              Download
-            </button>
-            <button type="button" id="loadDemoBtn" class="flex items-center justify-center gap-2 border-2 border-black p-3 font-['Inter'] font-bold text-xs uppercase hover:bg-gray-100 neo-pressed">
-              <span class="material-symbols-outlined">play_circle</span>
-              Load Demo
-            </button>
+    <!-- System Info -->
+    <div class="mt-lg w-full max-w-md">
+      <div class="flex justify-between items-end">
+        <div class="space-y-1">
+          <div class="w-32 h-2 border-2 border-primary overflow-hidden">
+            <div class="h-full w-2/3 hatch-pattern bg-primary"></div>
           </div>
+          <p class="font-mono-label text-mono-label uppercase opacity-60">System Load: 67%</p>
+        </div>
+        <div class="text-right">
+          <p class="font-mono-label text-mono-label uppercase">Station ID: OS-4491-X</p>
+          <p class="font-mono-label text-mono-label uppercase" id="rosterCacheStatus">Roster: Not loaded</p>
         </div>
       </div>
     </div>
   </main>
 
-  <div id="rosterStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black font-['Inter'] font-bold text-sm"></div>
-
-  <div id="loadingIndicator" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-    <div class="bg-white border-2 border-black p-6 neo-shadow">
-      <div class="material-symbols-outlined text-5xl animate-spin">sync</div>
-      <p id="loadingText" class="font-['Inter'] font-bold text-lg uppercase mt-4">Loading...</p>
+  <footer class="fixed bottom-0 left-0 w-full bg-surface-container-highest border-t-4 border-primary py-base px-md flex flex-col md:flex-row justify-between items-center gap-base">
+    <div class="flex flex-col">
+      <p class="font-mono-label text-mono-label text-on-surface uppercase font-bold">©2024 OFFICER SCAN – SECURE TERMINAL v4.1</p>
+      <p class="font-mono-label text-mono-label text-on-surface-variant uppercase">UUID: 8F2A-0192-B4C1-900E | ENCRYPTION: AES-256-GCM</p>
     </div>
-  </div>
+    <div class="flex gap-md">
+      <a class="font-mono-label text-mono-label text-on-surface-variant hover:text-primary underline" href="#">SYSTEM STATUS</a>
+      <a class="font-mono-label text-mono-label text-on-surface-variant hover:text-primary underline" href="#">PRIVACY</a>
+    </div>
+  </footer>
 
+  <!-- Scripts -->
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.3/xlsx.full.min.js"></script>
   <script src="app.js"></script>
@@ -101,74 +210,66 @@
         return;
       }
 
-      var loginForm = document.getElementById('loginForm');
-      var loginError = document.getElementById('loginError');
-      var setupRosterBtn = document.getElementById('setupRosterBtn');
-      var loadDemoBtn = document.getElementById('loadDemoBtn');
-      var uploadRosterBtn = document.getElementById('uploadRosterBtn');
-      var rosterFilesInput = document.getElementById('rosterFilesInput');
-      var rosterStatus = document.getElementById('rosterStatus');
-      var loadingIndicator = document.getElementById('loadingIndicator');
-      var loadingText = document.getElementById('loadingText');
+      const loginForm = document.getElementById('loginForm');
+      const loginError = document.getElementById('loginError');
+      const officerCode = document.getElementById('officerCode');
+      const pin = document.getElementById('pin');
+      const setupRosterBtn = document.getElementById('setupRosterBtn');
+      const loadDemoBtn = document.getElementById('loadDemoBtn');
+      const uploadRosterBtn = document.getElementById('uploadRosterBtn');
+      const rosterFilesInput = document.getElementById('rosterFilesInput');
+      const rosterStatus = document.getElementById('rosterStatus');
+      const rosterCacheStatus = document.getElementById('rosterCacheStatus');
+
+      function showLoginError(msg) {
+        loginError.textContent = msg;
+        loginError.classList.remove('hidden');
+      }
+      function hideLoginError() { loginError.classList.add('hidden'); }
 
       loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        var officerCode = document.getElementById('officerCode').value.trim();
-        var pin = document.getElementById('pin').value.trim();
-
-        if (!officerCode || !pin) {
-          showLoginError('Please enter both officer code and PIN');
-          return;
-        }
-
-        if (window.App.login(officerCode, pin)) {
+        hideLoginError();
+        const code = officerCode.value.trim();
+        const p = pin.value.trim();
+        if (!code || !p) { showLoginError('Please enter both fields'); return; }
+        if (window.App.login(code, p)) {
           window.location.href = 'scanner.html';
         } else {
           showLoginError('Invalid officer code or PIN');
         }
       });
 
-      function showLoginError(msg) {
-        loginError.textContent = msg;
-        loginError.classList.remove('hidden');
-      }
-
-      function hideLoginError() {
-        loginError.classList.add('hidden');
-      }
-
-      document.getElementById('officerCode').addEventListener('input', hideLoginError);
-      document.getElementById('pin').addEventListener('input', hideLoginError);
+      officerCode.addEventListener('input', hideLoginError);
+      pin.addEventListener('input', hideLoginError);
 
       function showRosterStatus(msg, isSuccess) {
         rosterStatus.textContent = msg;
-        rosterStatus.className = isSuccess
-          ? 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm'
-          : 'fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-red-800';
+        rosterStatus.className = 'mt-3 p-3 border-4 font-label-bold text-label-bold text-center ' +
+          (isSuccess ? 'bg-green-100 border-primary text-primary' : 'bg-error-container border-error text-on-error-container');
         rosterStatus.classList.remove('hidden');
-        setTimeout(function() { rosterStatus.classList.add('hidden'); }, 5000);
+        setTimeout(() => rosterStatus.classList.add('hidden'), 5000);
       }
 
       function showLoading(msg) {
-        loadingText.textContent = msg;
-        loadingIndicator.classList.remove('hidden');
+        // Simple inline loading – we can keep it basic
+        document.querySelector('main').style.opacity = '0.5';
+        // We could add a spinner, but for brevity we use a simple status
+        showRosterStatus(msg, true);
       }
-
       function hideLoading() {
-        loadingIndicator.classList.add('hidden');
+        document.querySelector('main').style.opacity = '1';
       }
 
       setupRosterBtn.addEventListener('click', async function() {
         hideLoginError();
         try {
-          showLoading('Connecting...');
+          showLoading('Downloading roster...');
           setupRosterBtn.disabled = true;
-          await window.App.setupRoster(function(p) { loadingText.textContent = p; });
+          await window.App.setupRoster(function(p) { /* progress */ });
           hideLoading();
           showRosterStatus('Roster downloaded!', true);
-          if (window.App.isLoggedIn()) {
-            setTimeout(function() { window.location.href = 'scanner.html'; }, 1000);
-          }
+          if (window.App.isLoggedIn()) setTimeout(() => window.location.href = 'scanner.html', 1000);
         } catch (error) {
           hideLoading();
           showRosterStatus(error.message, false);
@@ -179,17 +280,15 @@
 
       uploadRosterBtn.addEventListener('click', async function() {
         hideLoginError();
-        var files = rosterFilesInput.files;
-
+        const files = rosterFilesInput.files;
         if (!files || files.length === 0) {
-          showRosterStatus('Select one or more Excel files first.', false);
+          showRosterStatus('Select one or more Excel files.', false);
           return;
         }
-
         try {
           showLoading('Importing roster...');
           uploadRosterBtn.disabled = true;
-          var result = await window.App.importRosterFromFiles(files);
+          const result = await window.App.importRosterFromFiles(files);
           hideLoading();
           showRosterStatus('Imported ' + result.count + ' students from ' + result.files + ' file(s).', true);
           rosterFilesInput.value = '';
@@ -218,13 +317,12 @@
       });
 
       if (window.App.isRosterCached()) {
+        rosterCacheStatus.textContent = 'Roster: Loaded';
         showRosterStatus('Roster available offline', true);
       }
     });
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
   </script>
 </body>
 </html>

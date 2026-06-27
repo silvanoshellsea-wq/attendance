@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Officer Scan - Scanner</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700&family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
@@ -17,32 +17,33 @@
   </style>
 </head>
 <body class="bg-white text-black min-h-screen flex flex-col">
-  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center">
+  <header class="border-b-4 border-black px-6 py-4 flex justify-between items-center">
     <div class="flex items-center gap-2">
       <span class="material-symbols-outlined">signal_wifi_off</span>
-      <h1 class="font-['Archivo_Narrow'] font-bold text-xl uppercase">Officer Scan</h1>
+      <h1 class="font-['Archivo_Narrow'] font-bold text-2xl uppercase">Officer Scan</h1>
     </div>
+    <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-100">settings</button>
   </header>
 
   <main class="flex-grow p-4 flex flex-col items-center">
     <!-- Officer Info -->
     <div class="w-full max-w-md mb-4">
-      <div class="border-2 border-black p-4 flex justify-between items-center">
+      <div class="border-4 border-black p-4 flex justify-between items-center bg-gray-100">
         <div>
-          <p class="font-['Archivo_Narrow'] font-bold text-lg uppercase" id="officerName">Loading...</p>
-          <p class="font-['Inter'] text-sm" id="officerSection">Loading...</p>
+          <p class="font-['Archivo_Narrow'] font-bold text-xl uppercase" id="officerName">Loading...</p>
+          <p class="font-['Space_Mono'] text-sm" id="officerSection">Loading...</p>
         </div>
-        <button class="material-symbols-outlined p-2 hover:bg-gray-100" id="logoutBtn">logout</button>
+        <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-200" id="logoutBtn">logout</button>
       </div>
     </div>
 
     <!-- Tabs -->
     <div class="w-full max-w-md flex gap-2 mb-4">
-      <button class="flex-1 bg-black text-white py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black" id="scannerTabBtn">
+      <button type="button" class="flex-1 bg-black text-white py-4 font-['Archivo_Narrow'] font-bold text-lg uppercase border-4 border-black" id="scannerTabBtn">
         <span class="material-symbols-outlined align-middle mr-1">qr_code_scanner</span>
         Scanner
       </button>
-      <button class="flex-1 bg-white text-black py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black hover:bg-gray-100" id="recordsTabBtn">
+      <button type="button" class="flex-1 bg-white text-black py-4 font-['Archivo_Narrow'] font-bold text-lg uppercase border-4 border-black hover:bg-gray-100" id="recordsTabBtn">
         <span class="material-symbols-outlined align-middle mr-1">history</span>
         Records
       </button>
@@ -50,13 +51,13 @@
 
     <!-- Scanner Tab -->
     <div id="scannerTab" class="w-full max-w-md">
-      <div class="relative w-full aspect-square border-2 border-black bg-black group overflow-hidden">
+      <div class="relative w-full aspect-square border-4 border-black bg-black group overflow-hidden">
         <div id="reader" class="absolute inset-0"></div>
         <div class="scan-line"></div>
-        <div class="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white m-3"></div>
-        <div class="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-white m-3"></div>
-        <div class="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-white m-3"></div>
-        <div class="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white m-3"></div>
+        <div class="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-white m-3"></div>
+        <div class="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-white m-3"></div>
+        <div class="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-white m-3"></div>
+        <div class="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-white m-3"></div>
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div class="w-44 h-44 border-2 border-dashed border-white/50 rounded-lg flex items-center justify-center">
             <span class="material-symbols-outlined text-white/20 text-6xl">qr_code_2</span>
@@ -65,62 +66,67 @@
 
         <!-- Success Overlay -->
         <div id="successOverlay" class="absolute inset-0 bg-white/95 z-30 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity">
-          <div class="border-2 border-black bg-white p-6 neo-shadow">
+          <div class="border-4 border-black bg-white p-6 neo-shadow">
             <span class="material-symbols-outlined text-7xl font-bold text-green-600">check_circle</span>
             <h2 class="font-['Archivo_Narrow'] text-2xl uppercase font-bold mt-2">Allowed</h2>
-            <p id="successDetails" class="font-['Inter'] text-sm mt-2 text-center">Name, Section</p>
+            <p id="successDetails" class="font-['Space_Mono'] text-sm mt-2 text-center">Name, Section</p>
           </div>
         </div>
 
         <!-- Error Overlay -->
         <div id="errorOverlay" class="absolute inset-0 bg-black/90 z-30 flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity">
-          <div class="border-2 border-black bg-white p-6 neo-shadow">
+          <div class="border-4 border-black bg-white p-6 neo-shadow">
             <span class="material-symbols-outlined text-7xl font-bold text-red-600">cancel</span>
             <h2 id="errorTitle" class="font-['Archivo_Narrow'] text-2xl uppercase font-bold mt-2">Access Denied</h2>
-            <p id="errorDetails" class="font-['Inter'] text-sm mt-2 text-center">Details</p>
+            <p id="errorDetails" class="font-['Space_Mono'] text-sm mt-2 text-center">Details</p>
           </div>
         </div>
       </div>
 
-      <p class="text-center mt-4 font-['Inter'] text-sm text-gray-600">Position QR code within the frame</p>
+      <p class="text-center mt-4 font-['Space_Mono'] text-sm text-gray-600">Position QR code within the frame</p>
 
-      <div id="rosterWarning" class="hidden mt-4 p-3 bg-yellow-100 border-2 border-yellow-600 font-['Inter'] font-bold text-sm text-center">
+      <div id="rosterWarning" class="hidden mt-4 p-3 bg-yellow-100 border-4 border-yellow-600 font-['Inter'] font-bold text-sm text-center">
         Roster not loaded. Go to login to setup.
       </div>
     </div>
 
     <!-- Records Tab -->
     <div id="recordsTab" class="w-full max-w-md hidden">
-      <div class="border-2 border-black bg-white p-4">
+      <div class="border-4 border-black bg-white p-4">
         <div class="flex justify-between items-center mb-3">
-          <span class="font-['Archivo_Narrow'] font-bold text-sm uppercase">Pending Uploads</span>
-          <span id="pendingCount" class="bg-black text-white px-3 py-1 font-['Archivo_Narrow'] font-bold text-lg">0</span>
+          <span class="font-['Archivo_Narrow'] font-bold text-lg uppercase">Pending Uploads</span>
+          <span id="pendingCount" class="bg-black text-white px-4 py-1 font-['Archivo_Narrow'] font-bold text-xl">0</span>
         </div>
-        <div id="pendingList" class="border-2 border-black max-h-48 overflow-y-auto">
-          <div class="p-4 text-center font-['Inter'] text-sm text-gray-600">No pending records</div>
+        <div id="pendingList" class="border-4 border-black max-h-48 overflow-y-auto">
+          <div class="p-4 text-center font-['Space_Mono'] text-sm text-gray-600">No pending records</div>
         </div>
-        <button id="syncBtn" class="w-full mt-4 bg-white border-2 border-black p-3 font-['Archivo_Narrow'] font-bold text-sm uppercase flex items-center justify-center gap-2 hover:bg-gray-100 neo-pressed">
+        <button type="button" id="syncBtn" class="w-full mt-4 bg-black text-white border-4 border-black p-4 font-['Archivo_Narrow'] font-bold text-lg uppercase flex items-center justify-center gap-2 hover:bg-white hover:text-black transition-colors neo-pressed">
           <span class="material-symbols-outlined">cloud_upload</span>
           Upload Records
         </button>
-        <div id="syncStatus" class="hidden mt-3 p-3 border-2 font-['Inter'] font-bold text-sm text-center"></div>
+        <div id="syncStatus" class="hidden mt-3 p-3 border-4 border-black font-['Inter'] font-bold text-sm text-center"></div>
       </div>
     </div>
   </main>
 
-  <nav class="fixed bottom-0 left-0 w-full z-50 flex h-14 border-t-2 border-black bg-white">
-    <a class="flex items-center justify-center bg-black text-white flex-1" href="scanner.html">
+  <!-- Bottom Nav - Solid Black Background -->
+  <nav style="position: fixed; bottom: 0; left: 0; width: 100%; height: 64px; background-color: #000000; border-top: 4px solid #000000; display: flex; z-index: 9999;">
+    <a href="scanner.html" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; gap: 4px;">
       <span class="material-symbols-outlined">qr_code_scanner</span>
-      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Scanner</span>
+      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Scanner</span>
     </a>
-    <a class="flex items-center justify-center text-black flex-1 hover:bg-gray-100" href="records.html">
+    <a href="records.html" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; border-left: 4px solid white; border-right: 4px solid white; gap: 4px;">
       <span class="material-symbols-outlined">history</span>
-      <span class="font-['Inter'] font-bold text-xs uppercase ml-1">Records</span>
+      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Records</span>
+    </a>
+    <a href="#" style="flex: 1; display: flex; align-items: center; justify-content: center; background-color: #000000; color: white; text-decoration: none; gap: 4px;">
+      <span class="material-symbols-outlined">account_circle</span>
+      <span style="font-family: 'Inter', sans-serif; font-weight: bold; font-size: 12px; text-transform: uppercase;">Profile</span>
     </a>
   </nav>
 
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="app.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -214,97 +220,14 @@
         await processScan(text.trim().toUpperCase());
       }
 
-      function escapeHtml(value) {
-        return String(value || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/\"/g, '&quot;');
-      }
-
-      function parseQrPayload(text) {
-        var trimmed = String(text || '').trim();
-        if (!trimmed) {
-          return { studentId: '', name: '', program: '' };
-        }
-
-        try {
-          var parsed = JSON.parse(trimmed);
-          if (parsed && typeof parsed === 'object') {
-            return {
-              studentId: String(parsed.studentId || parsed.studentID || parsed.id || parsed['Student ID'] || parsed.student_id || '').trim(),
-              name: String(parsed.studentName || parsed.name || parsed['Student Name'] || parsed['student name'] || '').trim(),
-              program: String(parsed.collegeProgram || parsed.program || parsed['College Program'] || parsed['college program'] || '').trim()
-            };
-          }
-        } catch (e) {
-          // Fall through to manual parsing
-        }
-
-        var normalizedText = trimmed.replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
-        var bracketMatch = normalizedText.match(/\[(.*?)\]/);
-        var parenthesisMatch = normalizedText.match(/\((.*?)\)/);
-        var idMatch = normalizedText.match(/\b(\d{2,4}-\d{3,5})\b/);
-
-        var inferredId = '';
-        if (bracketMatch && bracketMatch[1]) {
-          inferredId = bracketMatch[1].trim();
-        } else if (parenthesisMatch && parenthesisMatch[1]) {
-          inferredId = parenthesisMatch[1].trim();
-        } else if (idMatch && idMatch[1]) {
-          inferredId = idMatch[1].trim();
-        }
-
-        var namePart = normalizedText;
-        if (bracketMatch) {
-          namePart = normalizedText.split('[')[0].trim();
-        } else if (parenthesisMatch) {
-          namePart = normalizedText.split('(')[0].trim();
-        }
-
-        var programPart = '';
-        if (bracketMatch) {
-          var afterBracket = normalizedText.substring(normalizedText.indexOf(']') + 1).trim();
-          programPart = afterBracket.replace(/^[-:]/, '').trim();
-        } else if (idMatch) {
-          var afterId = normalizedText.substring(normalizedText.indexOf(idMatch[1]) + idMatch[1].length).trim();
-          programPart = afterId.replace(/^[-:]/, '').trim();
-        }
-
-        if (inferredId || programPart || namePart) {
-          return {
-            studentId: inferredId,
-            name: namePart,
-            program: programPart
-          };
-        }
-
-        return { studentId: trimmed, name: '', program: '' };
-      }
-
-      async function processScan(scannedText) {
-        var payload = parseQrPayload(scannedText);
-        var studentId = payload.studentId;
-
-        if (!studentId) {
-          showError('Invalid QR', 'No student ID found in scan');
-          return;
-        }
-
+      async function processScan(studentId) {
         var student = await window.App.getStudentById(studentId);
-        if (!student) {
-          var debugStudents = await window.App.debugGetAllStudents();
-          console.log('Roster debug:', debugStudents);
-          showError('Section Not Found', 'Missing ID: ' + studentId);
-          return;
-        }
+        if (!student) { showError('Not Found', 'Student not in roster'); return; }
+        if (student.section !== officer.section) { showError('Not In Section', student.section); return; }
 
-        var result = await window.App.recordAttendance(student.id, officer.code);
+        var result = await window.App.recordAttendance(studentId, officer.code);
         if (result.success) {
-          var name = payload.name || student.name || 'Unknown Student';
-          var sectionDisplay = student.section ? student.section : 'Section Not Found';
-          var programText = payload.program ? '<div class="text-xs mt-1">' + escapeHtml(payload.program) + '</div>' : '';
-          showSuccess('Allowed', '<div class="font-[\'Inter\'] font-bold text-sm">' + escapeHtml(name) + '</div><div class="font-mono text-sm mt-1">' + escapeHtml(student.id + ' | ' + sectionDisplay) + '</div>' + programText);
+          showSuccess('Allowed', student.name + ', ' + student.section);
           updatePendingCount();
         } else if (result.reason === 'duplicate') {
           showError('Already Checked In', student.name);
@@ -314,7 +237,7 @@
       }
 
       function showSuccess(msg, details) {
-        successDetails.innerHTML = details;
+        successDetails.textContent = details;
         successOverlay.style.opacity = '1';
         successOverlay.style.pointerEvents = 'auto';
         setTimeout(function() {
@@ -342,14 +265,12 @@
         pendingCount.textContent = count;
 
         if (count === 0) {
-          pendingList.innerHTML = '<div class="p-4 text-center font-[\'Inter\'] text-sm text-gray-600">No pending records</div>';
+          pendingList.innerHTML = '<div class="p-4 text-center font-[\'Space_Mono\'] text-sm text-gray-600">No pending records</div>';
           syncBtn.disabled = true;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
           pendingList.innerHTML = records.map(function(r) {
-            var studentLabel = r.studentName || r.studentId || 'Unknown Student';
-            var sectionText = r.studentSection ? ' | ' + r.studentSection : ' | Section Not Found';
-            return '<div class="flex justify-between items-center p-3 border-b border-black"><div><span class="font-[\'Archivo_Narrow\'] font-bold text-sm uppercase">' + studentLabel + '</span><div class="font-[\'Inter\'] text-xs text-gray-600">' + window.App.formatTime(r.timestamp) + sectionText + '</div></div></div>';
+            return '<div class="flex justify-between items-center p-3 border-b-4 border-black"><span class="font-[\'Archivo_Narrow\'] font-bold text-base uppercase">' + r.studentName + '</span><span class="font-[\'Space_Mono\'] text-xs">' + window.App.formatTime(r.timestamp) + '</span></div>';
           }).join('');
           syncBtn.disabled = false;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> Upload ' + count + ' Record' + (count > 1 ? 's' : '');
@@ -391,8 +312,8 @@
       function showSyncStatus(msg, isSuccess) {
         syncStatus.textContent = msg;
         syncStatus.className = isSuccess
-          ? 'mt-3 p-3 border-2 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm text-center'
-          : 'mt-3 p-3 border-2 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-center text-red-800';
+          ? 'mt-3 p-3 border-4 border-black bg-green-100 font-[\'Inter\'] font-bold text-sm text-center'
+          : 'mt-3 p-3 border-4 border-red-600 bg-red-100 font-[\'Inter\'] font-bold text-sm text-center text-red-800';
         syncStatus.classList.remove('hidden');
         setTimeout(function() { syncStatus.classList.add('hidden'); }, 5000);
       }
