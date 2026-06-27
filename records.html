@@ -4,58 +4,111 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Officer Scan - Records</title>
-  
-  <!-- 1. Tailwind config MUST come before the CDN script -->
+
   <script>
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
           colors: {
-            primary: "#000000",
-            surface: "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed": "#1a1c1c",
             "surface-container-low": "#f3f3f3",
-            "surface-container-highest": "#e2e2e2",
-            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#474747",
+            "surface-container-lowest": "#ffffff",
+            "surface-bright": "#f9f9f9",
+            "primary": "#000000",
+            "secondary-fixed": "#e2e2e2",
+            "on-tertiary": "#ffffff",
+            "inverse-primary": "#c6c6c6",
+            "on-error-container": "#93000a",
+            "surface-variant": "#e2e2e2",
+            "on-error": "#ffffff",
             "on-surface": "#1a1c1c",
+            "error": "#ba1a1a",
+            "on-background": "#1a1c1c",
+            "background": "#f9f9f9",
+            "surface-container": "#eeeeee",
+            "outline": "#7e7576",
+            "primary-fixed-dim": "#c6c6c6",
+            "on-tertiary-container": "#858383",
+            "tertiary-container": "#1b1c1c",
+            "on-primary-container": "#848484",
+            "surface-tint": "#5e5e5e",
+            "surface-container-high": "#e8e8e8",
+            "surface-dim": "#dadada",
+            "secondary": "#5d5f5f",
+            "tertiary": "#000000",
+            "inverse-on-surface": "#f1f1f1",
+            "inverse-surface": "#2f3131",
+            "on-tertiary-fixed": "#1b1c1c",
+            "on-primary": "#ffffff",
+            "on-secondary-container": "#616363",
+            "error-container": "#ffdad6",
+            "on-primary-fixed": "#1b1b1b",
+            "secondary-fixed-dim": "#c6c6c7",
+            "tertiary-fixed-dim": "#c8c6c6",
+            "secondary-container": "#dfe0e0",
+            "on-primary-fixed-variant": "#474747",
             "on-surface-variant": "#4c4546",
-            outline: "#7e7576",
-            secondary: "#5d5f5f",
-            "secondary-container": "#dfe0e0"   // added for hover state
+            "tertiary-fixed": "#e4e2e1",
+            "primary-container": "#1b1b1b",
+            "outline-variant": "#cfc4c5",
+            "surface": "#f9f9f9",
+            "on-secondary-fixed-variant": "#454747",
+            "surface-container-highest": "#e2e2e2",
+            "primary-fixed": "#e2e2e2"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "xs": "4px",
+            "lg": "48px",
+            "sm": "12px",
+            "md": "24px",
+            "shadow-offset": "4px",
+            "base": "8px",
+            "xl": "80px",
+            "border-weight": "2px"
           },
           fontFamily: {
-            "headline-md": ["Archivo Narrow"],
-            "headline-lg": ["Archivo Narrow"],
+            "headline-xl": ["Archivo Narrow"],
             "headline-sm": ["Archivo Narrow"],
             "body-sm": ["Inter"],
+            "headline-lg": ["Archivo Narrow"],
+            "body-lg": ["Inter"],
+            "headline-md": ["Archivo Narrow"],
             "body-md": ["Inter"],
             "label-bold": ["Inter"],
             "mono-label": ["Inter"]
           },
-          // Added the custom font sizes used in this page
           fontSize: {
-            "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "700" }],
-            "headline-sm": ["18px", { lineHeight: "1.2", fontWeight: "700" }]
+            "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+            "headline-sm": ["18px", {"lineHeight": "1.2", "fontWeight": "700"}],
+            "body-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+            "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+            "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+            "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+            "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+            "label-bold": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+            "mono-label": ["13px", {"lineHeight": "1", "letterSpacing": "0", "fontWeight": "500"}]
           }
         }
       }
     }
   </script>
-  
-  <!-- 2. Now load Tailwind CDN (it will use the config above) -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700;800&family=Inter:wght@400;500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  
+
   <style>
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
       vertical-align: middle;
     }
-
-    .neo-shadow { box-shadow: 4px 4px 0px #000; }
-    .neo-shadow-hover:hover { box-shadow: 6px 6px 0px #000; transform: translate(-2px, -2px); }
-    .neo-pressed:active { box-shadow: 2px 2px 0px #000; transform: translate(2px, 2px); }
 
     .halftone-bg {
       background-image: radial-gradient(#000 1px, transparent 0);
@@ -64,103 +117,123 @@
     }
 
     .hatch-pattern {
-      background: repeating-linear-gradient(45deg, #000, #000 2px, transparent 2px, transparent 8px);
+      background: repeating-linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 2px, transparent 2px, transparent 8px);
+    }
+
+    .neo-brutalist-shadow { box-shadow: 4px 4px 0px #000000; }
+    .neo-brutalist-shadow-hover:hover { box-shadow: 6px 6px 0px #000000; transform: translate(-2px, -2px); }
+    .neo-brutalist-active:active { box-shadow: 2px 2px 0px #000000; transform: translate(2px, 2px); }
+
+    .boxed-label {
+      position: relative;
+    }
+    .boxed-label::after {
+      content: attr(data-label);
+      position: absolute;
+      top: -12px;
+      left: 12px;
+      background: white;
+      padding: 0 4px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 10px;
+      text-transform: uppercase;
+      border: 2px solid black;
     }
   </style>
 </head>
-<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col">
+
+<body class="bg-background text-on-background min-h-screen font-body-md overflow-x-hidden">
+
   <!-- Top App Bar -->
-  <header class="flex justify-between items-center px-6 py-4 w-full z-50 bg-surface border-b-2 border-primary">
-    <div class="flex items-center gap-2">
+  <header class="flex justify-between items-center px-md py-base w-full z-50 bg-surface border-b-2 border-primary fixed top-0 h-16">
+    <div class="flex items-center gap-sm">
       <span class="material-symbols-outlined text-primary">signal_wifi_off</span>
-      <h1 class="font-headline-md text-xl font-bold text-primary uppercase tracking-tight">Officer Scan</h1>
+      <h1 class="font-headline-md text-headline-md font-bold text-primary uppercase tracking-tight">OFFICER SCAN</h1>
     </div>
-    <div class="flex items-center gap-2">
-      <button class="material-symbols-outlined p-2 hover:bg-surface-container-low transition-colors" id="refreshBtn">refresh</button>
+    <div class="flex items-center gap-md">
+      <button id="refreshBtn" class="material-symbols-outlined p-xs hover:bg-surface-container-high transition-colors active:translate-y-px">refresh</button>
     </div>
   </header>
 
-  <main class="p-4 pb-24 max-w-4xl mx-auto">
+  <main class="pt-20 pb-24 px-md max-w-4xl mx-auto">
     <!-- Sync Status Section -->
-    <section class="mt-4 mb-6">
-      <div class="border-2 border-black p-4 bg-white neo-shadow flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden">
+    <section class="mt-md mb-lg">
+      <div class="border-2 border-black p-md bg-white neo-brutalist-shadow flex flex-col md:flex-row items-center justify-between gap-md relative overflow-hidden">
         <div class="halftone-bg absolute inset-0 pointer-events-none"></div>
         <div class="relative z-10">
-          <h2 class="font-headline-sm uppercase mb-1">Connectivity Hub</h2>
-          <p class="text-sm text-on-surface-variant font-body-sm">Scanner currently operating in offline mode. Records cached locally.</p>
+          <h2 class="font-headline-sm text-headline-sm uppercase mb-xs">Connectivity Hub</h2>
+          <p class="font-body-sm text-on-surface-variant">Scanner currently operating in offline mode. Records cached locally.</p>
         </div>
-        <div class="flex items-center gap-4 relative z-10">
+        <div class="flex items-center gap-md relative z-10">
           <div class="flex flex-col items-center">
-            <span class="font-bold text-xs text-primary mb-1 uppercase">Pending</span>
-            <div class="bg-primary text-white font-headline-lg text-2xl px-4 py-2 border-2 border-black inline-block" id="pendingCount">0</div>
+            <span class="font-label-bold text-label-bold text-primary mb-xs uppercase">Pending</span>
+            <div class="bg-primary text-on-primary font-headline-lg text-headline-lg px-md py-sm border-2 border-black inline-block" id="pendingCount">0</div>
           </div>
-          <button id="syncBtn" class="bg-white border-2 border-black p-4 font-bold text-sm uppercase flex items-center gap-2 neo-shadow hover:bg-surface-container-low transition-all group">
+          <button id="syncBtn" class="bg-white border-2 border-black p-md font-headline-sm text-headline-sm uppercase flex items-center gap-sm neo-brutalist-shadow neo-brutalist-shadow-hover neo-brutalist-active transition-all group">
             <span class="material-symbols-outlined">cloud_upload</span>
-            Upload Records
+            UPLOAD RECORDS
           </button>
         </div>
       </div>
     </section>
 
     <!-- Search -->
-    <div class="mb-4 flex gap-2">
-      <div class="flex-1 border-2 border-black bg-white p-3 relative">
-        <input class="w-full border-none focus:ring-0 p-0 text-lg font-headline-sm bg-transparent placeholder-outline" placeholder="SEARCH STUDENT..." type="text" id="searchInput"/>
+    <div class="mb-md flex gap-sm">
+      <div class="flex-1 border-2 border-black bg-white p-sm relative boxed-label" data-label="Search Student">
+        <input id="searchInput" class="w-full border-none focus:ring-0 p-0 text-headline-sm font-headline-sm bg-transparent placeholder-outline-variant" placeholder="TYPE NAME..." type="text"/>
       </div>
     </div>
 
     <!-- Attendance Records List -->
     <div class="border-2 border-black bg-white">
-      <div class="border-b-2 border-black p-3 bg-surface-container-highest flex justify-between items-center">
-        <span class="font-bold text-xs uppercase">Recent Activity</span>
-        <span class="font-bold text-xs uppercase" id="currentDate">Today</span>
+      <div class="border-b-2 border-black p-sm bg-surface-container-highest flex justify-between items-center">
+        <span class="font-label-bold text-label-bold uppercase">Recent Activity</span>
+        <span class="font-label-bold text-label-bold uppercase" id="currentDate">Today</span>
       </div>
       <div id="recordsList" class="divide-y-2 divide-black">
-        <div class="p-4 text-center text-on-surface-variant font-mono-label">No pending records</div>
+        <!-- Dynamic content injected here -->
       </div>
     </div>
 
-    <!-- Divider -->
-    <div class="my-6 h-4 halftone-bg border-y-2 border-black"></div>
-
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="border-2 border-black p-4 bg-white">
-        <p class="font-bold text-xs uppercase text-on-surface-variant mb-2">Total Scanned</p>
-        <p class="font-headline-lg text-2xl" id="totalScanned">0</p>
-        <div class="h-2 w-full bg-surface-container-low border border-black relative mt-4">
+    <div class="my-lg h-4 halftone-bg border-y-2 border-black"></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+      <div class="border-2 border-black p-md bg-white">
+        <p class="font-label-bold text-label-bold uppercase text-on-surface-variant mb-sm">Total Scanned</p>
+        <p class="font-headline-lg text-headline-lg" id="totalScanned">0</p>
+        <div class="h-2 w-full bg-surface-container mt-md border border-black relative">
           <div class="h-full hatch-pattern absolute left-0 top-0 border-r border-black" id="scannedBar" style="width: 0%"></div>
         </div>
       </div>
-      <div class="border-2 border-black p-4 bg-white">
-        <p class="font-bold text-xs uppercase text-on-surface-variant mb-2">Last Upload</p>
-        <p class="font-headline-lg text-xl" id="lastUpload">Never</p>
-        <p class="text-sm text-on-surface-variant mt-2 font-mono-label" id="batchNum">Batch #--</p>
+      <div class="border-2 border-black p-md bg-white">
+        <p class="font-label-bold text-label-bold uppercase text-on-surface-variant mb-sm">Last Upload</p>
+        <p class="font-headline-lg text-headline-lg" id="lastUpload">Never</p>
+        <p class="font-body-sm text-on-surface-variant mt-sm" id="batchNum">Batch #--</p>
       </div>
-      <div class="border-2 border-black p-4 bg-white">
-        <p class="font-bold text-xs uppercase text-on-surface-variant mb-2">Storage</p>
-        <p class="font-headline-lg text-xl" id="storage">--</p>
-        <p class="text-sm text-on-surface-variant mt-2 font-mono-label">Device: ScanPad Pro</p>
+      <div class="border-2 border-black p-md bg-white">
+        <p class="font-label-bold text-label-bold uppercase text-on-surface-variant mb-sm">Storage</p>
+        <p class="font-headline-lg text-headline-lg" id="storage">--</p>
+        <p class="font-body-sm text-on-surface-variant mt-sm">Device: ScanPad Pro</p>
       </div>
     </div>
   </main>
 
   <!-- Bottom Nav -->
-  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-16 bg-surface border-t-2 border-primary">
-    <a class="flex flex-col items-center justify-center text-secondary p-2 w-full hover:bg-secondary-container transition-colors" href="scanner.html">
+  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-20 bg-surface border-t-2 border-primary">
+    <a class="flex flex-col items-center justify-center text-secondary p-sm w-full hover:bg-secondary-container transition-colors active:translate-x-xs active:translate-y-xs" href="scanner.html">
       <span class="material-symbols-outlined">qr_code_scanner</span>
-      <span class="font-bold text-xs uppercase mt-1">Scanner</span>
+      <span class="font-label-bold text-label-bold uppercase mt-xs">SCANNER</span>
     </a>
-    <a class="flex flex-col items-center justify-center bg-primary text-white p-2 w-full transition-colors" href="records.html">
+    <a class="flex flex-col items-center justify-center bg-primary text-on-primary p-sm w-full transition-colors active:translate-x-xs active:translate-y-xs" href="records.html">
       <span class="material-symbols-outlined">history</span>
-      <span class="font-bold text-xs uppercase mt-1">Records</span>
+      <span class="font-label-bold text-label-bold uppercase mt-xs">RECORDS</span>
     </a>
   </nav>
 
-  <!-- Sync Status -->
+  <!-- Sync Status Toast -->
   <div id="syncStatus" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 border-2 border-black font-bold text-sm"></div>
 
-  <!-- Libraries -->
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="app.js"></script>
 
@@ -168,9 +241,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       if (!window.App.requireLogin()) return;
 
-      const officer = window.App.getOfficerInfo();
-
-      // Set current date
       const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       document.getElementById('currentDate').textContent = `Today - ${today}`;
 
@@ -186,29 +256,27 @@
       const refreshBtn = document.getElementById('refreshBtn');
       const searchInput = document.getElementById('searchInput');
 
-      // Load records
       async function loadRecords() {
         const records = await window.App.getPendingRecordsWithNames();
         const count = records.length;
-
         pendingCount.textContent = count;
 
         if (count === 0) {
-          recordsList.innerHTML = '<div class="p-4 text-center text-on-surface-variant font-mono-label">No pending records</div>';
+          recordsList.innerHTML = '<div class="p-md text-center text-on-surface-variant font-mono-label">No pending records</div>';
           syncBtn.disabled = true;
           syncBtn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span> No Records';
         } else {
           recordsList.innerHTML = records.map(r => `
-            <div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+            <div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors group">
               <div>
                 <p class="font-headline-sm uppercase font-bold">${r.studentName}</p>
-                <div class="flex items-center gap-2 mt-1">
+                <div class="flex items-center gap-sm mt-xs">
                   <span class="material-symbols-outlined text-sm">schedule</span>
                   <span class="font-mono-label text-xs">${window.App.formatTime(r.timestamp)}</span>
                 </div>
               </div>
-              <div class="hatch-pattern border-2 border-black px-2 py-1">
-                <span class="font-bold text-xs uppercase">Waiting</span>
+              <div class="hatch-pattern border-2 border-black px-sm py-xs">
+                <span class="font-label-bold text-label-bold uppercase">WAITING</span>
               </div>
             </div>
           `).join('');
@@ -216,17 +284,14 @@
           syncBtn.innerHTML = `<span class="material-symbols-outlined">cloud_upload</span> Upload ${count} Record${count > 1 ? 's' : ''}`;
         }
 
-        // Update stats
         const allRecords = await window.App.db.outbox.toArray();
         totalScanned.textContent = allRecords.length;
         scannedBar.style.width = Math.min(allRecords.length * 0.7, 100) + '%';
       }
 
-      // Sync
       syncBtn.addEventListener('click', async () => {
         const count = await window.App.getPendingCount();
         if (count === 0) return;
-
         syncBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Uploading...';
         syncBtn.disabled = true;
 
@@ -259,10 +324,8 @@
         setTimeout(() => syncStatus.classList.add('hidden'), 5000);
       }
 
-      // Refresh
       refreshBtn.addEventListener('click', loadRecords);
 
-      // Storage estimate
       if (navigator.storage && navigator.storage.estimate) {
         navigator.storage.estimate().then(estimate => {
           const percent = Math.round((estimate.usage / estimate.quota) * 100);
@@ -272,7 +335,6 @@
         storage.textContent = '12%';
       }
 
-      // Search
       searchInput.addEventListener('input', async (e) => {
         const query = e.target.value.toLowerCase();
         const records = await window.App.getPendingRecordsWithNames();
@@ -281,19 +343,19 @@
           : records;
 
         if (filtered.length === 0) {
-          recordsList.innerHTML = '<div class="p-4 text-center text-on-surface-variant font-mono-label">No matching records</div>';
+          recordsList.innerHTML = '<div class="p-md text-center text-on-surface-variant font-mono-label">No matching records</div>';
         } else {
           recordsList.innerHTML = filtered.map(r => `
-            <div class="p-4 flex items-center justify-between hover:bg-surface-container-low transition-colors group">
+            <div class="p-md flex items-center justify-between hover:bg-surface-container-low transition-colors group">
               <div>
                 <p class="font-headline-sm uppercase font-bold">${r.studentName}</p>
-                <div class="flex items-center gap-2 mt-1">
+                <div class="flex items-center gap-sm mt-xs">
                   <span class="material-symbols-outlined text-sm">schedule</span>
                   <span class="font-mono-label text-xs">${window.App.formatTime(r.timestamp)}</span>
                 </div>
               </div>
-              <div class="hatch-pattern border-2 border-black px-2 py-1">
-                <span class="font-bold text-xs uppercase">Waiting</span>
+              <div class="hatch-pattern border-2 border-black px-sm py-xs">
+                <span class="font-label-bold text-label-bold uppercase">WAITING</span>
               </div>
             </div>
           `).join('');
