@@ -214,14 +214,70 @@
         await processScan(text.trim().toUpperCase());
       }
 
-      async function processScan(studentId) {
-        var student = await window.App.getStudentById(studentId);
-        if (!student) { showError('Not Found', 'Student not in roster'); return; }
-        if (student.section !== officer.section) { showError('Not In Section', student.section); return; }
+      function escapeHtml(value) {
+        return String(value || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\"/g, '&quot;');
+      }
 
-        var result = await window.App.recordAttendance(studentId, officer.code);
+      function parseQrPayload(text) {
+        var trimmed = String(text || '').trim();
+        if (!trimmed) {
+          return { studentId: '', name: '', program: '' };
+        }
+
+        try {
+          var parsed = JSON.parse(trimmed);
+          if (parsed && typeof parsed === 'object') {
+            return {
+              studentId: String(parsed.studentId || parsed.studentID || parsed.id || parsed['Student ID'] || parsed.student_id || '').trim(),
+              name: String(parsed.studentName || parsed.name || parsed['Student Name'] || parsed['student name'] || '').trim(),
+              program: String(parsed.collegeProgram || parsed.program || parsed['College Program'] || parsed['college program'] || '').trim()
+            };
+          }
+        } catch (e) {
+          // Fall through to manual parsing
+        }
+
+        var segments = trimmed.split(/\s*\|\s*|\s*,\s*|\s{2,}/);
+        if (segments.length >= 3) {
+          return {
+            studentId: String(segments[1] || '').trim(),
+            name: String(segments[0] || '').trim(),
+            program: String(segments[2] || '').trim()
+          };
+        }
+
+        return { studentId: trimmed, name: '', program: '' };
+      }
+
+      async function processScan(scannedText) {
+        var payload = parseQrPayload(scannedText);
+        var studentId = payload.studentId;
+
+        if (!studentId) {
+          showError('Invalid QR', 'No student ID found in scan');
+          return;
+        }
+
+        var student = await window.App.getStudentById(studentId);
+        if (!student) {
+          showError('Section Not Found', 'Missing ID: ' + studentId);
+          return;
+        }
+
+        if (student.section !== officer.section) {
+          showError('Not In Section', student.section);
+          return;
+        }
+
+        var result = await window.App.recordAttendance(student.id, officer.code);
         if (result.success) {
-          showSuccess('Allowed', student.name + ', ' + student.section);
+          var name = payload.name || student.name || 'Unknown Student';
+          var programText = payload.program ? '<div class="text-xs mt-1">' + escapeHtml(payload.program) + '</div>' : '';
+          showSuccess('Allowed', '<div class="font-[\'Inter\'] font-bold text-sm">' + escapeHtml(name) + '</div><div class="font-mono text-sm mt-1">' + escapeHtml(student.id + ' | ' + student.section) + '</div>' + programText);
           updatePendingCount();
         } else if (result.reason === 'duplicate') {
           showError('Already Checked In', student.name);
@@ -231,7 +287,7 @@
       }
 
       function showSuccess(msg, details) {
-        successDetails.textContent = details;
+        successDetails.innerHTML = details;
         successOverlay.style.opacity = '1';
         successOverlay.style.pointerEvents = 'auto';
         setTimeout(function() {

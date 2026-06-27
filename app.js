@@ -158,6 +158,168 @@ async function saveRosterToDb(roster) {
 }
 
 /**
+ * Normalize workbook headers so import logic can find common columns.
+ * @param {string} value
+ * @returns {string}
+ */
+function normalizeHeader(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+/**
+ * Infer a section name from a student ID when the ID encodes it.
+ * Examples: A-1001, B1002, SEC-A-1003, SECTIONB1004.
+ * @param {string|number} studentId
+ * @param {string} fallbackSection
+ * @returns {string}
+ */
+function inferSectionFromStudentId(studentId, fallbackSection = '') {
+  const normalized = String(studentId || '').trim().toUpperCase();
+  if (!normalized) {
+    return fallbackSection;
+  }
+
+  const sectionPatterns = [
+    [/SECTION[-_\s]*([A-Z0-9]+)/, 'Section-$1'],
+    [/SEC[-_\s]*([A-Z0-9]+)/, 'Section-$1'],
+    [/^([A-Z])[-_\s]?\d+/, '$1'],
+    [/^([A-Z]{1,3})\d+/, '$1'],
+    [/([A-Z])\d+$/, '$1']
+  ];
+
+  for (const [pattern, template] of sectionPatterns) {
+    const match = normalized.match(pattern);
+    if (match) {
+      const token = match[1] ? match[1].replace(/[^A-Z0-9]+/g, '') : '';
+      if (!token) {
+        continue;
+      }
+      if (template === 'Section-$1') {
+        return `Section-${token}`;
+      }
+      return token;
+    }
+  }
+
+  return fallbackSection;
+}
+
+/**
+ * Convert workbook rows into student-like objects.
+ * @param {object} workbook
+ * @param {File} file
+ * @returns {Array}
+ */
+function extractStudentsFromWorkbook(workbook, file) {
+  const students = [];
+  const fallbackSection = file.name.replace(/\.(xlsx|xls|csv)$/i, '').replace(/[_-]+/g, ' ').trim() || (workbook && workbook.SheetNames && workbook.SheetNames[0] ? workbook.SheetNames[0] : 'Imported Section');
+
+  if (!workbook || !workbook.SheetNames || !workbook.SheetNames.length) {
+    return students;
+  }
+
+  workbook.SheetNames.forEach((sheetName) => {
+    const sheet = workbook.Sheets[sheetName];
+    if (!sheet) return;
+
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false, blankrows: false }) || [];
+
+    rows.forEach((row, index) => {
+      const normalizedRow = {};
+      Object.keys(row).forEach((key) => {
+        normalizedRow[normalizeHeader(key)] = row[key];
+      });
+
+      const idValue = [normalizedRow['student id'], normalizedRow.id, normalizedRow['studentid'], normalizedRow['roll no'], normalizedRow['roll number'], normalizedRow['roll'], normalizedRow['student number']]
+        .find((value) => value !== undefined && value !== null && String(value).trim() !== '');
+      const nameValue = [normalizedRow.name, normalizedRow['student name'], normalizedRow['full name'], normalizedRow['student'], normalizedRow['fullname']]
+        .find((value) => value !== undefined && value !== null && String(value).trim() !== '');
+      const sectionValue = [normalizedRow.section, normalizedRow.class, normalizedRow.batch, normalizedRow.group]
+        .find((value) => value !== undefined && value !== null && String(value).trim() !== '');
+      const inferredSection = inferSectionFromStudentId(idValue, fallbackSection);
+
+      if (!nameValue && !idValue) {
+        return;
+      }
+
+      students.push({
+        id: String(idValue || `${fallbackSection}-${index + 1}`).trim(),
+        name: String(nameValue || 'Unnamed Student').trim(),
+        section: String(inferredSection || sectionValue || fallbackSection).trim()
+      });
+    });
+  });
+
+  return students;
+}
+
+/**
+ * Import one or more Excel files as roster data.
+ * Each file is treated as one section and the file name becomes the section name.
+ * @param {FileList|Array} files
+ * @returns {Promise<object>}
+ */
+async function importRosterFromFiles(files) {
+  if (typeof XLSX === 'undefined') {
+    throw new Error('Excel support is not available in this browser.');
+  }
+
+  const selectedFiles = Array.from(files || []);
+  if (selectedFiles.length === 0) {
+    throw new Error('Select at least one Excel file to import.');
+  }
+
+  const importedStudents = [];
+  const seenIds = new Set();
+
+  for (const file of selectedFiles) {
+    if (!file || !file.name) {
+      continue;
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const studentsFromFile = extractStudentsFromWorkbook(workbook, file);
+
+    if (!studentsFromFile.length) {
+      throw new Error(`No student rows were found in ${file.name}.`);
+    }
+
+    studentsFromFile.forEach((student, index) => {
+      let studentId = String(student.id || '').trim();
+      if (!studentId) {
+        studentId = `${student.section || 'Imported'}-${index + 1}`;
+      }
+
+      if (seenIds.has(studentId)) {
+        studentId = `${studentId}-${index + 1}`;
+      }
+      seenIds.add(studentId);
+
+      importedStudents.push({
+        id: studentId,
+        name: String(student.name || 'Unnamed Student').trim(),
+        section: String(student.section || 'Imported Section').trim()
+      });
+    });
+  }
+
+  if (!importedStudents.length) {
+    throw new Error('No students were imported.');
+  }
+
+  await saveRosterToDb(importedStudents);
+  return {
+    count: importedStudents.length,
+    files: selectedFiles.length
+  };
+}
+
+/**
  * Setup roster - fetch from server or show error
  * @param {function} onProgress - Progress callback
  * @returns {Promise<boolean>}
@@ -204,7 +366,19 @@ async function getAllStudents() {
  * @returns {Promise<object|null>}
  */
 async function getStudentById(studentId) {
-  return await db.students.get(studentId);
+  const normalizedInput = String(studentId || '').trim();
+  if (!normalizedInput) {
+    return null;
+  }
+
+  const directMatch = await db.students.get(normalizedInput);
+  if (directMatch) {
+    return directMatch;
+  }
+
+  const allStudents = await db.students.toArray();
+  const normalizedInputLower = normalizedInput.toLowerCase();
+  return allStudents.find(student => String(student.id || '').trim().toLowerCase() === normalizedInputLower) || null;
 }
 
 // ==========================================
@@ -442,6 +616,7 @@ if (typeof window !== 'undefined') {
     requireLogin,
     isRosterCached,
     setupRoster,
+    importRosterFromFiles,
     loadDemoRoster,
     getAllStudents,
     getStudentById,
