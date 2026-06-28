@@ -1,267 +1,505 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Officer Scan - Scanner</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@700&family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>OFFICER SCAN · Home</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    body { background: #f9f9f9; font-family: 'Inter', sans-serif; }
     .neo-shadow { box-shadow: 4px 4px 0 #000; }
-    .neo-pressed:active { box-shadow: 2px 2px 0 #000; transform: translate(2px, 2px); }
-    .scan-line { height: 4px; background: #000; position: absolute; width: 100%; top: 0; animation: scan 3s linear infinite; z-index: 20; }
-    @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
-    .halftone { background-image: radial-gradient(#000 1px, transparent 0); background-size: 8px 8px; opacity: 0.05; }
+    .neo-shadow-sm { box-shadow: 2px 2px 0 #000; }
+    .active-press:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #000; }
+    .hatch-pattern { background: repeating-linear-gradient(45deg, #000, #000 2px, #fff 2px, #fff 6px); }
+    .halftone-bg { background-image: radial-gradient(#000 1px, transparent 0); background-size: 8px 8px; opacity: 0.06; }
+    .scan-line { width: 100%; height: 2px; background: #000; position: absolute; animation: scan 3s linear infinite; }
+    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f9f9f9; border-left: 2px solid #000; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #000; }
   </style>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#000000",
+            surface: "#f9f9f9",
+            background: "#f9f9f9",
+            "on-primary": "#ffffff",
+            "on-surface": "#1b1b1b",
+            "on-surface-variant": "#4c4546",
+            secondary: "#5d5f5f",
+            "surface-container": "#e8e8e8",
+            "surface-container-highest": "#e2e2e2",
+            "surface-container-high": "#e8e8e8",
+            "secondary-container": "#dfe0e0"
+          },
+          fontFamily: {
+            "headline-lg": ["Archivo Narrow"],
+            "headline-md": ["Archivo Narrow"],
+            "headline-xl": ["Archivo Narrow"],
+            "body-md": ["Inter"],
+            "label-bold": ["Inter"],
+            "mono-label": ["Space Mono"]
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body class="bg-gray-50 text-black min-h-screen flex flex-col">
+<body class="min-h-screen pb-32">
 
-  <header class="border-b-2 border-black px-6 py-4 flex justify-between items-center bg-white">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-black">signal_wifi_off</span>
-      <h1 class="font-['Archivo_Narrow'] font-bold text-xl uppercase tracking-tight">Officer Scan</h1>
-    </div>
-    <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-100">settings</button>
-  </header>
-
-  <main class="flex-grow p-4 flex flex-col items-center">
-    <!-- Officer Info -->
-    <div class="w-full max-w-md mb-4">
-      <div class="border-2 border-black bg-white p-4 flex justify-between items-center">
-        <div>
-          <p class="font-['Archivo_Narrow'] font-bold text-lg uppercase" id="officerName">Loading...</p>
-          <p class="font-['Space_Mono'] text-sm text-gray-600" id="officerSection">Loading...</p>
-        </div>
-        <button type="button" class="material-symbols-outlined p-2 hover:bg-gray-100" id="logoutBtn">logout</button>
+  <!-- ====== DESKTOP LAYOUT ====== -->
+  <div class="hidden md:block">
+    <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-2 bg-background border-b-4 border-primary">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL'1;">security</span>
+        <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">OFFICER SCAN</h1>
       </div>
-    </div>
+      <nav class="hidden md:flex gap-4">
+        <a class="font-mono-label text-mono-label text-primary uppercase" href="#">System Status: Online</a>
+        <a class="font-mono-label text-mono-label text-primary uppercase" href="#">Encrypted</a>
+      </nav>
+      <div class="flex items-center gap-4">
+        <button class="material-symbols-outlined p-2 hover:bg-surface-container-high">sync</button>
+        <button class="material-symbols-outlined p-2 hover:bg-surface-container-high">settings</button>
+        <button class="material-symbols-outlined p-2 hover:bg-surface-container-high">signal_cellular_alt</button>
+      </div>
+    </header>
 
-    <!-- Tabs -->
-    <div class="w-full max-w-md flex gap-2 mb-4">
-      <button type="button" class="flex-1 bg-black text-white py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black" id="scannerTabBtn">
-        Scanner
-      </button>
-      <button type="button" class="flex-1 bg-white text-black py-3 font-['Archivo_Narrow'] font-bold text-sm uppercase border-2 border-black hover:bg-gray-100" id="recordsTabBtn">
-        Records
-      </button>
-    </div>
-
-    <!-- Scanner Tab -->
-    <div id="scannerTab" class="w-full max-w-md">
-      <div class="relative w-full aspect-square border-2 border-black bg-black group overflow-hidden">
-        <div id="reader" class="absolute inset-0"></div>
-        <div class="scan-line"></div>
-        <div class="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-white m-2"></div>
-        <div class="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-white m-2"></div>
-        <div class="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-white m-2"></div>
-        <div class="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-white m-2"></div>
-
-        <!-- Success Overlay -->
-        <div id="successOverlay" class="absolute inset-0 bg-white/95 z-30 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-          <div class="border-2 border-black bg-white p-4 neo-shadow text-center">
-            <span class="material-symbols-outlined text-5xl text-green-600">check_circle</span>
-            <p id="successDetails" class="font-['Archivo_Narrow'] font-bold text-lg mt-2">Allowed</p>
+    <main class="mt-24 max-w-7xl mx-auto px-6 space-y-8">
+      <!-- Hero -->
+      <section class="grid md:grid-cols-2 gap-6 items-center border-b-4 border-primary pb-6 relative">
+        <div class="absolute inset-0 halftone-bg -z-10"></div>
+        <div class="space-y-4">
+          <div class="inline-block bg-primary text-on-primary px-2 py-1 font-mono-label text-mono-label">OPERATIONAL_MODE: ACTIVE</div>
+          <h2 class="font-headline-xl text-headline-xl uppercase tracking-tighter">READY FOR DEPLOYMENT.</h2>
+          <p class="font-body-md text-on-surface-variant max-w-xl">Secure terminal initiated. All scanning protocols are calibrated for high-throughput personnel verification.</p>
+          <button class="bg-primary text-on-primary font-headline-md text-headline-md px-6 py-4 border-4 border-primary neo-shadow active-press flex items-center gap-2 uppercase">
+            <span class="material-symbols-outlined">qr_code_scanner</span> LAUNCH SCANNER
+          </button>
+        </div>
+        <div class="relative border-4 border-primary bg-surface h-80 flex items-center justify-center overflow-hidden neo-shadow">
+          <div class="scan-line"></div>
+          <div class="text-center p-4">
+            <span class="material-symbols-outlined text-[80px] text-primary opacity-20">qr_code_2</span>
+            <p class="font-mono-label text-mono-label mt-4">VISUAL_ARRAY_STANDBY</p>
           </div>
         </div>
+      </section>
 
-        <!-- Error Overlay -->
-        <div id="errorOverlay" class="absolute inset-0 bg-black/90 z-30 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-          <div class="border-2 border-white bg-black p-4 text-center">
-            <span class="material-symbols-outlined text-5xl text-white">cancel</span>
-            <p id="errorTitle" class="font-['Archivo_Narrow'] font-bold text-lg text-white mt-2">Denied</p>
-            <p id="errorDetails" class="font-['Space_Mono'] text-xs text-gray-400 mt-1"></p>
+      <!-- Roster -->
+      <section class="space-y-4">
+        <div class="flex justify-between items-end border-b-4 border-primary pb-2">
+          <h3 class="font-headline-lg text-headline-lg uppercase">ROSTER DEPLOYMENT</h3>
+          <span class="font-mono-label text-mono-label">SELECT BATCH TO UPLOAD</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
+            <span class="material-symbols-outlined text-4xl">description</span>
+            <h4 class="font-headline-md text-headline-md">1ST YEAR</h4>
+            <p class="font-mono-label text-mono-label text-on-surface-variant">CADET_LEVEL_ALPHA</p>
+            <div class="w-full h-1 bg-primary"></div>
+            <button class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT EXCEL</button>
+          </div>
+          <div class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
+            <span class="material-symbols-outlined text-4xl">description</span>
+            <h4 class="font-headline-md text-headline-md">2ND YEAR</h4>
+            <p class="font-mono-label text-mono-label text-on-surface-variant">CADET_LEVEL_BETA</p>
+            <div class="w-full h-1 bg-primary"></div>
+            <button class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT EXCEL</button>
+          </div>
+          <div class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
+            <span class="material-symbols-outlined text-4xl">description</span>
+            <h4 class="font-headline-md text-headline-md">3RD YEAR</h4>
+            <p class="font-mono-label text-mono-label text-on-surface-variant">CADET_LEVEL_GAMMA</p>
+            <div class="w-full h-1 bg-primary"></div>
+            <button class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT EXCEL</button>
+          </div>
+          <div class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
+            <span class="material-symbols-outlined text-4xl">description</span>
+            <h4 class="font-headline-md text-headline-md">4TH YEAR</h4>
+            <p class="font-mono-label text-mono-label text-on-surface-variant">OFFICER_CANDIDATE</p>
+            <div class="w-full h-1 bg-primary"></div>
+            <button class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT EXCEL</button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <p class="text-center mt-3 font-['Space_Mono'] text-xs text-gray-500">Position QR code in frame</p>
-
-      <div id="rosterWarning" class="hidden mt-3 p-2 bg-yellow-100 border border-yellow-600 font-['Inter'] text-xs text-center">
-        Roster not loaded
-      </div>
-    </div>
-
-    <!-- Records Tab -->
-    <div id="recordsTab" class="w-full max-w-md hidden">
-      <div class="border-2 border-black bg-white p-4">
-        <div class="flex justify-between items-center mb-3">
-          <span class="font-['Archivo_Narrow'] font-bold text-sm uppercase">Pending</span>
-          <span id="pendingCount" class="bg-black text-white px-3 py-1 font-['Archivo_Narrow'] font-bold">0</span>
+      <!-- Bottom: Log & Quota -->
+      <section class="grid md:grid-cols-2 gap-4">
+        <div class="border-4 border-primary bg-surface flex flex-col h-64 neo-shadow">
+          <div class="bg-primary text-on-primary px-4 py-1 font-mono-label flex justify-between">
+            <span>OPERATIONAL LOG</span>
+            <span>LIVE_FEED</span>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4 font-mono-label text-mono-label custom-scrollbar space-y-2" id="log-feed">
+            <div class="flex gap-2"><span class="text-on-surface-variant">[08:42:11]</span> <span class="text-error">BOOT_SEQUENCE_COMPLETE</span></div>
+            <div class="flex gap-2"><span class="text-on-surface-variant">[08:42:15]</span> <span>NETWORK_MODE: ENCRYPTED_MESH</span></div>
+            <div class="flex gap-2"><span class="text-on-surface-variant">[08:43:02]</span> <span class="bg-primary-container px-1">SYNC_SUCCESS: DATABASE_R1</span></div>
+            <div class="flex gap-2"><span class="text-on-surface-variant">[08:44:10]</span> <span>HEARTBEAT_SIGNAL: OPTIMAL</span></div>
+            <div class="flex gap-2"><span class="text-on-surface-variant">[08:45:30]</span> <span>USER_AUTH: ADMIN_TERMINAL_04</span></div>
+            <div class="flex gap-2"><span class="text-on-surface-variant">[08:46:01]</span> <span class="text-error">PING_LATENCY: 12ms</span></div>
+          </div>
         </div>
-        <div id="pendingList" class="border border-black max-h-40 overflow-y-auto text-sm">
-          <div class="p-3 text-center text-gray-500">No records</div>
+        <div class="border-4 border-primary bg-surface p-4 neo-shadow flex flex-col justify-between">
+          <div>
+            <h4 class="font-headline-md text-headline-md uppercase border-b-4 border-primary mb-4 pb-1">DAILY QUOTA</h4>
+            <div class="flex items-baseline gap-2">
+              <span class="font-headline-xl text-[84px] leading-none">84%</span>
+              <span class="font-mono-label text-mono-label uppercase">of operational goal met</span>
+            </div>
+          </div>
+          <div class="space-y-2 mt-4">
+            <div class="flex justify-between font-mono-label">
+              <span>CAPACITY_REACHED</span>
+              <span>4,200 / 5,000</span>
+            </div>
+            <div class="w-full h-12 border-4 border-primary bg-white relative overflow-hidden">
+              <div class="h-full hatch-pattern" style="width:84%"></div>
+            </div>
+          </div>
         </div>
-        <button type="button" id="syncBtn" class="w-full mt-3 bg-black text-white border-2 border-black py-2 font-['Archivo_Narrow'] text-sm uppercase hover:bg-white hover:text-black transition-colors">
-          Upload
+      </section>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-16 bg-background border-t-4 border-primary">
+      <a class="flex flex-col items-center justify-center bg-primary text-on-primary h-full px-6" href="scanner.html">
+        <span class="material-symbols-outlined">qr_code_scanner</span>
+        <span class="font-mono-label text-mono-label uppercase mt-1">SCANNER</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="records.html">
+        <span class="material-symbols-outlined">database</span>
+        <span class="font-mono-label text-mono-label uppercase mt-1">RECORDS</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="#">
+        <span class="material-symbols-outlined">account_circle</span>
+        <span class="font-mono-label text-mono-label uppercase mt-1">PROFILE</span>
+      </a>
+    </nav>
+
+    <footer class="w-full py-6 px-4 flex flex-col md:flex-row justify-between items-center gap-2 border-t-4 border-primary bg-surface-container-highest mt-12">
+      <div class="font-mono-label text-mono-label font-bold uppercase tracking-widest">©2024 OFFICER SCAN - SECURE TERMINAL v4.1</div>
+      <div class="flex gap-4">
+        <a class="font-mono-label hover:text-primary underline uppercase" href="#">SYSTEM STATUS</a>
+        <a class="font-mono-label hover:text-primary underline uppercase" href="#">ENCRYPTION KEYS</a>
+        <a class="font-mono-label hover:text-primary underline uppercase" href="#">PRIVACY PROTOCOL</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ====== MOBILE LAYOUT ====== -->
+  <div class="block md:hidden">
+    <header class="w-full top-0 sticky bg-surface border-b-4 border-primary flex justify-between items-center px-6 h-20 z-50">
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-primary" style="font-size:32px;">signal_cellular_alt</span>
+        <h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary uppercase">OFFICER SCAN</h1>
+      </div>
+      <button class="material-symbols-outlined text-primary">settings_remote</button>
+    </header>
+
+    <main class="px-6 py-4 space-y-6">
+      <div class="absolute inset-0 halftone-bg -z-10 pointer-events-none"></div>
+
+      <section class="bg-surface border-4 border-primary neo-shadow p-4 mt-4">
+        <div class="flex justify-between items-start mb-4">
+          <h2 class="font-headline-xl text-headline-xl uppercase text-primary leading-tight">READY FOR<br>DEPLOYMENT</h2>
+          <div class="bg-primary text-on-primary px-3 py-1 font-mono-label border-2 border-primary">V.04.22</div>
+        </div>
+        <button id="launchScannerBtn" class="w-full bg-primary text-on-primary py-4 px-6 border-4 border-primary neo-shadow active-press flex items-center justify-center gap-4">
+          <span class="material-symbols-outlined" style="font-size:32px;">qr_code_scanner</span>
+          <span class="font-headline-md text-headline-md uppercase">LAUNCH SCANNER</span>
         </button>
-        <div id="syncStatus" class="hidden mt-2 p-2 border border-black text-xs text-center"></div>
-      </div>
-    </div>
-  </main>
+      </section>
 
-  <!-- Bottom Nav -->
-  <nav class="fixed bottom-0 left-0 w-full flex h-14 border-t-2 border-black bg-white z-50">
-    <a href="scanner.html" class="flex-1 flex items-center justify-center bg-black text-white font-['Inter'] text-xs uppercase font-bold">
-      Scanner
-    </a>
-    <a href="records.html" class="flex-1 flex items-center justify-center bg-white text-black font-['Inter'] text-xs uppercase font-bold border-l-2 border-black hover:bg-gray-50">
-      Records
-    </a>
-  </nav>
+      <section>
+        <div class="flex items-center justify-between mb-4 border-b-4 border-primary pb-2">
+          <h3 class="font-headline-md text-headline-md uppercase">ROSTER DEPLOYMENT</h3>
+          <span class="font-mono-label uppercase text-secondary">4 Units Active</span>
+        </div>
+        <div class="flex flex-col gap-4">
+          <div class="bg-surface border-4 border-primary neo-shadow p-4 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-headline-md text-headline-md uppercase">1ST YEAR ALPHA</h4>
+              <div class="border-2 border-primary px-2 font-mono-label bg-secondary-container">DEP_01</div>
+            </div>
+            <p class="font-body-md text-on-surface-variant">Standard security screening batch. Clearance level: BASIC.</p>
+            <button class="w-full bg-surface-container-highest border-4 border-primary p-3 font-label-bold uppercase hover:bg-primary hover:text-on-primary flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">table_chart</span> SELECT EXCEL
+            </button>
+          </div>
+          <div class="bg-surface border-4 border-primary neo-shadow p-4 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-headline-md text-headline-md uppercase">2ND YEAR BRAVO</h4>
+              <div class="border-2 border-primary px-2 font-mono-label bg-secondary-container">DEP_02</div>
+            </div>
+            <p class="font-body-md text-on-surface-variant">Enhanced surveillance protocol. Clearance level: INTERMEDIATE.</p>
+            <button class="w-full bg-surface-container-highest border-4 border-primary p-3 font-label-bold uppercase hover:bg-primary hover:text-on-primary flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">table_chart</span> SELECT EXCEL
+            </button>
+          </div>
+          <div class="bg-surface border-4 border-primary neo-shadow p-4 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-headline-md text-headline-md uppercase">3RD YEAR CHARLIE</h4>
+              <div class="border-2 border-primary px-2 font-mono-label bg-secondary-container">DEP_03</div>
+            </div>
+            <p class="font-body-md text-on-surface-variant">Restricted access monitoring. Clearance level: SENIOR.</p>
+            <button class="w-full bg-surface-container-highest border-4 border-primary p-3 font-label-bold uppercase hover:bg-primary hover:text-on-primary flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">table_chart</span> SELECT EXCEL
+            </button>
+          </div>
+          <div class="bg-surface border-4 border-primary neo-shadow p-4 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+              <h4 class="font-headline-md text-headline-md uppercase">4TH YEAR DELTA</h4>
+              <div class="border-2 border-primary px-2 font-mono-label bg-secondary-container">DEP_04</div>
+            </div>
+            <p class="font-body-md text-on-surface-variant">High-stakes operations unit. Clearance level: OVERSEER.</p>
+            <button class="w-full bg-surface-container-highest border-4 border-primary p-3 font-label-bold uppercase hover:bg-primary hover:text-on-primary flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">table_chart</span> SELECT EXCEL
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-surface border-4 border-primary neo-shadow p-4">
+        <h3 class="font-headline-md text-headline-md uppercase mb-4 border-b-2 border-primary pb-1">DAILY QUOTA</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-end mb-1">
+            <span class="font-mono-label uppercase">Efficiency Rating</span>
+            <span class="font-headline-lg text-headline-lg">84%</span>
+          </div>
+          <div class="w-full h-8 border-4 border-primary bg-surface-container">
+            <div class="h-full hatch-pattern" style="width:84%"></div>
+          </div>
+          <p class="font-mono-label text-secondary-fixed-dim text-[10px] uppercase">Threshold Target: 90% | Remaining Shift: 02h 14m</p>
+        </div>
+      </section>
+
+      <section class="pb-12">
+        <h3 class="font-headline-md text-headline-md uppercase mb-4 border-b-4 border-primary pb-1 flex items-center gap-2">
+          <span class="material-symbols-outlined">history_edu</span> OPERATIONAL LOG
+        </h3>
+        <div class="space-y-2 font-mono-label">
+          <div class="flex gap-4 p-2 border-b border-primary-fixed">
+            <span class="text-secondary">08:42</span>
+            <span class="text-primary font-bold">[SYS]</span>
+            <span>Terminal initialized. Ready.</span>
+          </div>
+          <div class="flex gap-4 p-2 border-b border-primary-fixed">
+            <span class="text-secondary">09:15</span>
+            <span class="text-primary font-bold">[USR]</span>
+            <span>Excel batch DEP_01 uploaded.</span>
+          </div>
+          <div class="flex gap-4 p-2 border-b border-primary-fixed bg-secondary-container/30">
+            <span class="text-secondary">10:04</span>
+            <span class="text-error font-bold">[ERR]</span>
+            <span class="text-error">Scan mismatch detected in Block B.</span>
+          </div>
+          <div class="flex gap-4 p-2">
+            <span class="text-secondary">11:30</span>
+            <span class="text-primary font-bold">[SYS]</span>
+            <span>Quota sync completed (84%).</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="fixed bottom-0 w-full z-50 h-24 bg-surface border-t-4 border-primary flex justify-around items-stretch">
+      <a class="flex flex-col items-center justify-center bg-primary text-on-primary h-full w-full border-x-2 border-primary active-press" href="scanner.html">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL'1;">qr_code_scanner</span>
+        <span class="font-label-bold text-label-bold uppercase mt-1">SCANNER</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-primary h-full w-full border-x-2 border-primary hover:bg-secondary-container active-press" href="records.html">
+        <span class="material-symbols-outlined">database</span>
+        <span class="font-label-bold text-label-bold uppercase mt-1">RECORDS</span>
+      </a>
+      <a class="flex flex-col items-center justify-center text-primary h-full w-full border-x-2 border-primary hover:bg-secondary-container active-press" href="#">
+        <span class="material-symbols-outlined">account_circle</span>
+        <span class="font-label-bold text-label-bold uppercase mt-1">PROFILE</span>
+      </a>
+    </nav>
+  </div>
 
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="app.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      if (!window.App.requireLogin()) return;
+    // Wait for libraries to load
+    setTimeout(() => {
+      initScanner();
+    }, 500);
+
+    function initScanner() {
+      if (!window.App || !window.App.requireLogin()) return;
 
       var officer = window.App.getOfficerInfo();
-      document.getElementById('officerName').textContent = officer.name;
-      document.getElementById('officerSection').textContent = officer.section;
+      if (!officer) {
+        window.location.href = 'index.html';
+        return;
+      }
 
-      var logoutBtn = document.getElementById('logoutBtn');
-      var scannerTabBtn = document.getElementById('scannerTabBtn');
-      var recordsTabBtn = document.getElementById('recordsTabBtn');
-      var scannerTab = document.getElementById('scannerTab');
-      var recordsTab = document.getElementById('recordsTab');
-      var successOverlay = document.getElementById('successOverlay');
-      var errorOverlay = document.getElementById('errorOverlay');
-      var successDetails = document.getElementById('successDetails');
-      var errorTitle = document.getElementById('errorTitle');
-      var errorDetails = document.getElementById('errorDetails');
-      var rosterWarning = document.getElementById('rosterWarning');
-      var pendingCount = document.getElementById('pendingCount');
-      var pendingList = document.getElementById('pendingList');
-      var syncBtn = document.getElementById('syncBtn');
-      var syncStatus = document.getElementById('syncStatus');
-
+      var scannerSection = null;
       var html5QrCode = null;
       var isScanning = false;
 
-      scannerTabBtn.addEventListener('click', function() {
-        scannerTab.classList.remove('hidden');
-        recordsTab.classList.add('hidden');
-        scannerTabBtn.classList.add('bg-black', 'text-white');
-        scannerTabBtn.classList.remove('bg-white', 'text-black');
-        recordsTabBtn.classList.add('bg-white', 'text-black');
-        recordsTabBtn.classList.remove('bg-black', 'text-white');
-        startScanner();
-      });
+      // Create scanner section dynamically
+      function createScannerSection() {
+        if (scannerSection) return scannerSection;
 
-      recordsTabBtn.addEventListener('click', function() {
-        scannerTab.classList.add('hidden');
-        recordsTab.classList.remove('hidden');
-        recordsTabBtn.classList.add('bg-black', 'text-white');
-        recordsTabBtn.classList.remove('bg-white', 'text-black');
-        scannerTabBtn.classList.add('bg-white', 'text-black');
-        scannerTabBtn.classList.remove('bg-black', 'text-white');
-        stopScanner();
-        loadPendingRecords();
-      });
-
-      logoutBtn.addEventListener('click', function() { stopScanner(); window.App.logout(); });
+        scannerSection = document.createElement('section');
+        scannerSection.className = 'bg-surface border-4 border-primary neo-shadow p-4';
+        scannerSection.innerHTML = `
+          <div class="relative border-4 border-primary bg-black h-72 flex items-center justify-center overflow-hidden" id="qr-reader">
+            <div class="scan-line"></div>
+            <div class="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-white m-2"></div>
+            <div class="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-white m-2"></div>
+            <div class="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-white m-2"></div>
+            <div class="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-white m-2"></div>
+          </div>
+          <div id="scan-result" class="hidden mt-4 p-4 text-center"></div>
+        `;
+        return scannerSection;
+      }
 
       function startScanner() {
-        if (!window.App.isRosterCached()) { rosterWarning.classList.remove('hidden'); return; }
-        rosterWarning.classList.add('hidden');
-        if (html5QrCode && !isScanning) { try { html5QrCode.resume(); isScanning = true; } catch(e) { startScannerNew(); } return; }
-        startScannerNew();
-      }
+        if (isScanning) return;
 
-      async function startScannerNew() {
+        var readerEl = document.getElementById('qr-reader');
+        if (!readerEl) return;
+
         try {
-          html5QrCode = new Html5Qrcode('reader');
-          await html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 200, height: 200 } }, onScanSuccess, function() {});
+          html5QrCode = new Html5Qrcode('qr-reader');
+          html5QrCode.start(
+            { facingMode: 'environment' },
+            { fps: 10, qrbox: { width: 200, height: 200 } },
+            onScanSuccess,
+            onScanFailure
+          );
           isScanning = true;
-        } catch(err) { showError('Camera Error', 'Cannot access camera'); }
+        } catch (err) {
+          console.error('Scanner error:', err);
+          showResult('error', 'Camera access denied');
+        }
       }
 
-      function stopScanner() { if (html5QrCode && isScanning) { html5QrCode.stop().catch(function() {}); isScanning = false; } }
+      function onScanSuccess(text) {
+        var studentId = text.trim().toUpperCase();
+        processScan(studentId);
+      }
 
-      async function onScanSuccess(text) {
-        if (html5QrCode && isScanning) try { await html5QrCode.pause(); } catch(e) {}
-        await processScan(text.trim().toUpperCase());
+      function onScanFailure(err) {
+        // Silent fail - normal when no QR in frame
       }
 
       async function processScan(studentId) {
         var student = await window.App.getStudentById(studentId);
-        if (!student) { showError('Not Found', 'Student not in roster'); return; }
-        if (student.section !== officer.section) { showError('Wrong Section', student.section); return; }
+        var resultEl = document.getElementById('scan-result');
+
+        if (!student) {
+          showResult('error', 'NOT IN ROSTER');
+          return;
+        }
+
+        if (student.section !== officer.section) {
+          showResult('error', 'WRONG SECTION: ' + student.section);
+          return;
+        }
+
         var result = await window.App.recordAttendance(studentId, officer.code);
-        if (result.success) { showSuccess(student.name + ' - ' + student.section); updatePendingCount(); }
-        else if (result.reason === 'duplicate') { showError('Already In', student.name); }
-        else { showError('Error', 'Failed to record'); }
-      }
 
-      function showSuccess(details) {
-        successDetails.textContent = details;
-        successOverlay.style.opacity = '1';
-        successOverlay.style.pointerEvents = 'auto';
-        setTimeout(function() {
-          successOverlay.style.opacity = '0';
-          successOverlay.style.pointerEvents = 'none';
-          if (html5QrCode && isScanning) html5QrCode.resume().catch(function() {});
-        }, 2000);
-      }
-
-      function showError(title, details) {
-        errorTitle.textContent = title;
-        errorDetails.textContent = details;
-        errorOverlay.style.opacity = '1';
-        errorOverlay.style.pointerEvents = 'auto';
-        setTimeout(function() {
-          errorOverlay.style.opacity = '0';
-          errorOverlay.style.pointerEvents = 'none';
-          if (html5QrCode && isScanning) html5QrCode.resume().catch(function() {});
-        }, 2000);
-      }
-
-      async function loadPendingRecords() {
-        var records = await window.App.getPendingRecordsWithNames();
-        var count = records.length;
-        pendingCount.textContent = count;
-        if (count === 0) {
-          pendingList.innerHTML = '<div class="p-3 text-center text-gray-500">No records</div>';
-          syncBtn.disabled = true;
+        if (result.success) {
+          showResult('success', student.name + ' - ' + student.section);
+        } else if (result.reason === 'duplicate') {
+          showResult('warning', 'ALREADY CHECKED IN: ' + student.name);
         } else {
-          pendingList.innerHTML = records.map(function(r) {
-            return '<div class="flex justify-between p-2 border-b border-black"><span class="font-bold uppercase">' + r.studentName + '</span><span class="text-gray-500">' + window.App.formatTime(r.timestamp) + '</span></div>';
-          }).join('');
-          syncBtn.disabled = false;
+          showResult('error', 'SCAN FAILED');
         }
       }
 
-      async function updatePendingCount() {
-        var count = await window.App.getPendingCount();
-        if (!recordsTab.classList.contains('hidden')) loadPendingRecords();
+      function showResult(type, message) {
+        var resultEl = document.getElementById('scan-result');
+        if (!resultEl) return;
+
+        resultEl.classList.remove('hidden');
+        if (type === 'success') {
+          resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-green-600">check_circle</span><p class="font-headline-md mt-2 text-green-600 uppercase">' + message + '</p>';
+        } else if (type === 'warning') {
+          resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-yellow-600">warning</span><p class="font-headline-md mt-2 text-yellow-600 uppercase">' + message + '</p>';
+        } else {
+          resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-red-600">cancel</span><p class="font-headline-md mt-2 text-red-600 uppercase">' + message + '</p>';
+        }
+
+        // Pause and resume
+        if (html5QrCode && isScanning) {
+          html5QrCode.pause();
+          setTimeout(() => {
+            resultEl.classList.add('hidden');
+            html5QrCode.resume();
+          }, 2000);
+        }
       }
 
-      syncBtn.addEventListener('click', async function() {
-        if (!navigator.onLine) { showSyncStatus('No internet', false); return; }
-        var pending = await window.App.getPendingCount();
-        if (pending === 0) { showSyncStatus('No records', true); return; }
-        syncBtn.textContent = 'Uploading...';
-        syncBtn.disabled = true;
-        try { await window.App.syncAttendanceRecords(); showSyncStatus('Uploaded!', true); }
-        catch(e) { try { await window.App.mockSyncAttendanceRecords(); showSyncStatus('Done (demo)', true); } catch(e2) { showSyncStatus('Failed', false); } }
-        loadPendingRecords();
-        syncBtn.textContent = 'Upload';
-        syncBtn.disabled = false;
+      // Add click handler to launch buttons (both mobile and desktop)
+      var launchBtn = document.getElementById('launchScannerBtn');
+      var launchBtnDesktop = document.getElementById('launchScannerBtnDesktop');
+
+      function handleLaunchClick(e) {
+        e.preventDefault();
+        var main = document.querySelector('main');
+        if (!main) return;
+
+        // Hide hero section
+        var hero = main.querySelector('section:first-of-type');
+        if (hero) hero.classList.add('hidden');
+
+        // Remove existing scanner
+        var existing = main.querySelector('.scanner-active');
+        if (existing) existing.remove();
+
+        // Add scanner section
+        var scanner = createScannerSection();
+        scanner.classList.add('scanner-active');
+        main.insertBefore(scanner, main.children[1]);
+
+        // Start scanner after a small delay
+        setTimeout(startScanner, 300);
+      }
+
+      if (launchBtn) launchBtn.addEventListener('click', handleLaunchClick);
+      if (launchBtnDesktop) launchBtnDesktop.addEventListener('click', handleLaunchClick);
+
+      // Log feed
+      const logFeed = document.getElementById('log-feed');
+      if (logFeed) {
+        const logs = ["SCAN_REQUEST: ID_3991_PENDING", "DATA_PACKET_ENCRYPTED: RSA_4096", "WIFI_STRENGTH: 98%", "THERMAL_STATE: NOMINAL", "GEO_TAG_LOCK: SUCCESS", "BATTERY_LEVEL: 88%_OPTIMIZED"];
+        setInterval(() => {
+          const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+          const logText = logs[Math.floor(Math.random() * logs.length)];
+          const div = document.createElement('div');
+          div.className = 'flex gap-2 opacity-0 transition-opacity duration-500';
+          div.innerHTML = `<span class="text-on-surface-variant">[${time}]</span> <span>${logText}</span>`;
+          logFeed.appendChild(div);
+          logFeed.scrollTop = logFeed.scrollHeight;
+          setTimeout(() => div.classList.remove('opacity-0'), 50);
+          if (logFeed.children.length > 20) logFeed.removeChild(logFeed.firstChild);
+        }, 3000);
+      }
+
+      // Active press effect
+      document.querySelectorAll('.active-press').forEach(el => {
+        el.addEventListener('mousedown', () => { el.style.transform = 'translate(4px,4px)'; el.style.boxShadow = '0 0 0 #000'; });
+        el.addEventListener('mouseup', () => { el.style.transform = ''; el.style.boxShadow = ''; });
+        el.addEventListener('mouseleave', () => { el.style.transform = ''; el.style.boxShadow = ''; });
       });
+    }
 
-      function showSyncStatus(msg, ok) {
-        syncStatus.textContent = msg;
-        syncStatus.className = ok ? 'mt-2 p-2 border border-black bg-green-100 text-xs text-center' : 'mt-2 p-2 border border-red-600 bg-red-100 text-xs text-center text-red-800';
-        syncStatus.classList.remove('hidden');
-        setTimeout(function() { syncStatus.classList.add('hidden'); }, 3000);
-      }
-
-      if (!window.App.isRosterCached()) rosterWarning.classList.remove('hidden');
-      startScanner();
-    });
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
   </script>
 </body>
 </html>

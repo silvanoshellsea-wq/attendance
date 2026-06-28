@@ -9,7 +9,7 @@
 // ==========================================
 // Cache Configuration
 // ==========================================
-const CACHE_NAME = 'attendance-scanner-v2';
+const CACHE_NAME = 'attendance-scanner-v8';
 
 // Assets to precache (app shell)
 const PRECACHE_ASSETS = [
