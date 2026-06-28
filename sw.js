@@ -9,18 +9,17 @@
 // ==========================================
 // Cache Configuration
 // ==========================================
-const CACHE_NAME = 'attendance-scanner-v8';
+const CACHE_NAME = 'attendance-scanner-v9';
 
-// Assets to precache (app shell)
+// Assets to precache (app shell) – only your own files
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/scanner.html',
-  '/styles.css',
+  '/records.html',
   '/app.js',
-  'https://unpkg.com/dexie@latest/dist/dexie.js',
-  'https://unpkg.com/html5-qrcode',
-  '/manifest.json'
+  '/manifest.json'   // if you have one
+  // Do NOT include external CDN URLs here – they will be fetched from network
 ];
 
 // ==========================================
@@ -33,14 +32,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[Service Worker] Precaching app shell');
-        return cache.addAll(PRECACHE_ASSETS);
+        // Use addAll but catch failures so install doesn't break
+        return cache.addAll(PRECACHE_ASSETS).catch((err) => {
+          console.warn('[Service Worker] Some assets failed to cache:', err);
+        });
       })
       .then(() => {
         console.log('[Service Worker] Precaching complete');
         return self.skipWaiting(); // Activate immediately
-      })
-      .catch((error) => {
-        console.error('[Service Worker] Precaching failed:', error);
       })
   );
 });
@@ -75,21 +74,26 @@ self.addEventListener('activate', (event) => {
 // Fetch Event - Serve from Cache
 // ==========================================
 self.addEventListener('fetch', (event) => {
-  const requestUrl = new URL(event.request.url);
+  const request = event.request;
+  const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (event.request.method !== 'GET') {
+  // ---- Skip non-GET requests ----
+  if (request.method !== 'GET') return;
+
+  // ---- Skip requests that are not from our origin (ignore CDN, extensions, etc.) ----
+  if (url.origin !== self.location.origin) {
+    // Let the browser handle these normally (no caching)
     return;
   }
 
-  // Handle API requests (network first, fallback to cache for roster)
-  if (requestUrl.pathname.startsWith('/api/')) {
-    event.respondWith(handleApiRequest(event.request));
+  // ---- Handle API requests (network first, fallback) ----
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(handleApiRequest(request));
     return;
   }
 
-  // Handle app shell assets (cache first)
-  event.respondWith(handleAppShellRequest(event.request));
+  // ---- Handle app shell assets (cache first) ----
+  event.respondWith(handleAppShellRequest(request));
 });
 
 // ==========================================
@@ -97,29 +101,25 @@ self.addEventListener('fetch', (event) => {
 // ==========================================
 async function handleAppShellRequest(request) {
   const cachedResponse = await caches.match(request);
-
   if (cachedResponse) {
     return cachedResponse;
   }
 
-  // If not in cache, try network
+  // Not in cache – try network
   try {
     const networkResponse = await fetch(request);
-
-    // Cache the new response
+    // Cache only if successful and same origin (already ensured)
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_NAME);
       cache.put(request, networkResponse.clone());
     }
-
     return networkResponse;
   } catch (error) {
-    // Return offline fallback for HTML pages
+    // Offline fallback for HTML pages
     if (request.headers.get('accept')?.includes('text/html')) {
       return caches.match('/index.html');
     }
-
-    // Return error for other requests
+    // For other assets, return a minimal error
     return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
   }
 }
@@ -130,20 +130,18 @@ async function handleAppShellRequest(request) {
 async function handleApiRequest(request) {
   try {
     const networkResponse = await fetch(request);
+    // Optionally cache API responses for offline use
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
     return networkResponse;
   } catch (error) {
-    // Network failed, try to return cached data for roster endpoint
-    const requestUrl = new URL(request.url);
-
-    if (requestUrl.pathname === '/api/roster') {
-      // Return cached roster if available
-      const cachedRoster = await caches.match('/api/roster');
-      if (cachedRoster) {
-        return cachedRoster;
-      }
+    // Network failed – try cache
+    const cachedResponse = await caches.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
     }
-
-    // No cache available, return error
     return new Response(
       JSON.stringify({ error: 'Offline and no cached data available' }),
       { status: 503, headers: { 'Content-Type': 'application/json' } }
@@ -152,7 +150,7 @@ async function handleApiRequest(request) {
 }
 
 // ==========================================
-// Push Notifications (Placeholder for future use)
+// Push Notifications (Placeholder)
 // ==========================================
 self.addEventListener('push', (event) => {
   if (event.data) {
@@ -162,7 +160,7 @@ self.addEventListener('push', (event) => {
 });
 
 // ==========================================
-// Background Sync (Placeholder for future use)
+// Background Sync (Placeholder)
 // ==========================================
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-attendance') {

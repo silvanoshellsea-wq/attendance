@@ -36,6 +36,7 @@
           fontFamily: {
             "headline-lg": ["Archivo Narrow"],
             "headline-md": ["Archivo Narrow"],
+            "headline-xl": ["Archivo Narrow"],
             "body-md": ["Inter"],
             "label-bold": ["Inter"],
             "mono-label": ["Space Mono"]
@@ -71,6 +72,14 @@
         <p class="font-mono-label text-xs uppercase text-on-surface-variant">PENDING</p>
         <p id="pendingCount" class="font-headline-xl">0</p>
       </div>
+    </div>
+
+    <!-- Filter: Section Dropdown -->
+    <div class="flex items-center gap-4 mb-4">
+      <label for="sectionFilter" class="font-mono-label uppercase text-primary">Filter by Section:</label>
+      <select id="sectionFilter" class="border-4 border-primary bg-surface px-4 py-2 font-mono-label text-primary focus:outline-none">
+        <option value="ALL">All Sections</option>
+      </select>
     </div>
 
     <!-- Sync Button -->
@@ -111,7 +120,7 @@
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
   <script src="app.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {   // ← FIX: added 'async'
       if (!window.App.requireLogin()) return;
 
       var today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -123,44 +132,110 @@
       var recordsList = document.getElementById('recordsList');
       var syncBtn = document.getElementById('syncBtn');
       var syncStatus = document.getElementById('syncStatus');
+      var sectionFilter = document.getElementById('sectionFilter');
 
-      async function loadRecords() {
-        var allRecords = await window.App.db.outbox.toArray();
-        var pendingRecords = await window.App.getPendingRecordsWithNames();
-
-        totalScanned.textContent = allRecords.length;
-        pendingCount.textContent = pendingRecords.length;
-
-        if (allRecords.length === 0) {
-          recordsList.innerHTML = '<div class="text-center text-on-surface-variant py-8">No records to display</div>';
-        } else {
-          var recordsWithNames = [];
-          for (var i = 0; i < allRecords.length; i++) {
-            var r = allRecords[i];
-            var student = await window.App.getStudentById(r.studentId);
-            recordsWithNames.push({
-              studentName: student ? student.name : r.studentId,
-              studentSection: student ? student.section : 'Unknown',
-              timestamp: r.timestamp,
-              synced: r.synced
-            });
-          }
-
-          recordsWithNames.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-          recordsList.innerHTML = recordsWithNames.map(function(r) {
-            var statusBadge = r.synced
-              ? '<span class="bg-green-100 text-green-800 px-2 py-1 text-xs uppercase">Synced</span>'
-              : '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs uppercase">Pending</span>';
-            var time = new Date(r.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-            return '<div class="flex justify-between items-center py-3 border-b border-gray-200"><div><p class="font-bold uppercase">' + r.studentName + '</p><p class="text-xs text-on-surface-variant">' + r.studentSection + ' • ' + time + '</p></div>' + statusBadge + '</div>';
-          }).join('');
-        }
-
-        syncBtn.disabled = pendingRecords.length === 0;
-        syncBtn.textContent = pendingRecords.length > 0 ? 'UPLOAD ' + pendingRecords.length + ' RECORDS' : 'NO RECORDS';
+      // Populate section dropdown
+      async function populateSectionFilter() {
+        var students = await window.App.getAllStudents();
+        var sections = new Set();
+        students.forEach(s => sections.add(s.section));
+        var currentFilter = sectionFilter.value;
+        sectionFilter.innerHTML = '<option value="ALL">All Sections</option>';
+        sections.forEach(sec => {
+          var opt = document.createElement('option');
+          opt.value = sec;
+          opt.textContent = sec;
+          if (sec === currentFilter) opt.selected = true;
+          sectionFilter.appendChild(opt);
+        });
       }
 
+      // Load records with optional section filter
+      async function loadRecords() {
+        var allRecords = await window.App.db.outbox.toArray();
+        var selectedSection = sectionFilter.value;
+
+        // Filter by section if not "ALL"
+        var filteredRecords = allRecords;
+        if (selectedSection !== 'ALL') {
+          var students = await window.App.getAllStudents();
+          var studentMap = {};
+          students.forEach(s => studentMap[s.id] = s);
+          filteredRecords = allRecords.filter(r => {
+            var student = studentMap[r.studentId];
+            return student && student.section === selectedSection;
+          });
+        }
+
+        totalScanned.textContent = allRecords.length;
+
+        var pendingRecords = allRecords.filter(r => !r.synced);
+        pendingCount.textContent = pendingRecords.length;
+
+        if (filteredRecords.length === 0) {
+          recordsList.innerHTML = '<div class="text-center text-on-surface-variant py-8">No records to display</div>';
+          return;
+        }
+
+        // Group by studentId and date (YYYY-MM-DD)
+        var groups = {};
+        filteredRecords.forEach(record => {
+          var date = new Date(record.timestamp).toISOString().split('T')[0];
+          var key = record.studentId + '|' + date;
+          if (!groups[key]) {
+            groups[key] = { studentId: record.studentId, date: date, times: [] };
+          }
+          groups[key].times.push(record.timestamp);
+        });
+
+        var groupArray = Object.values(groups);
+        groupArray.sort((a, b) => {
+          if (a.date !== b.date) return b.date.localeCompare(a.date);
+          return a.studentName?.localeCompare(b.studentName) || 0;
+        });
+
+        var html = '';
+        for (var g of groupArray) {
+          var student = await window.App.getStudentById(g.studentId);
+          var studentName = student ? student.name : g.studentId;
+          var section = student ? student.section : 'Unknown';
+          g.studentName = studentName;
+          g.section = section;
+
+          g.times.sort();
+          var timeIn = g.times[0] || null;
+          var timeOut = g.times[1] || null;
+          var timeInDisplay = timeIn ? new Date(timeIn).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
+          var timeOutDisplay = timeOut ? new Date(timeOut).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
+
+          var hasPending = g.times.some(t => {
+            var rec = filteredRecords.find(r => r.timestamp === t && !r.synced);
+            return rec !== undefined;
+          });
+          var statusBadge = hasPending
+            ? '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs uppercase">Pending</span>'
+            : '<span class="bg-green-100 text-green-800 px-2 py-1 text-xs uppercase">Synced</span>';
+
+          html += `<div class="flex justify-between items-center py-3 border-b border-gray-200">
+            <div>
+              <p class="font-bold uppercase">${studentName}</p>
+              <p class="text-xs text-on-surface-variant">${section} • ${g.date}</p>
+              <div class="flex gap-4 mt-1 text-sm">
+                <span>⏰ In: ${timeInDisplay}</span>
+                <span>⏰ Out: ${timeOutDisplay}</span>
+              </div>
+            </div>
+            ${statusBadge}
+          </div>`;
+        }
+
+        recordsList.innerHTML = html;
+
+        syncBtn.disabled = pendingRecords.length === 0;
+        syncBtn.textContent = pendingRecords.length > 0 ? 'UPLOAD ' + pendingRecords.length + ' RECORDS' : 'NO PENDING RECORDS';
+      }
+
+      // Sync button click
       syncBtn.addEventListener('click', async function() {
         var count = await window.App.getPendingCount();
         if (count === 0) return;
@@ -196,7 +271,10 @@
       }
 
       document.getElementById('refreshBtn').addEventListener('click', loadRecords);
-      loadRecords();
+      sectionFilter.addEventListener('change', loadRecords);
+
+      await populateSectionFilter();
+      await loadRecords();
     });
 
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

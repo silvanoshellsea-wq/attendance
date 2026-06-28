@@ -557,20 +557,6 @@ async function debugGetAllStudents() {
 async function recordAttendance(studentId, officerCode) {
   const timestamp = new Date().toISOString();
 
-  // Check if already checked in today
-  const today = new Date().toDateString();
-  const existingRecords = await db.outbox
-    .where('studentId')
-    .equals(studentId)
-    .toArray();
-
-  const alreadyCheckedIn = existingRecords.some(record => {
-    return new Date(record.timestamp).toDateString() === today;
-  });
-
-  if (alreadyCheckedIn) {
-    return { success: false, reason: 'duplicate', message: 'Already checked in' };
-  }
 
   // Record the attendance
   const student = await getStudentById(studentId);
@@ -580,7 +566,7 @@ async function recordAttendance(studentId, officerCode) {
     studentSection: student ? student.section : '',
     officerCode,
     timestamp,
-    synced: false
+    synced: false   // boolean – safe, but we avoid .equals(false) queries later
   };
 
   await db.outbox.add(record);
@@ -590,10 +576,18 @@ async function recordAttendance(studentId, officerCode) {
 
 /**
  * Get pending (unsynced) attendance records
+ * SAFE VERSION: fetches all and filters in JavaScript to avoid IndexedDB key errors
  * @returns {Promise<Array>}
  */
 async function getPendingRecords() {
-  return await db.outbox.where('synced').equals(false).toArray();
+  try {
+    const all = await db.outbox.toArray();
+    // Treat synced: false, undefined, null, 0 as pending
+    return all.filter(record => !record.synced);
+  } catch (error) {
+    console.error('Error fetching pending records:', error);
+    return [];
+  }
 }
 
 /**
@@ -601,7 +595,8 @@ async function getPendingRecords() {
  * @returns {Promise<number>}
  */
 async function getPendingCount() {
-  return await db.outbox.where('synced').equals(false).count();
+  const pending = await getPendingRecords();
+  return pending.length;
 }
 
 /**
