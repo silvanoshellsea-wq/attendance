@@ -1,959 +1,423 @@
 <!DOCTYPE html>
 <html class="light" lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>OFFICER SCAN · Home</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"
-    onerror="(function(){const l=document.createElement('link');l.rel='stylesheet';l.href='fallback.css';document.head.appendChild(l);console.warn('Using fallback CSS');})()"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&family=Inter:wght@400;700&family=Space+Mono&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet">
+  <title>OFFICER SCAN</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" onerror="(function(){const l=document.createElement('link');l.rel='stylesheet';l.href='fallback.css';document.head.appendChild(l);})()"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&family=Inter:wght@400;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: #f9f9f9;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .neo-shadow {
-      box-shadow: 4px 4px 0 #000;
-    }
-
-    .neo-shadow-sm {
-      box-shadow: 2px 2px 0 #000;
-    }
-
-    .active-press:active {
-      transform: translate(4px, 4px);
-      box-shadow: 0 0 0 #000;
-    }
-
-    .hatch-pattern {
-      background: repeating-linear-gradient(45deg, #000, #000 2px, #fff 2px, #fff 6px);
-    }
-
-    .halftone-bg {
-      background-image: radial-gradient(#000 1px, transparent 0);
-      background-size: 8px 8px;
-      opacity: 0.06;
-    }
-
-    .scan-line {
-      width: 100%;
-      height: 2px;
-      background: #000;
-      position: absolute;
-      animation: scan 3s linear infinite;
-    }
-
-    @keyframes scan {
-      0% {
-        top: 0;
-      }
-
-      100% {
-        top: 100%;
-      }
-    }
-
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: #f9f9f9;
-      border-left: 2px solid #000;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #000;
-    }
-
-    /* Force scanner container to be square */
-    #qr-reader-desktop {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-
-    #qr-reader-desktop video {
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover;
-    }
+    body { background: #f9f9f9; font-family: 'Inter', sans-serif; }
+    .neo-shadow { box-shadow: 4px 4px 0 #000; }
+    .active-press:active { transform: translate(4px, 4px); box-shadow: 0 0 0 #000; }
+    .scan-line { width: 100%; height: 2px; background: #000; position: absolute; animation: scan 3s linear infinite; }
+    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
   </style>
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
-          colors: {
-            primary: "#000000",
-            surface: "#f9f9f9",
-            background: "#f9f9f9",
-            "on-primary": "#ffffff",
-            "on-surface": "#1b1b1b",
-            "on-surface-variant": "#4c4546",
-            secondary: "#5d5f5f",
-            "surface-container": "#e8e8e8",
-            "surface-container-highest": "#e2e2e2",
-            "surface-container-high": "#e8e8e8",
-            "secondary-container": "#dfe0e0"
-          },
-          fontFamily: {
-            "headline-lg": ["Archivo Narrow"],
-            "headline-md": ["Archivo Narrow"],
-            "headline-xl": ["Archivo Narrow"],
-            "body-md": ["Inter"],
-            "label-bold": ["Inter"],
-            "mono-label": ["Space Mono"]
-          }
+          colors: { primary: "#000000", surface: "#f9f9f9", background: "#f9f9f9", "on-primary": "#ffffff", "on-surface": "#1b1b1b", "on-surface-variant": "#4c4546", "surface-container-high": "#e8e8e8" },
+          fontFamily: { "headline-lg": ["Archivo Narrow"], "headline-md": ["Archivo Narrow"], "body-md": ["Inter"], "label-bold": ["Inter"], "mono-label": ["Space Mono"] }
         }
       }
     }
   </script>
 </head>
+<body class="min-h-screen pb-20">
 
-<body class="min-h-screen pb-32">
+<!-- ==================== DESKTOP ==================== -->
+<div class="hidden md:block">
+  <header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-2 bg-background border-b-4 border-primary">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL'1;">security</span>
+      <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">OFFICER SCAN</h1>
+    </div>
+    <nav class="hidden md:flex gap-4">
+      <a class="font-mono-label text-mono-label text-primary uppercase" href="#">System Status: Online</a>
+    </nav>
+  </header>
 
-  <!-- ====== DESKTOP LAYOUT ====== -->
-  <div class="hidden md:block">
-    <header
-      class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-2 bg-background border-b-4 border-primary">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL'1;">security</span>
-        <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">OFFICER SCAN
-        </h1>
+  <main class="mt-24 max-w-7xl mx-auto px-6 space-y-8">
+    <section class="grid md:grid-cols-2 gap-6 items-center border-b-4 border-primary pb-6">
+      <div class="space-y-4">
+        <div class="inline-block bg-primary text-on-primary px-2 py-1 font-mono-label text-mono-label">OPERATIONAL_MODE: ACTIVE</div>
+        <h2 class="font-headline-xl text-headline-xl uppercase tracking-tighter">READY FOR DEPLOYMENT.</h2>
+        <p class="font-body-md text-on-surface-variant max-w-xl">Secure terminal initiated.</p>
+        <button id="launchScannerBtnDesktop" class="bg-primary text-on-primary font-headline-md text-headline-md px-6 py-4 border-4 border-primary neo-shadow active-press flex items-center gap-2 uppercase">
+          <span class="material-symbols-outlined">qr_code_scanner</span> LAUNCH SCANNER
+        </button>
       </div>
-      <nav class="hidden md:flex gap-4">
-        <a class="font-mono-label text-mono-label text-primary uppercase" href="#">System Status: Online</a>
-        <a class="font-mono-label text-mono-label text-primary uppercase" href="#">Encrypted</a>
-      </nav>
-      <div class="flex items-center gap-4">
-        <button class="material-symbols-outlined p-2 hover:bg-surface-container-high">sync</button>
-        <button class="material-symbols-outlined p-2 hover:bg-surface-container-high">settings</button>
-        <button class="material-symbols-outlined p-2 hover:bg-surface-container-high">signal_cellular_alt</button>
-      </div>
-    </header>
-
-    <main class="mt-24 max-w-7xl mx-auto px-6 space-y-8">
-      <!-- Hero -->
-      <section class="grid md:grid-cols-2 gap-6 items-center border-b-4 border-primary pb-6 relative" id="heroSection">
-        <div class="absolute inset-0 halftone-bg -z-10"></div>
-        <div class="space-y-4">
-          <div class="inline-block bg-primary text-on-primary px-2 py-1 font-mono-label text-mono-label">
-            OPERATIONAL_MODE: ACTIVE</div>
-          <h2 class="font-headline-xl text-headline-xl uppercase tracking-tighter">READY FOR DEPLOYMENT.</h2>
-          <p class="font-body-md text-on-surface-variant max-w-xl">Secure terminal initiated. All scanning protocols are
-            calibrated for high-throughput personnel verification.</p>
-          <button id="launchScannerBtnDesktop"
-            class="bg-primary text-on-primary font-headline-md text-headline-md px-6 py-4 border-4 border-primary neo-shadow active-press flex items-center gap-2 uppercase">
-            <span class="material-symbols-outlined">qr_code_scanner</span> LAUNCH SCANNER
-          </button>
+      <div id="desktopScannerPanel" class="relative border-4 border-primary bg-surface w-80 h-80 flex items-center justify-center overflow-hidden neo-shadow">
+        <div class="scan-line"></div>
+        <div class="text-center p-4">
+          <span class="material-symbols-outlined text-[80px] text-primary opacity-20">qr_code_2</span>
+          <p class="font-mono-label text-mono-label mt-4">VISUAL_ARRAY_STANDBY</p>
         </div>
-        <!-- Desktop scanner placeholder – square -->
-        <div id="desktopScannerPanel"
-          class="relative border-4 border-primary bg-surface w-80 h-80 flex items-center justify-center overflow-hidden neo-shadow">
-          <div class="scan-line"></div>
-          <div class="text-center p-4">
-            <span class="material-symbols-outlined text-[80px] text-primary opacity-20">qr_code_2</span>
-            <p class="font-mono-label text-mono-label mt-4">VISUAL_ARRAY_STANDBY</p>
-          </div>
-          <div id="scan-result-desktop"
-            class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-4"></div>
+        <div id="scan-result-desktop" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-4"></div>
+      </div>
+    </section>
+
+    <section class="bg-surface border-4 border-primary neo-shadow p-6">
+      <h3 class="font-headline-lg text-headline-lg uppercase text-primary mb-4">MANUAL ENTRY</h3>
+      <form id="manualEntryFormDesktop" class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">STUDENT NAME</label>
+          <input type="text" id="manualNameDesktop" placeholder="Full Name" class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
+        </div>
+        <div>
+          <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SECTION</label>
+          <input type="text" id="manualSectionDesktop" placeholder="e.g., 7-A" class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
+        </div>
+        <div>
+          <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SCHOOL ID</label>
+          <input type="text" id="manualSchoolIdDesktop" placeholder="School ID" class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
+        </div>
+        <button type="submit" class="col-span-3 bg-primary text-on-primary py-3 px-6 border-4 border-primary neo-shadow active-press font-label-bold text-label-bold uppercase flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined">person_add</span> ADD STUDENT
+        </button>
+      </form>
+    </section>
+
+    <section class="grid md:grid-cols-2 gap-4">
+      <div class="border-4 border-primary bg-surface flex flex-col h-64 neo-shadow">
+        <div class="bg-primary text-on-primary px-4 py-1 font-mono-label flex justify-between">
+          <span>OPERATIONAL LOG</span>
+          <span>LIVE_FEED</span>
+        </div>
+        <div id="log-feed" class="flex-1 overflow-y-auto p-4 font-mono-label text-mono-label space-y-2"></div>
+      </div>
+      <div class="border-4 border-primary bg-surface p-4 neo-shadow flex flex-col justify-between">
+        <h4 class="font-headline-md text-headline-md uppercase border-b-4 border-primary mb-4 pb-1">DAILY QUOTA</h4>
+        <div class="flex items-baseline gap-2">
+          <span class="font-headline-xl text-[84px] leading-none">84%</span>
+          <span class="font-mono-label text-mono-label uppercase">of operational goal met</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Desktop Bottom Nav -->
+  <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-16 bg-background border-t-4 border-primary">
+    <a class="flex flex-col items-center justify-center bg-primary text-on-primary h-full px-6" href="scanner.html">
+      <span class="material-symbols-outlined">qr_code_scanner</span>
+      <span class="font-mono-label text-mono-label uppercase mt-1">SCANNER</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="records.html">
+      <span class="material-symbols-outlined">database</span>
+      <span class="font-mono-label text-mono-label uppercase mt-1">RECORDS</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="#">
+      <span class="material-symbols-outlined">account_circle</span>
+      <span class="font-mono-label text-mono-label uppercase mt-1">PROFILE</span>
+    </a>
+  </nav>
+</div>
+
+<!-- ==================== MOBILE ==================== -->
+<div class="block md:hidden">
+  <header class="w-full top-0 sticky bg-surface border-b-4 border-primary flex justify-between items-center px-6 h-20 z-50">
+    <div class="flex items-center gap-4">
+      <span class="material-symbols-outlined text-primary" style="font-size:32px;">signal_cellular_alt</span>
+      <h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary uppercase">OFFICER SCAN</h1>
+    </div>
+  </header>
+
+  <main class="px-4 py-4 pb-24">
+    <!-- Mobile Tabs -->
+    <div class="flex gap-2 mb-4 border-b-4 border-primary sticky top-20 z-40 bg-surface">
+      <button class="mobile-tab active flex-1 py-3 px-4 bg-primary text-on-primary font-label-bold uppercase border-b-4 border-primary" data-tab="scanner">SCANNER</button>
+      <button class="mobile-tab flex-1 py-3 px-4 bg-surface text-primary font-label-bold uppercase border-primary" data-tab="records">RECORDS</button>
+    </div>
+
+    <!-- SCANNER TAB -->
+    <div id="scanner-tab" class="mobile-tab-content space-y-4">
+      <section class="bg-surface border-4 border-primary neo-shadow p-4 mt-4">
+        <div class="flex justify-between items-start">
+          <h2 class="font-headline-xl text-headline-xl uppercase text-primary">READY FOR DEPLOYMENT</h2>
+          <div class="bg-primary text-on-primary px-3 py-1 font-mono-label text-xs">V.04.22</div>
         </div>
       </section>
 
-      <!-- Manual Entry Form (Desktop) -->
-      <section class="bg-surface border-4 border-primary neo-shadow p-6">
-        <h3 class="font-headline-lg text-headline-lg uppercase text-primary mb-4">MANUAL ENTRY</h3>
-        <form id="manualEntryForm" class="grid grid-cols-3 gap-4">
-          <div>
-            <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">STUDENT NAME</label>
-            <input type="text" id="manualName" placeholder="Full Name"
-              class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
-          </div>
-          <div>
-            <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SECTION</label>
-            <input type="text" id="manualSection" placeholder="e.g., 7-A"
-              class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
-          </div>
-          <div>
-            <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SCHOOL ID</label>
-            <input type="text" id="manualSchoolId" placeholder="School ID"
-              class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
-          </div>
-          <button type="submit"
-            class="col-span-3 bg-primary text-on-primary py-3 px-6 border-4 border-primary neo-shadow active-press font-label-bold text-label-bold uppercase flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined">person_add</span> ADD STUDENT
-          </button>
+      <!-- Mobile Scanner -->
+      <section class="bg-surface border-4 border-primary neo-shadow p-4">
+        <h3 class="font-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
+        <div id="qr-reader-mobile" class="relative border-4 border-primary bg-black h-72 w-72 mx-auto flex items-center justify-center overflow-hidden">
+          <span class="text-white text-sm">Starting camera...</span>
+        </div>
+      </section>
+
+      <!-- Manual Entry -->
+      <section class="bg-surface border-4 border-primary neo-shadow p-4">
+        <h3 class="font-headline-md uppercase text-primary mb-4">MANUAL ENTRY</h3>
+        <form id="manualEntryForm" class="space-y-3">
+          <input type="text" id="manualName" placeholder="Full Name" class="w-full h-10 border-4 border-primary px-2" required />
+          <input type="text" id="manualSection" placeholder="Section" class="w-full h-10 border-4 border-primary px-2" required />
+          <input type="text" id="manualSchoolId" placeholder="School ID" class="w-full h-10 border-4 border-primary px-2" required />
+          <button type="submit" class="w-full bg-primary text-on-primary py-3 border-4 border-primary neo-shadow active-press font-bold uppercase">ADD STUDENT</button>
         </form>
       </section>
-
-      <!-- Roster and other sections unchanged ... -->
-      <!-- (keep the rest of your desktop layout as is) -->
-      <section class="space-y-4">
-        <div class="flex justify-between items-end border-b-4 border-primary pb-2">
-          <h3 class="font-headline-lg text-headline-lg uppercase">ROSTER DEPLOYMENT</h3>
-          <span class="font-mono-label text-mono-label">SELECT BATCH TO UPLOAD</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- four year cards – copy from your original, unchanged -->
-          <div
-            class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
-            <span class="material-symbols-outlined text-4xl">description</span>
-            <h4 class="font-headline-md text-headline-md">1ST YEAR</h4>
-            <p class="font-mono-label text-mono-label text-on-surface-variant">CADET_LEVEL_ALPHA</p>
-            <div class="w-full h-1 bg-primary"></div>
-            <button
-              class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT
-              EXCEL</button>
-          </div>
-          <div
-            class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
-            <span class="material-symbols-outlined text-4xl">description</span>
-            <h4 class="font-headline-md text-headline-md">2ND YEAR</h4>
-            <p class="font-mono-label text-mono-label text-on-surface-variant">CADET_LEVEL_BETA</p>
-            <div class="w-full h-1 bg-primary"></div>
-            <button
-              class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT
-              EXCEL</button>
-          </div>
-          <div
-            class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
-            <span class="material-symbols-outlined text-4xl">description</span>
-            <h4 class="font-headline-md text-headline-md">3RD YEAR</h4>
-            <p class="font-mono-label text-mono-label text-on-surface-variant">CADET_LEVEL_GAMMA</p>
-            <div class="w-full h-1 bg-primary"></div>
-            <button
-              class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT
-              EXCEL</button>
-          </div>
-          <div
-            class="bg-surface border-4 border-primary p-4 neo-shadow flex flex-col items-center text-center space-y-2 hover:bg-surface-container">
-            <span class="material-symbols-outlined text-4xl">description</span>
-            <h4 class="font-headline-md text-headline-md">4TH YEAR</h4>
-            <p class="font-mono-label text-mono-label text-on-surface-variant">OFFICER_CANDIDATE</p>
-            <div class="w-full h-1 bg-primary"></div>
-            <button
-              class="w-full bg-white text-primary border-4 border-primary py-2 font-label-bold text-label-bold uppercase active-press">SELECT
-              EXCEL</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Bottom: Log & Quota (unchanged) -->
-      <section class="grid md:grid-cols-2 gap-4">
-        <div class="border-4 border-primary bg-surface flex flex-col h-64 neo-shadow">
-          <div class="bg-primary text-on-primary px-4 py-1 font-mono-label flex justify-between">
-            <span>OPERATIONAL LOG</span>
-            <span>LIVE_FEED</span>
-          </div>
-          <div class="flex-1 overflow-y-auto p-4 font-mono-label text-mono-label custom-scrollbar space-y-2"
-            id="log-feed">
-            <!-- log entries -->
-          </div>
-        </div>
-        <div class="border-4 border-primary bg-surface p-4 neo-shadow flex flex-col justify-between">
-          <div>
-            <h4 class="font-headline-md text-headline-md uppercase border-b-4 border-primary mb-4 pb-1">DAILY QUOTA</h4>
-            <div class="flex items-baseline gap-2">
-              <span class="font-headline-xl text-[84px] leading-none">84%</span>
-              <span class="font-mono-label text-mono-label uppercase">of operational goal met</span>
-            </div>
-          </div>
-          <div class="space-y-2 mt-4">
-            <div class="flex justify-between font-mono-label">
-              <span>CAPACITY_REACHED</span>
-              <span>4,200 / 5,000</span>
-            </div>
-            <div class="w-full h-12 border-4 border-primary bg-white relative overflow-hidden">
-              <div class="h-full hatch-pattern" style="width:84%"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Bottom Nav -->
-    <nav
-      class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-16 bg-background border-t-4 border-primary">
-      <a class="flex flex-col items-center justify-center bg-primary text-on-primary h-full px-6" href="scanner.html">
-        <span class="material-symbols-outlined">qr_code_scanner</span>
-        <span class="font-mono-label text-mono-label uppercase mt-1">SCANNER</span>
-      </a>
-      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6"
-        href="records.html">
-        <span class="material-symbols-outlined">database</span>
-        <span class="font-mono-label text-mono-label uppercase mt-1">RECORDS</span>
-      </a>
-      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6"
-        href="#">
-        <span class="material-symbols-outlined">account_circle</span>
-        <span class="font-mono-label text-mono-label uppercase mt-1">PROFILE</span>
-      </a>
-    </nav>
-
-    <footer
-      class="w-full py-6 px-4 flex flex-col md:flex-row justify-between items-center gap-2 border-t-4 border-primary bg-surface-container-highest mt-12">
-      <div class="font-mono-label text-mono-label font-bold uppercase tracking-widest">©2024 OFFICER SCAN - SECURE
-        TERMINAL v4.1</div>
-      <div class="flex gap-4">
-        <a class="font-mono-label hover:text-primary underline uppercase" href="#">SYSTEM STATUS</a>
-        <a class="font-mono-label hover:text-primary underline uppercase" href="#">ENCRYPTION KEYS</a>
-        <a class="font-mono-label hover:text-primary underline uppercase" href="#">PRIVACY PROTOCOL</a>
-      </div>
-    </footer>
-  </div>
-
-  <!-- ====== MOBILE LAYOUT ====== -->
-  <div class="block md:hidden">
-    <header
-      class="w-full top-0 sticky bg-surface border-b-4 border-primary flex justify-between items-center px-6 h-20 z-50">
-      <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined text-primary" style="font-size:32px;">signal_cellular_alt</span>
-        <h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary uppercase">OFFICER SCAN
-        </h1>
-      </div>
-      <button class="material-symbols-outlined text-primary">settings_remote</button>
-    </header>
-
-    <main class="px-4 py-4 pb-24">
-      <div class="absolute inset-0 halftone-bg -z-10 pointer-events-none"></div>
-
-      <!-- Mobile Tabs -->
-      <div class="flex gap-2 mb-4 border-b-4 border-primary sticky top-20 z-40 bg-surface">
-        <button
-          class="mobile-tab active flex-1 py-3 px-4 bg-primary text-on-primary font-label-bold text-label-bold uppercase border-b-4 border-primary"
-          data-tab="scanner">
-          SCANNER
-        </button>
-        <button
-          class="mobile-tab flex-1 py-3 px-4 bg-surface text-primary font-label-bold text-label-bold uppercase border-primary hover:bg-surface-container"
-          data-tab="records">
-          RECORDS
-        </button>
-      </div>
-
-      <!-- SCANNER TAB -->
-      <div id="scanner-tab" class="mobile-tab-content space-y-4">
-        <section class="bg-surface border-4 border-primary neo-shadow p-4 mt-4" id="mobileHeroSection">
-          <div class="flex justify-between items-start mb-4">
-            <h2 class="font-headline-xl text-headline-xl uppercase text-primary leading-tight">READY FOR<br>DEPLOYMENT
-            </h2>
-            <div class="bg-primary text-on-primary px-3 py-1 font-mono-label border-2 border-primary">V.04.22</div>
-          </div>
-        </section>
-
-        <!-- Mobile Scanner (always visible) -->
-        <section class="bg-surface border-4 border-primary neo-shadow p-4">
-          <h3 class="font-headline-md text-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
-          <div class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
-            <div class="text-on-primary text-center">Starting camera...</div>
-          </div>
-        </section>
-        <div id="scan-result-mobile" class="hidden fixed inset-0 flex items-center justify-center z-50" style="background:rgba(0,0,0,0.5);"></div>
-
-        <!-- Manual Entry Form -->
-        <section class="bg-surface border-4 border-primary neo-shadow p-4">
-          <h3 class="font-headline-md text-headline-md uppercase text-primary mb-4">MANUAL ENTRY</h3>
-          <form id="manualEntryForm" class="space-y-3">
-            <div>
-              <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">STUDENT NAME</label>
-              <input type="text" id="manualName" placeholder="Full Name"
-                class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
-            </div>
-            <div>
-              <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SECTION</label>
-              <input type="text" id="manualSection" placeholder="e.g., 7-A"
-                class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
-            </div>
-            <div>
-              <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SCHOOL ID</label>
-              <input type="text" id="manualSchoolId" placeholder="School ID"
-                class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
-            </div>
-            <button type="submit"
-              class="w-full bg-primary text-on-primary py-3 px-4 border-4 border-primary neo-shadow active-press font-label-bold uppercase">
-              <span class="material-symbols-outlined" style="vertical-align:middle;">person_add</span> ADD STUDENT
-            </button>
-          </form>
-        </section>
-      </div>
-
-      <!-- RECORDS TAB -->
-      <div id="records-tab" class="mobile-tab-content hidden space-y-4">
-        <!-- Stats -->
-        <div class="grid grid-cols-2 gap-3 mb-4">
-          <div class="border-4 border-primary bg-surface p-3 text-center">
-            <p class="font-mono-label text-xs uppercase text-on-surface-variant">TOTAL SCANNED</p>
-            <p id="mobileTotalScanned" class="font-headline-lg">0</p>
-          </div>
-          <div class="border-4 border-primary bg-surface p-3 text-center">
-            <p class="font-mono-label text-xs uppercase text-on-surface-variant">PENDING</p>
-            <p id="mobilePendingCount" class="font-headline-lg">0</p>
-          </div>
-        </div>
-
-        <!-- Section Filter -->
-        <div class="mb-3">
-          <label for="sectionFilterMobileScanner"
-            class="font-mono-label uppercase text-primary text-xs block mb-2">Filter by Section:</label>
-          <select id="sectionFilterMobileScanner"
-            class="w-full border-4 border-primary bg-surface px-3 py-2 font-mono-label text-primary focus:outline-none">
-            <option value="ALL">All Sections</option>
-          </select>
-        </div>
-
-        <!-- Upload & Reset Buttons -->
-        <div class="flex gap-2 mb-3">
-          <button id="syncBtnMobileScanner"
-            class="flex-1 bg-primary text-on-primary py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-primary neo-shadow active-press">
-            UPLOAD RECORDS
-          </button>
-          <button id="resetRecordsBtn"
-            class="flex-1 bg-red-600 text-white py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-red-600 neo-shadow active-press">
-            RESET
-          </button>
-        </div>
-
-        <!-- Records List -->
-        <div class="bg-surface border-4 border-primary">
-          <div class="bg-primary text-on-primary px-3 py-2 font-mono-label text-xs flex justify-between">
-            <span>RECORDS</span>
-            <span id="mobileCurrentDate">TODAY</span>
-          </div>
-          <div id="mobileRecordsList"
-            class="divide-y-2 divide-primary max-h-96 overflow-y-auto p-3 font-mono-label text-xs">
-            <div class="text-center text-on-surface-variant py-8">No records to display</div>
-          </div>
-        </div>
-      </div>
-    </main>
-
-    <nav class="fixed bottom-0 w-full z-50 h-16 bg-surface border-t-4 border-primary flex justify-around items-stretch">
-      <a class="flex flex-col items-center justify-center bg-primary text-on-primary h-full px-6" href="#">
-        <span class="material-symbols-outlined">qr_code_scanner</span>
-        <span class="font-mono-label uppercase mt-1 text-xs">SCANNER</span>
-      </a>
-      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6"
-        href="records.html">
-        <span class="material-symbols-outlined">database</span>
-        <span class="font-mono-label uppercase mt-1 text-xs">RECORDS</span>
-      </a>
-      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6"
-        href="#">
-        <span class="material-symbols-outlined">account_circle</span>
-        <span class="font-mono-label uppercase mt-1 text-xs">PROFILE</span>
-      </a>
-    </nav>
-  </div>
-
-  <!-- ====== SCRIPTS ====== -->
-  <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="app.js"></script>
-  <script>
-    // Wait for libraries to load
-    setTimeout(() => {
-      initScanner();
-    }, 500);
-
-    function initScanner() {
-      if (!window.App || !window.App.requireLogin()) return;
-
-      var officer = window.App.getOfficerInfo();
-      if (!officer) {
-        window.location.href = 'index.html';
-        return;
-      }
-
-      // Shared scanner state
-      var html5QrCode = null;
-      var isScanning = false;
-
-      // --- Mobile scanner creation ---
-      var scannerSection = null;
-      function createMobileScannerSection() {
-        if (scannerSection) return scannerSection;
-        scannerSection = document.createElement('div');
-        scannerSection.id = 'mobileScannerActive';
-        scannerSection.className = 'bg-surface border-4 border-primary neo-shadow p-4 mt-4';
-        scannerSection.innerHTML = `
-    <div class="relative border-4 border-primary bg-black h-72 w-72 flex items-center justify-center overflow-hidden mx-auto" id="qr-reader-mobile-wrapper">
-      <!-- This div will be taken over by the scanner library -->
-      <div id="qr-reader-mobile" class="w-full h-full"></div>
-      <!-- Overlay sits outside the scanner div, but is absolutely positioned over the wrapper -->
-      <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50 pointer-events-none"></div>
     </div>
-  `;
-        return scannerSection;
-      }
 
-      // --- Shared QR processing ---
-      var lastScannedId = null;
-      var scanCooldown = false;
+    <!-- RECORDS TAB -->
+    <div id="records-tab" class="mobile-tab-content hidden space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="border-4 border-primary bg-surface p-3 text-center">
+          <p class="font-mono-label text-xs uppercase">TOTAL SCANNED</p>
+          <p id="mobileTotalScanned" class="font-headline-lg">0</p>
+        </div>
+        <div class="border-4 border-primary bg-surface p-3 text-center">
+          <p class="font-mono-label text-xs uppercase">PENDING</p>
+          <p id="mobilePendingCount" class="font-headline-lg">0</p>
+        </div>
+      </div>
+      <select id="sectionFilterMobileScanner" class="w-full border-4 border-primary bg-surface px-3 py-2 font-mono-label">
+        <option value="ALL">All Sections</option>
+      </select>
+      <div class="flex gap-2">
+        <button id="syncBtnMobileScanner" class="flex-1 bg-primary text-on-primary py-3 font-bold uppercase border-4 border-primary neo-shadow">UPLOAD</button>
+        <button id="resetRecordsBtn" class="flex-1 bg-red-600 text-white py-3 font-bold uppercase border-4 border-red-600 neo-shadow">RESET</button>
+      </div>
+      <div class="bg-surface border-4 border-primary">
+        <div class="bg-primary text-on-primary px-3 py-2 font-mono-label text-xs flex justify-between">
+          <span>RECORDS</span>
+          <span id="mobileCurrentDate">TODAY</span>
+        </div>
+        <div id="mobileRecordsList" class="divide-y-2 divide-primary max-h-80 overflow-y-auto p-3 font-mono-label text-xs">
+          <div class="text-center text-on-surface-variant py-8">No records</div>
+        </div>
+      </div>
+    </div>
+  </main>
 
-      function onScanSuccess(text) {
-        // Skip if in cooldown (prevents rapid duplicate scans)
-        if (scanCooldown) return;
+  <!-- Mobile Bottom Nav -->
+  <nav class="fixed bottom-0 w-full z-50 h-16 bg-surface border-t-4 border-primary flex justify-around">
+    <a class="flex flex-col items-center justify-center bg-primary text-on-primary h-full px-6" href="#">
+      <span class="material-symbols-outlined">qr_code_scanner</span>
+      <span class="font-mono-label uppercase mt-1 text-xs">SCANNER</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface h-full px-6" href="records.html">
+      <span class="material-symbols-outlined">database</span>
+      <span class="font-mono-label uppercase mt-1 text-xs">RECORDS</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-on-surface h-full px-6" href="#">
+      <span class="material-symbols-outlined">account_circle</span>
+      <span class="font-mono-label uppercase mt-1 text-xs">PROFILE</span>
+    </a>
+  </nav>
+</div>
 
-        var studentId = text.trim().toUpperCase();
+<!-- Mobile Overlay (outside both tabs) -->
+<div id="mobile-overlay" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/70">
+  <div id="mobile-overlay-content" class="bg-white border-4 border-black p-6 text-center max-w-sm mx-4">
+    <span id="overlay-icon" class="material-symbols-outlined text-6xl"></span>
+    <p id="overlay-message" class="font-bold text-lg mt-2 uppercase"></p>
+  </div>
+</div>
 
-        // Skip if same ID scanned consecutively
-        if (studentId === lastScannedId) return;
+<script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="app.js"></script>
+<script>
+setTimeout(function() { initScanner(); }, 500);
 
-        // Determine which result element to use
-        var resultEl = document.getElementById('scan-result-desktop') || document.getElementById('scan-result-mobile');
-        if (!resultEl) return;
+function initScanner() {
+  if (!window.App || !window.App.requireLogin()) return;
+  var officer = window.App.getOfficerInfo();
+  if (!officer) { window.location.href = 'index.html'; return; }
 
-        // Set cooldown to prevent duplicate scans
-        lastScannedId = studentId;
-        scanCooldown = true;
-        setTimeout(function () {
-          lastScannedId = null;
-          scanCooldown = false;
-        }, 3000);
+  var html5QrCode = null;
+  var isScanning = false;
+  var lastScannedId = null;
+  var scanCooldown = false;
 
-        processScan(studentId, resultEl);
-      }
+  // ==================== MOBILE ====================
+  function startScannerMobile() {
+    var readerEl = document.getElementById('qr-reader-mobile');
+    if (!readerEl || isScanning) return;
 
-      function onScanFailure(err) { /* silent */ }
+    try {
+      html5QrCode = new Html5Qrcode('qr-reader-mobile');
+      html5QrCode.start(
+        { facingMode: 'environment' },
+        { fps: 20, qrbox: { width: 200, height: 200 } },
+        onScanSuccess,
+        function(err) {}
+      ).then(function() {
+        isScanning = true;
+        readerEl.innerHTML = '';
+      }).catch(function(err) {
+        readerEl.innerHTML = '<span class="text-red-500">Camera error</span>';
+      });
+    } catch(err) {
+      console.error(err);
+    }
+  }
 
-      async function processScan(studentId, resultEl) {
-        var student = await window.App.getStudentById(studentId);
+  // ==================== DESKTOP ====================
+  function startScannerDesktop() {
+    var panel = document.getElementById('desktopScannerPanel');
+    if (!panel || isScanning) return;
 
-        if (!student) {
-          showResult(resultEl, 'error', 'NOT IN ROSTER', '');
-          return;
-        }
+    panel.innerHTML = '<div id="qr-reader-desktop" class="w-full h-full relative"></div><div id="scan-result-desktop" class="hidden absolute inset-0 bg-white/90 flex items-center justify-center"></div>';
 
-        // Check if student already has a record for today
-        var today = new Date().toISOString().split('T')[0];
-        var allRecords = await window.App.getAllAttendanceRecords();
-        var todayRecords = allRecords.filter(function (r) {
-          return r.studentId === studentId && r.timestamp.startsWith(today);
-        });
-
-        // Determine IN or OUT based on whether there's already a record today
-        var isIn = todayRecords.length === 0;
-        var status = isIn ? 'IN' : 'OUT';
-
-        // Record the attendance
-        var result = await window.App.recordAttendance(studentId, officer.code);
-
-        if (result.success) {
-          showResult(resultEl, 'success', student.name, student.section, status);
-        } else {
-          showResult(resultEl, 'error', 'SCAN FAILED', '');
-        }
-      }
-
-      function showResult(resultEl, type, name, section, status) {
-        if (!resultEl) return;
-
-        // Vibration
-        if (navigator.vibrate) navigator.vibrate(100);
-
-        // Build message
-        var msg = type === 'error' ? 'NOT IN ROSTER' : name + ', ' + section + ' - ' + status;
-        var color = type === 'error' ? 'text-red-600' : 'text-green-600';
-        var icon = type === 'error' ? 'cancel' : 'check_circle';
-
-        resultEl.innerHTML = '<div class="bg-white border-4 border-black p-4 text-center"><span class="material-symbols-outlined text-5xl ' + color + '">' + icon + '</span><p class="font-bold mt-2 ' + color + ' uppercase">' + msg + '</p></div>';
-
-        // Full screen overlay
-        resultEl.style.cssText = 'display:flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);';
-        resultEl.classList.remove('hidden');
-
-        // Hide after 2.5s
-        clearTimeout(window._resultTimer);
-        window._resultTimer = setTimeout(function () {
-          resultEl.style.display = '';
-          resultEl.style.background = '';
-          resultEl.classList.add('hidden');
-        }, 2500);
-      }
-
-      // --- DESKTOP scanner ---
-      function stopScannerDesktop() {
-        if (html5QrCode && isScanning) {
-          try {
-            html5QrCode.stop();
-            html5QrCode.clear();
-          } catch (e) { /* ignore */ }
-          html5QrCode = null;
-          isScanning = false;
-        } else {
-          html5QrCode = null;
-          isScanning = false;
-        }
-
-        var panel = document.getElementById('desktopScannerPanel');
-        if (panel) {
-          panel.innerHTML = `
-            <div class="scan-line"></div>
-            <div class="text-center p-4">
-              <span class="material-symbols-outlined text-[80px] text-primary opacity-20">qr_code_2</span>
-              <p class="font-mono-label text-mono-label mt-4">VISUAL_ARRAY_STANDBY</p>
-            </div>
-            <div id="scan-result-desktop" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-4"></div>
-          `;
-        }
+    try {
+      html5QrCode = new Html5Qrcode('qr-reader-desktop');
+      html5QrCode.start(
+        { facingMode: 'environment' },
+        { fps: 20, qrbox: { width: 250, height: 250 } },
+        onScanSuccess,
+        function(err) {}
+      ).then(function() {
+        isScanning = true;
         var btn = document.getElementById('launchScannerBtnDesktop');
-        if (btn) btn.innerHTML = '<span class="material-symbols-outlined">qr_code_scanner</span> LAUNCH SCANNER';
-      }
-
-      function startScannerDesktop() {
-        var panel = document.getElementById('desktopScannerPanel');
-        if (!panel) return;
-        if (panel.querySelector('#qr-reader-desktop')) {
-          stopScannerDesktop();
-          return;
-        }
-
-        panel.innerHTML = `
-          <div id="qr-reader-desktop" class="w-full h-full relative"></div>
-          <div id="scan-result-desktop" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-4"></div>
-        `;
-
-        try {
-          html5QrCode = new Html5Qrcode('qr-reader-desktop');
-          html5QrCode.start(
-            { facingMode: 'environment' },
-            { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false },
-            onScanSuccess,
-            onScanFailure
-          ).then(function () {
-            isScanning = true;
-            var btn = document.getElementById('launchScannerBtnDesktop');
-            if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
-          }).catch(function (err) {
-            console.error('Scanner error:', err);
-            panel.innerHTML = `
-              <div class="flex flex-col items-center justify-center h-full text-red-600 p-4">
-                <span class="material-symbols-outlined text-6xl">error</span>
-                <p class="font-headline-md mt-2">Camera unavailable</p>
-                <p class="text-xs mt-1">` + err.message + `</p>
-              </div>
-            `;
-          });
-        } catch (err) {
-          console.error(err);
-          panel.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full text-red-600 p-4">
-              <span class="material-symbols-outlined text-6xl">error</span>
-              <p class="font-headline-md mt-2">Camera unavailable</p>
-            </div>
-          `;
-        }
-      }
-
-      // --- MOBILE scanner ---
-      function stopScannerMobile() {
-        if (html5QrCode && isScanning) {
-          try {
-            html5QrCode.stop();
-            html5QrCode.clear();
-          } catch (e) { /* ignore */ }
-          html5QrCode = null;
-          isScanning = false;
-        } else {
-          html5QrCode = null;
-          isScanning = false;
-        }
-      }
-
-      function startScannerMobile() {
-        var readerEl = document.getElementById('qr-reader-mobile');
-        if (!readerEl) return;
-        if (isScanning) return;
-
-        try {
-          html5QrCode = new Html5Qrcode('qr-reader-mobile');
-          html5QrCode.start(
-            { facingMode: 'environment' },
-            { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false },
-            onScanSuccess,
-            onScanFailure
-          ).then(function () {
-            isScanning = true;
-          }).catch(function (err) {
-            console.error('Mobile scanner error:', err);
-            var resultEl = document.getElementById('scan-result-mobile');
-            if (resultEl) showResult(resultEl, 'error', 'Camera: ' + err.message);
-          });
-        } catch (err) {
-          console.error(err);
-          var resultEl = document.getElementById('scan-result-mobile');
-          if (resultEl) showResult(resultEl, 'error', 'Camera access denied');
-        }
-      }
-
-      // --- Toggle handler for both buttons ---
-      function handleLaunchClick(e) {
-        e.preventDefault();
-        var isDesktop = window.matchMedia('(min-width: 768px)').matches;
-        if (isDesktop) {
-          startScannerDesktop();
-        } else {
-          startScannerMobile();
-        }
-      }
-
-      // Attach listeners
-      var launchBtn = document.getElementById('launchScannerBtn');
-      var launchBtnDesktop = document.getElementById('launchScannerBtnDesktop');
-      if (launchBtn) launchBtn.addEventListener('click', handleLaunchClick);
-      if (launchBtnDesktop) launchBtnDesktop.addEventListener('click', handleLaunchClick);
-
-      // Manual entry form handler
-      var manualForm = document.getElementById('manualEntryForm');
-      if (manualForm) {
-        manualForm.addEventListener('submit', function (e) {
-          e.preventDefault();
-          var name = document.getElementById('manualName').value.trim();
-          var section = document.getElementById('manualSection').value.trim();
-          var schoolId = document.getElementById('manualSchoolId').value.trim();
-
-          if (!name || !section || !schoolId) {
-            alert('Please fill in all fields');
-            return;
-          }
-
-          // Create a fake QR data (school ID)
-          var result = window.App.recordAttendance(schoolId);
-          var resultEl = document.getElementById('scan-result-mobile');
-
-          if (result.success) {
-            showResult(resultEl, 'success', name + ' - ' + section);
-          } else if (result.reason === 'duplicate') {
-            showResult(resultEl, 'warning', 'ALREADY CHECKED IN: ' + name);
-          } else {
-            showResult(resultEl, 'error', 'ADD FAILED');
-          }
-
-          // Clear form
-          manualForm.reset();
-        });
-      }
-
-      // Auto-start mobile scanner on page load
-      var isMobile = !window.matchMedia('(min-width: 768px)').matches;
-      if (isMobile) {
-        setTimeout(function () {
-          startScannerMobile();
-        }, 500);
-      }
-
-      // --- Mobile Tab Handling ---
-      var mobileTabs = document.querySelectorAll('.mobile-tab');
-      var mobileTabContents = document.querySelectorAll('.mobile-tab-content');
-
-      mobileTabs.forEach(tab => {
-        tab.addEventListener('click', function () {
-          var targetTab = this.getAttribute('data-tab');
-
-          // Remove active state from all tabs and hide all content
-          mobileTabs.forEach(t => {
-            t.classList.remove('bg-primary', 'text-on-primary');
-            t.classList.add('bg-surface', 'text-primary', 'hover:bg-surface-container');
-          });
-          mobileTabContents.forEach(content => {
-            content.classList.add('hidden');
-          });
-
-          // Activate clicked tab
-          this.classList.add('bg-primary', 'text-on-primary');
-          this.classList.remove('bg-surface', 'text-primary', 'hover:bg-surface-container');
-          document.getElementById(targetTab + '-tab').classList.remove('hidden');
-        });
+        if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
       });
+    } catch(err) {
+      panel.innerHTML = '<div class="text-red-600 p-4">Camera unavailable</div>';
+    }
+  }
 
-      // --- Load Records on Records Tab ---
-      async function loadRecordsTabData() {
-        var allRecords = await window.App.db.outbox.toArray();
-        var today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        document.getElementById('mobileCurrentDate').textContent = today.toUpperCase();
+  // ==================== SHARED ====================
+  function onScanSuccess(text) {
+    if (scanCooldown) return;
+    var studentId = text.trim().toUpperCase();
+    if (studentId === lastScannedId) return;
 
-        document.getElementById('mobileTotalScanned').textContent = allRecords.length;
-        var pendingRecords = allRecords.filter(r => !r.synced);
-        document.getElementById('mobilePendingCount').textContent = pendingRecords.length;
+    lastScannedId = studentId;
+    scanCooldown = true;
+    setTimeout(function() { lastScannedId = null; scanCooldown = false; }, 3000);
 
-        // Populate section filter
-        var students = await window.App.getAllStudents();
-        var sections = new Set();
-        students.forEach(s => sections.add(s.section));
-        var sectionSelect = document.getElementById('sectionFilterMobileScanner');
-        sectionSelect.innerHTML = '<option value="ALL">All Sections</option>';
-        sections.forEach(sec => {
-          var opt = document.createElement('option');
-          opt.value = sec;
-          opt.textContent = sec;
-          sectionSelect.appendChild(opt);
-        });
+    processScan(studentId);
+  }
 
-        // Initial records render
-        renderMobileRecords(allRecords, pendingRecords);
-      }
+  async function processScan(studentId) {
+    var student = await window.App.getStudentById(studentId);
+    var isMobile = !window.matchMedia('(min-width: 768px)').matches;
 
-      async function renderMobileRecords(allRecords, pendingRecords) {
-        var selectedSection = document.getElementById('sectionFilterMobileScanner').value;
-        var filteredRecords = allRecords;
-
-        if (selectedSection !== 'ALL') {
-          var students = await window.App.getAllStudents();
-          var studentMap = {};
-          students.forEach(s => studentMap[s.id] = s);
-          filteredRecords = allRecords.filter(r => {
-            var student = studentMap[r.studentId];
-            return student && student.section === selectedSection;
-          });
-        }
-
-        if (filteredRecords.length === 0) {
-          document.getElementById('mobileRecordsList').innerHTML = '<div class="text-center text-on-surface-variant py-8">No records to display</div>';
-          return;
-        }
-
-        // Group by studentId and date
-        var groups = {};
-        filteredRecords.forEach(record => {
-          var date = new Date(record.timestamp).toISOString().split('T')[0];
-          var key = record.studentId + '|' + date;
-          if (!groups[key]) {
-            groups[key] = { studentId: record.studentId, date: date, times: [] };
-          }
-          groups[key].times.push(record.timestamp);
-        });
-
-        var groupArray = Object.values(groups);
-        groupArray.sort((a, b) => {
-          if (a.date !== b.date) return b.date.localeCompare(a.date);
-          return a.studentName?.localeCompare(b.studentName) || 0;
-        });
-
-        var html = '';
-        for (var g of groupArray) {
-          var student = await window.App.getStudentById(g.studentId);
-          var studentName = student ? student.name : g.studentId;
-          var section = student ? student.section : 'Unknown';
-          g.studentName = studentName;
-          g.section = section;
-
-          g.times.sort();
-          var timeIn = g.times[0] || null;
-          var timeOut = g.times[1] || null;
-          var timeInDisplay = timeIn ? new Date(timeIn).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
-          var timeOutDisplay = timeOut ? new Date(timeOut).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : '';
-
-          var hasPending = g.times.some(t => {
-            var rec = filteredRecords.find(r => r.timestamp === t && !r.synced);
-            return rec !== undefined;
-          });
-          var statusBadge = hasPending
-            ? '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs uppercase">Pending</span>'
-            : '<span class="bg-green-100 text-green-800 px-2 py-1 text-xs uppercase">Synced</span>';
-
-          html += `<div class="flex justify-between items-center py-2 border-b border-gray-200">
-            <div>
-              <p class="font-bold uppercase text-sm">${studentName}</p>
-              <p class="text-xs text-on-surface-variant">${section} • ${g.date}</p>
-              <div class="flex gap-2 mt-1 text-xs">
-                <span>In: ${timeInDisplay}</span>
-                <span>Out: ${timeOutDisplay}</span>
-              </div>
-            </div>
-            ${statusBadge}
-          </div>`;
-        }
-
-        document.getElementById('mobileRecordsList').innerHTML = html;
-        document.getElementById('syncBtnMobileScanner').disabled = pendingRecords.length === 0;
-        document.getElementById('syncBtnMobileScanner').textContent = pendingRecords.length > 0 ? 'UPLOAD ' + pendingRecords.length : 'NO PENDING';
-      }
-
-      // Sync button handler for mobile records tab
-      document.getElementById('syncBtnMobileScanner').addEventListener('click', async function () {
-        var count = await window.App.getPendingCount();
-        if (count === 0) return;
-
-        this.textContent = 'UPLOADING...';
-        this.disabled = true;
-
-        try {
-          await window.App.syncAttendanceRecords();
-          console.log('Records uploaded successfully');
-        } catch (e) {
-          try {
-            await window.App.mockSyncAttendanceRecords();
-            console.log('Upload complete (demo)');
-          } catch (e2) {
-            console.log('Upload failed');
-          }
-        }
-
-        await loadRecordsTabData();
-      });
-
-      // Reset records button handler
-      document.getElementById('resetRecordsBtn').addEventListener('click', async function () {
-        if (!confirm('Reset all attendance records? This cannot be undone.')) return;
-        await window.App.clearAttendanceRecords();
-        await loadRecordsTabData();
-        alert('Records reset!');
-      });
-
-      // Section filter change handler
-      document.getElementById('sectionFilterMobileScanner').addEventListener('change', async function () {
-        var allRecords = await window.App.db.outbox.toArray();
-        var pendingRecords = allRecords.filter(r => !r.synced);
-        await renderMobileRecords(allRecords, pendingRecords);
-      });
-
-      // Load records data when tab is clicked
-      var recordsTabBtn = document.querySelector('[data-tab="records"]');
-      if (recordsTabBtn) {
-        recordsTabBtn.addEventListener('click', loadRecordsTabData);
-      }
-
-      // Initial load of records data
-      loadRecordsTabData();
-
-      // --- Log feed (unchanged) ---
-      const logFeed = document.getElementById('log-feed');
-      if (logFeed) {
-        const logs = ["SCAN_REQUEST: ID_3991_PENDING", "DATA_PACKET_ENCRYPTED: RSA_4096", "WIFI_STRENGTH: 98%", "THERMAL_STATE: NOMINAL", "GEO_TAG_LOCK: SUCCESS", "BATTERY_LEVEL: 88%_OPTIMIZED"];
-        setInterval(() => {
-          const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
-          const logText = logs[Math.floor(Math.random() * logs.length)];
-          const div = document.createElement('div');
-          div.className = 'flex gap-2 opacity-0 transition-opacity duration-500';
-          div.innerHTML = `<span class="text-on-surface-variant">[${time}]</span> <span>${logText}</span>`;
-          logFeed.appendChild(div);
-          logFeed.scrollTop = logFeed.scrollHeight;
-          setTimeout(() => div.classList.remove('opacity-0'), 50);
-          if (logFeed.children.length > 20) logFeed.removeChild(logFeed.firstChild);
-        }, 3000);
-      }
-
-      // Active press effect (unchanged)
-      document.querySelectorAll('.active-press').forEach(el => {
-        el.addEventListener('mousedown', () => { el.style.transform = 'translate(4px,4px)'; el.style.boxShadow = '0 0 0 #000'; });
-        el.addEventListener('mouseup', () => { el.style.transform = ''; el.style.boxShadow = ''; });
-        el.addEventListener('mouseleave', () => { el.style.transform = ''; el.style.boxShadow = ''; });
-      });
+    if (!student) {
+      showOverlay(false, 'NOT IN ROSTER');
+      return;
     }
 
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-  </script>
-</body>
+    var today = new Date().toISOString().split('T')[0];
+    var allRecords = await window.App.getAllAttendanceRecords();
+    var todayRecords = allRecords.filter(function(r) { return r.studentId === studentId && r.timestamp.startsWith(today); });
+    var status = todayRecords.length === 0 ? 'IN' : 'OUT';
 
+    var result = await window.App.recordAttendance(studentId, officer.code);
+    if (result.success) {
+      showOverlay(true, student.name + ', ' + student.section + ' - ' + status);
+    }
+  }
+
+  function showOverlay(success, message) {
+    var overlay = document.getElementById('mobile-overlay');
+    var icon = document.getElementById('overlay-icon');
+    var msg = document.getElementById('overlay-message');
+
+    if (success) {
+      icon.textContent = 'check_circle';
+      icon.className = 'material-symbols-outlined text-6xl text-green-600';
+    } else {
+      icon.textContent = 'cancel';
+      icon.className = 'material-symbols-outlined text-6xl text-red-600';
+    }
+    msg.textContent = message;
+    msg.className = 'font-bold text-lg mt-2 uppercase ' + (success ? 'text-green-600' : 'text-red-600');
+
+    overlay.classList.remove('hidden');
+    if (navigator.vibrate) navigator.vibrate(100);
+
+    setTimeout(function() { overlay.classList.add('hidden'); }, 2500);
+  }
+
+  // ==================== INIT ====================
+  // Mobile tabs
+  document.querySelectorAll('.mobile-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.mobile-tab').forEach(function(t) {
+        t.classList.remove('bg-primary', 'text-on-primary');
+        t.classList.add('bg-surface', 'text-primary');
+      });
+      document.querySelectorAll('.mobile-tab-content').forEach(function(c) { c.classList.add('hidden'); });
+      this.classList.add('bg-primary', 'text-on-primary');
+      this.classList.remove('bg-surface', 'text-primary');
+      document.getElementById(this.dataset.tab + '-tab').classList.remove('hidden');
+      if (this.dataset.tab === 'scanner' && !isScanning) startScannerMobile();
+    });
+  });
+
+  // Start mobile scanner on load
+  setTimeout(function() { startScannerMobile(); }, 1000);
+
+  // Desktop button
+  document.getElementById('launchScannerBtnDesktop').addEventListener('click', function() {
+    if (isScanning && html5QrCode) {
+      html5QrCode.stop().then(function() { isScanning = false; this.innerHTML = '<span class="material-symbols-outlined">qr_code_scanner</span> LAUNCH SCANNER'; });
+    } else {
+      startScannerDesktop();
+    }
+  });
+
+  // Manual entry
+  document.querySelectorAll('#manualEntryForm, #manualEntryFormDesktop').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = this.querySelector('[id*="manualName"]').value.trim();
+      var section = this.querySelector('[id*="manualSection"]').value.trim();
+      var schoolId = this.querySelector('[id*="manualSchoolId"]').value.trim();
+      if (!name || !section || !schoolId) return;
+      var isMobile = this.id === 'manualEntryForm';
+      window.App.recordAttendance(schoolId, officer ? officer.code : '').then(function() {
+        showOverlay(true, name + ', ' + section + ' - IN');
+        form.reset();
+      });
+    });
+  });
+
+  // Mobile records
+  async function loadRecordsTabData() {
+    var allRecords = await window.App.db.outbox.toArray();
+    document.getElementById('mobileTotalScanned').textContent = allRecords.length;
+    var pending = allRecords.filter(function(r) { return !r.synced; });
+    document.getElementById('mobilePendingCount').textContent = pending.length;
+    document.getElementById('mobileCurrentDate').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase();
+    document.getElementById('syncBtnMobileScanner').textContent = pending.length > 0 ? 'UPLOAD ' + pending.length : 'NO PENDING';
+  }
+
+  document.getElementById('syncBtnMobileScanner').addEventListener('click', async function() {
+    this.textContent = 'UPLOADING...';
+    try { await window.App.syncAttendanceRecords(); } catch(e) { await window.App.mockSyncAttendanceRecords(); }
+    await loadRecordsTabData();
+  });
+
+  document.getElementById('resetRecordsBtn').addEventListener('click', async function() {
+    if (!confirm('Reset all records?')) return;
+    await window.App.clearAttendanceRecords();
+    await loadRecordsTabData();
+  });
+
+  document.querySelector('[data-tab="records"]').addEventListener('click', loadRecordsTabData);
+
+  // Log feed
+  var logs = ["SCAN_REQUEST_PENDING", "DATA_ENCRYPTED", "WIFI_98%", "THERMAL_NOMINAL"];
+  var logFeed = document.getElementById('log-feed');
+  if (logFeed) {
+    setInterval(function() {
+      var div = document.createElement('div');
+      div.className = 'flex gap-2';
+      div.innerHTML = '<span class="text-on-surface-variant">[' + new Date().toLocaleTimeString('en-GB', { hour12: false }) + ']</span> <span>' + logs[Math.floor(Math.random() * logs.length)] + '</span>';
+      logFeed.appendChild(div);
+      if (logFeed.children.length > 10) logFeed.removeChild(logFeed.firstChild);
+    }, 3000);
+  }
+}
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
 </html>
