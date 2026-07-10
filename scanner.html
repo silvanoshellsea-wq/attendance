@@ -606,10 +606,6 @@
             isScanning = true;
             var btn = document.getElementById('launchScannerBtnDesktop');
             if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
-            // Try to enable continuous focus after starting
-            try {
-              html5QrCode.applyVideoConstraints({ advanced: [{ focusMode: 'continuous' }] });
-            } catch(e) { /* focus mode not supported on this device */ }
           }).catch(function(err) {
             console.error('Scanner error:', err);
             panel.innerHTML = `
@@ -660,10 +656,6 @@
             onScanFailure
           ).then(function() {
             isScanning = true;
-            // Try to enable continuous focus after starting
-            try {
-              html5QrCode.applyVideoConstraints({ advanced: [{ focusMode: 'continuous' }] });
-            } catch(e) { /* focus mode not supported on this device */ }
           }).catch(function(err) {
             console.error('Mobile scanner error:', err);
             var resultEl = document.getElementById('scan-result-mobile');
