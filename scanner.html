@@ -355,13 +355,11 @@
         <!-- Mobile Scanner (always visible) -->
         <section class="bg-surface border-4 border-primary neo-shadow p-4">
           <h3 class="font-headline-md text-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
-          <div
-            class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden"
-            id="qr-reader-mobile">
+          <div class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
             <div class="text-on-primary text-center">Starting camera...</div>
-            <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50"></div>
           </div>
         </section>
+        <div id="scan-result-mobile" class="hidden fixed inset-0 flex items-center justify-center z-50" style="background:rgba(0,0,0,0.5);"></div>
 
         <!-- Manual Entry Form -->
         <section class="bg-surface border-4 border-primary neo-shadow p-4">
@@ -562,61 +560,25 @@
         if (!resultEl) return;
 
         // Vibration
-        if (navigator.vibrate) {
-          navigator.vibrate(type === 'error' ? 300 : 100);
-        }
+        if (navigator.vibrate) navigator.vibrate(100);
 
-        // Determine icon and message
-        var icon, color, label;
-        if (type === 'error') {
-          icon = 'cancel';
-          color = 'text-red-600';
-          label = 'NOT IN ROSTER';
-        } else if (type === 'warning') {
-          icon = 'warning';
-          color = 'text-yellow-600';
-          label = 'ALREADY CHECKED IN';
-        } else {
-          icon = 'check_circle';
-          color = 'text-green-600';
-          label = name + ', ' + section + ' – ' + status;
-        }
+        // Build message
+        var msg = type === 'error' ? 'NOT IN ROSTER' : name + ', ' + section + ' - ' + status;
+        var color = type === 'error' ? 'text-red-600' : 'text-green-600';
+        var icon = type === 'error' ? 'cancel' : 'check_circle';
 
-        // Build overlay content
-        resultEl.innerHTML = `
-    <div class="bg-white border-4 border-black p-4 shadow-2xl text-center max-w-xs mx-auto">
-      <span class="material-symbols-outlined text-6xl ${color}">${icon}</span>
-      <p class="font-headline-md mt-2 ${color} uppercase">${label}</p>
-      <p class="text-xs text-on-surface-variant mt-1">${new Date().toLocaleTimeString()}</p>
-    </div>
-  `;
+        resultEl.innerHTML = '<div class="bg-white border-4 border-black p-4 text-center"><span class="material-symbols-outlined text-5xl ' + color + '">' + icon + '</span><p class="font-bold mt-2 ' + color + ' uppercase">' + msg + '</p></div>';
 
-        // Show the overlay
+        // Full screen overlay
+        resultEl.style.cssText = 'display:flex;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);';
         resultEl.classList.remove('hidden');
-        resultEl.style.display = 'flex';
-        resultEl.style.position = 'absolute';
-        resultEl.style.top = '0';
-        resultEl.style.left = '0';
-        resultEl.style.right = '0';
-        resultEl.style.bottom = '0';
-        resultEl.style.zIndex = '9999';
-        resultEl.style.background = 'rgba(0,0,0,0.3)';
-        resultEl.style.pointerEvents = 'none'; // allow tap-through
 
-        // Pause scanner
-        if (html5QrCode && isScanning) {
-          html5QrCode.pause();
-        }
-
-        // Hide after 2.5s and resume
+        // Hide after 2.5s
         clearTimeout(window._resultTimer);
         window._resultTimer = setTimeout(function () {
-          resultEl.classList.add('hidden');
           resultEl.style.display = '';
           resultEl.style.background = '';
-          if (html5QrCode && isScanning) {
-            html5QrCode.resume();
-          }
+          resultEl.classList.add('hidden');
         }, 2500);
       }
 
