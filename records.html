@@ -57,7 +57,8 @@
     <button class="material-symbols-outlined p-2 hover:bg-surface-container-high" id="refreshBtn">sync</button>
   </header>
 
-  <main class="mt-20 max-w-4xl mx-auto px-6">
+  <!-- DESKTOP LAYOUT -->
+  <main class="hidden md:block mt-20 max-w-4xl mx-auto px-6">
     <!-- Stats Row -->
     <div class="grid grid-cols-3 gap-4 mb-6">
       <div class="border-4 border-primary bg-surface p-4 text-center">
@@ -99,6 +100,64 @@
     </div>
   </main>
 
+  <!-- MOBILE LAYOUT -->
+  <main class="block md:hidden mt-20 px-4 pb-20">
+    <!-- Mobile Tabs -->
+    <div class="flex gap-2 mb-4 border-b-4 border-primary">
+      <button class="mobile-tab active flex-1 py-3 px-4 bg-primary text-on-primary font-label-bold text-label-bold uppercase border-b-4 border-primary" data-tab="stats">
+        STATS
+      </button>
+      <button class="mobile-tab flex-1 py-3 px-4 bg-surface text-primary font-label-bold text-label-bold uppercase border-primary hover:bg-surface-container" data-tab="records">
+        RECORDS
+      </button>
+    </div>
+
+    <!-- Stats Tab -->
+    <div id="stats-tab" class="mobile-tab-content">
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="border-4 border-primary bg-surface p-3 text-center">
+          <p class="font-mono-label text-xs uppercase text-on-surface-variant">TOTAL SCANNED</p>
+          <p id="totalScanned-mobile" class="font-headline-lg">0</p>
+        </div>
+        <div class="border-4 border-primary bg-surface p-3 text-center">
+          <p class="font-mono-label text-xs uppercase text-on-surface-variant">PENDING</p>
+          <p id="pendingCount-mobile" class="font-headline-lg">0</p>
+        </div>
+      </div>
+      <div class="border-4 border-primary bg-surface p-3 text-center">
+        <p class="font-mono-label text-xs uppercase text-on-surface-variant">LAST UPLOAD</p>
+        <p id="lastUpload-mobile" class="font-headline-md">Never</p>
+      </div>
+    </div>
+
+    <!-- Records Tab -->
+    <div id="records-tab" class="mobile-tab-content hidden">
+      <!-- Filter: Section Dropdown -->
+      <div class="mb-3">
+        <label for="sectionFilter-mobile" class="font-mono-label uppercase text-primary text-xs block mb-2">Filter by Section:</label>
+        <select id="sectionFilter-mobile" class="w-full border-4 border-primary bg-surface px-3 py-2 font-mono-label text-primary focus:outline-none">
+          <option value="ALL">All Sections</option>
+        </select>
+      </div>
+
+      <!-- Sync Button -->
+      <button id="syncBtn-mobile" class="w-full bg-primary text-on-primary py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-primary neo-shadow active-press mb-3">
+        UPLOAD RECORDS
+      </button>
+
+      <!-- Records List -->
+      <div class="bg-surface border-4 border-primary">
+        <div class="bg-primary text-on-primary px-3 py-2 font-mono-label text-xs flex justify-between">
+          <span>RECORDS</span>
+          <span id="currentDate-mobile">TODAY</span>
+        </div>
+        <div id="recordsList-mobile" class="divide-y-2 divide-primary max-h-96 overflow-y-auto p-3 font-mono-label text-xs">
+          <div class="text-center text-on-surface-variant py-8">No records to display</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
   <!-- Bottom Nav -->
   <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-16 bg-background border-t-4 border-primary">
     <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="scanner.html">
@@ -125,20 +184,57 @@
 
       var today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       document.getElementById('currentDate').textContent = today.toUpperCase();
+      document.getElementById('currentDate-mobile').textContent = today.toUpperCase();
 
+      // Desktop elements
       var pendingCount = document.getElementById('pendingCount');
       var totalScanned = document.getElementById('totalScanned');
       var lastUpload = document.getElementById('lastUpload');
       var recordsList = document.getElementById('recordsList');
       var syncBtn = document.getElementById('syncBtn');
-      var syncStatus = document.getElementById('syncStatus');
       var sectionFilter = document.getElementById('sectionFilter');
+
+      // Mobile elements
+      var pendingCountMobile = document.getElementById('pendingCount-mobile');
+      var totalScannedMobile = document.getElementById('totalScanned-mobile');
+      var lastUploadMobile = document.getElementById('lastUpload-mobile');
+      var recordsListMobile = document.getElementById('recordsList-mobile');
+      var syncBtnMobile = document.getElementById('syncBtn-mobile');
+      var sectionFilterMobile = document.getElementById('sectionFilter-mobile');
+
+      var syncStatus = document.getElementById('syncStatus');
+
+      // Mobile tab handling
+      var mobileTabs = document.querySelectorAll('.mobile-tab');
+      var mobileTabContents = document.querySelectorAll('.mobile-tab-content');
+      
+      mobileTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          var targetTab = this.getAttribute('data-tab');
+          
+          // Remove active state from all tabs and hide all content
+          mobileTabs.forEach(t => {
+            t.classList.remove('bg-primary', 'text-on-primary');
+            t.classList.add('bg-surface', 'text-primary', 'hover:bg-surface-container');
+          });
+          mobileTabContents.forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          // Activate clicked tab
+          this.classList.add('bg-primary', 'text-on-primary');
+          this.classList.remove('bg-surface', 'text-primary', 'hover:bg-surface-container');
+          document.getElementById(targetTab + '-tab').classList.remove('hidden');
+        });
+      });
 
       // Populate section dropdown
       async function populateSectionFilter() {
         var students = await window.App.getAllStudents();
         var sections = new Set();
         students.forEach(s => sections.add(s.section));
+        
+        // Update desktop dropdown
         var currentFilter = sectionFilter.value;
         sectionFilter.innerHTML = '<option value="ALL">All Sections</option>';
         sections.forEach(sec => {
@@ -148,14 +244,25 @@
           if (sec === currentFilter) opt.selected = true;
           sectionFilter.appendChild(opt);
         });
+
+        // Update mobile dropdown (sync with desktop)
+        var currentFilterMobile = sectionFilterMobile.value;
+        sectionFilterMobile.innerHTML = '<option value="ALL">All Sections</option>';
+        sections.forEach(sec => {
+          var opt = document.createElement('option');
+          opt.value = sec;
+          opt.textContent = sec;
+          if (sec === currentFilterMobile) opt.selected = true;
+          sectionFilterMobile.appendChild(opt);
+        });
       }
 
       // Load records with optional section filter
       async function loadRecords() {
         var allRecords = await window.App.db.outbox.toArray();
+        
+        // Desktop filter
         var selectedSection = sectionFilter.value;
-
-        // Filter by section if not "ALL"
         var filteredRecords = allRecords;
         if (selectedSection !== 'ALL') {
           var students = await window.App.getAllStudents();
@@ -167,13 +274,42 @@
           });
         }
 
+        // Mobile filter
+        var selectedSectionMobile = sectionFilterMobile.value;
+        var filteredRecordsMobile = allRecords;
+        if (selectedSectionMobile !== 'ALL') {
+          var students = await window.App.getAllStudents();
+          var studentMap = {};
+          students.forEach(s => studentMap[s.id] = s);
+          filteredRecordsMobile = allRecords.filter(r => {
+            var student = studentMap[r.studentId];
+            return student && student.section === selectedSectionMobile;
+          });
+        }
+
         totalScanned.textContent = allRecords.length;
+        totalScannedMobile.textContent = allRecords.length;
 
         var pendingRecords = allRecords.filter(r => !r.synced);
         pendingCount.textContent = pendingRecords.length;
+        pendingCountMobile.textContent = pendingRecords.length;
 
+        // Render desktop records
+        renderRecordsList(recordsList, filteredRecords, allRecords, pendingRecords);
+        
+        // Render mobile records
+        renderRecordsList(recordsListMobile, filteredRecordsMobile, allRecords, pendingRecords);
+
+        syncBtn.disabled = pendingRecords.length === 0;
+        syncBtn.textContent = pendingRecords.length > 0 ? 'UPLOAD ' + pendingRecords.length + ' RECORDS' : 'NO PENDING RECORDS';
+        
+        syncBtnMobile.disabled = pendingRecords.length === 0;
+        syncBtnMobile.textContent = pendingRecords.length > 0 ? 'UPLOAD ' + pendingRecords.length : 'NO PENDING';
+      }
+
+      async function renderRecordsList(container, filteredRecords, allRecords, pendingRecords) {
         if (filteredRecords.length === 0) {
-          recordsList.innerHTML = '<div class="text-center text-on-surface-variant py-8">No records to display</div>';
+          container.innerHTML = '<div class="text-center text-on-surface-variant py-8">No records to display</div>';
           return;
         }
 
@@ -229,29 +365,32 @@
           </div>`;
         }
 
-        recordsList.innerHTML = html;
-
-        syncBtn.disabled = pendingRecords.length === 0;
-        syncBtn.textContent = pendingRecords.length > 0 ? 'UPLOAD ' + pendingRecords.length + ' RECORDS' : 'NO PENDING RECORDS';
+        container.innerHTML = html;
       }
 
-      // Sync button click
-      syncBtn.addEventListener('click', async function() {
+      // Sync button click handlers
+      async function handleSync() {
         var count = await window.App.getPendingCount();
         if (count === 0) return;
 
         syncBtn.textContent = 'UPLOADING...';
         syncBtn.disabled = true;
+        syncBtnMobile.textContent = 'UPLOADING...';
+        syncBtnMobile.disabled = true;
 
         try {
           await window.App.syncAttendanceRecords();
           showStatus('Records uploaded successfully!', true);
           var now = new Date();
           lastUpload.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+          lastUploadMobile.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         } catch(e) {
           try {
             await window.App.mockSyncAttendanceRecords();
             showStatus('Upload complete (demo)', true);
+            var now = new Date();
+            lastUpload.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            lastUploadMobile.textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
           } catch(e2) {
             showStatus('Upload failed', false);
           }
@@ -259,7 +398,11 @@
 
         loadRecords();
         syncBtn.disabled = false;
-      });
+        syncBtnMobile.disabled = false;
+      }
+
+      syncBtn.addEventListener('click', handleSync);
+      syncBtnMobile.addEventListener('click', handleSync);
 
       function showStatus(msg, ok) {
         syncStatus.textContent = msg;
@@ -272,6 +415,7 @@
 
       document.getElementById('refreshBtn').addEventListener('click', loadRecords);
       sectionFilter.addEventListener('change', loadRecords);
+      sectionFilterMobile.addEventListener('change', loadRecords);
 
       await populateSectionFilter();
       await loadRecords();

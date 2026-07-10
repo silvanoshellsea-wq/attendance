@@ -181,6 +181,11 @@
         return;
       }
 
+      // Auto-load attendance.xlsx roster on page load
+      window.App.importRosterFromFile('/attendance.xlsx')
+        .then(result => console.log('Roster auto-loaded:', result.count, 'students'))
+        .catch(err => console.log('Note: attendance.xlsx not found or already loaded:', err.message));
+
       const loginForm = document.getElementById('loginForm');
       const loginError = document.getElementById('loginError');
       const officerCode = document.getElementById('officerCode');
