@@ -288,15 +288,38 @@
           <h2 class="font-headline-xl text-headline-xl uppercase text-primary leading-tight">READY FOR<br>DEPLOYMENT</h2>
           <div class="bg-primary text-on-primary px-3 py-1 font-mono-label border-2 border-primary">V.04.22</div>
         </div>
-        <button id="launchScannerBtn"
-          class="w-full bg-primary text-on-primary py-4 px-6 border-4 border-primary neo-shadow active-press flex items-center justify-center gap-4">
-          <span class="material-symbols-outlined" style="font-size:32px;">qr_code_scanner</span>
-          <span class="font-headline-md text-headline-md uppercase">LAUNCH SCANNER</span>
-        </button>
       </section>
 
-      <!-- Mobile scanner container will be inserted here -->
-      <div id="mobileScannerContainer"></div>
+      <!-- Mobile Scanner (always visible) -->
+      <section class="bg-surface border-4 border-primary neo-shadow p-4">
+        <h3 class="font-headline-md text-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
+        <div class="relative border-4 border-primary bg-black h-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
+          <div class="text-on-primary text-center">Starting camera...</div>
+        </div>
+        <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center bg-surface-container border-4 border-primary"></div>
+      </section>
+
+      <!-- Manual Entry Form -->
+      <section class="bg-surface border-4 border-primary neo-shadow p-4">
+        <h3 class="font-headline-md text-headline-md uppercase text-primary mb-4">MANUAL ENTRY</h3>
+        <form id="manualEntryForm" class="space-y-3">
+          <div>
+            <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">STUDENT NAME</label>
+            <input type="text" id="manualName" placeholder="Full Name" class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
+          </div>
+          <div>
+            <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SECTION</label>
+            <input type="text" id="manualSection" placeholder="e.g., 7-A" class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
+          </div>
+          <div>
+            <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SCHOOL ID</label>
+            <input type="text" id="manualSchoolId" placeholder="School ID" class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
+          </div>
+          <button type="submit" class="w-full bg-primary text-on-primary py-3 px-4 border-4 border-primary neo-shadow active-press font-label-bold uppercase">
+            <span class="material-symbols-outlined" style="vertical-align:middle;">person_add</span> ADD STUDENT
+          </button>
+        </form>
+      </section>
 
       <!-- The rest of mobile layout (roster, quota, log) – unchanged -->
       <section>
@@ -448,8 +471,8 @@
         try {
           html5QrCode = new Html5Qrcode('qr-reader-desktop');
           html5QrCode.start(
-            { facingMode: 'environment' },
-            { fps: 10, qrbox: { width: 200, height: 200 } },
+            { facingMode: 'environment', aspectRatio: { ideal: 1 } },
+            { fps: 25, qrbox: { width: 300, height: 300 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
           );
@@ -480,57 +503,27 @@
           html5QrCode = null;
           isScanning = false;
         }
-
-        var container = document.getElementById('mobileScannerContainer');
-        if (container) {
-          container.innerHTML = '';
-        }
-        var btn = document.getElementById('launchScannerBtn');
-        if (btn) btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:32px;">qr_code_scanner</span><span class="font-headline-md text-headline-md uppercase">LAUNCH SCANNER</span>';
-        // Show hero again
-        var hero = document.getElementById('mobileHeroSection');
-        if (hero) hero.style.display = '';
       }
 
       function startScannerMobile() {
-        var container = document.getElementById('mobileScannerContainer');
-        if (!container) return;
-        // If scanner already active, toggle off
-        if (container.querySelector('#qr-reader-mobile')) {
-          stopScannerMobile();
-          return;
+        var readerEl = document.getElementById('qr-reader-mobile');
+        if (!readerEl) return;
+        if (isScanning) return;
+
+        try {
+          html5QrCode = new Html5Qrcode('qr-reader-mobile');
+          html5QrCode.start(
+            { facingMode: 'environment', aspectRatio: { ideal: 1 } },
+            { fps: 25, qrbox: { width: 280, height: 280 }, disableFlip: false },
+            onScanSuccess,
+            onScanFailure
+          );
+          isScanning = true;
+        } catch (err) {
+          console.error(err);
+          var resultEl = document.getElementById('scan-result-mobile');
+          if (resultEl) showResult(resultEl, 'error', 'Camera access denied');
         }
-
-        // Hide hero
-        var hero = document.getElementById('mobileHeroSection');
-        if (hero) hero.style.display = 'none';
-
-        // Insert scanner
-        var scanner = createMobileScannerSection();
-        container.appendChild(scanner);
-
-        setTimeout(function() {
-          var readerEl = document.getElementById('qr-reader-mobile');
-          if (!readerEl) return;
-          if (isScanning) return;
-
-          try {
-            html5QrCode = new Html5Qrcode('qr-reader-mobile');
-            html5QrCode.start(
-              { facingMode: 'environment' },
-              { fps: 10, qrbox: { width: 200, height: 200 } },
-              onScanSuccess,
-              onScanFailure
-            );
-            isScanning = true;
-            var btn = document.getElementById('launchScannerBtn');
-            if (btn) btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:32px;">stop</span><span class="font-headline-md text-headline-md uppercase">STOP SCANNER</span>';
-          } catch (err) {
-            console.error(err);
-            var resultEl = document.getElementById('scan-result-mobile');
-            if (resultEl) showResult(resultEl, 'error', 'Camera access denied');
-          }
-        }, 300);
       }
 
       // --- Toggle handler for both buttons ---
@@ -549,6 +542,45 @@
       var launchBtnDesktop = document.getElementById('launchScannerBtnDesktop');
       if (launchBtn) launchBtn.addEventListener('click', handleLaunchClick);
       if (launchBtnDesktop) launchBtnDesktop.addEventListener('click', handleLaunchClick);
+
+      // Manual entry form handler
+      var manualForm = document.getElementById('manualEntryForm');
+      if (manualForm) {
+        manualForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var name = document.getElementById('manualName').value.trim();
+          var section = document.getElementById('manualSection').value.trim();
+          var schoolId = document.getElementById('manualSchoolId').value.trim();
+          
+          if (!name || !section || !schoolId) {
+            alert('Please fill in all fields');
+            return;
+          }
+          
+          // Create a fake QR data (school ID)
+          var result = window.App.recordAttendance(schoolId);
+          var resultEl = document.getElementById('scan-result-mobile');
+          
+          if (result.success) {
+            showResult(resultEl, 'success', name + ' - ' + section);
+          } else if (result.reason === 'duplicate') {
+            showResult(resultEl, 'warning', 'ALREADY CHECKED IN: ' + name);
+          } else {
+            showResult(resultEl, 'error', 'ADD FAILED');
+          }
+          
+          // Clear form
+          manualForm.reset();
+        });
+      }
+
+      // Auto-start mobile scanner on page load
+      var isMobile = !window.matchMedia('(min-width: 768px)').matches;
+      if (isMobile) {
+        setTimeout(function() {
+          startScannerMobile();
+        }, 500);
+      }
 
       // --- Log feed (unchanged) ---
       const logFeed = document.getElementById('log-feed');

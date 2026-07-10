@@ -140,35 +140,6 @@
         </button>
         <div id="loginError" class="hidden mt-2 p-3 bg-error-container border-4 border-error font-label-bold text-label-bold text-on-error-container text-center">Invalid officer code or PIN</div>
       </form>
-
-      <!-- Divider -->
-      <div class="h-1 bg-primary w-full"></div>
-
-      <!-- Roster Sync -->
-      <div class="p-md bg-surface-container-low">
-        <div class="flex items-center gap-2 mb-base">
-          <span class="material-symbols-outlined text-secondary">database</span>
-          <h3 class="font-label-bold text-label-bold uppercase">ROSTER SYNC</h3>
-        </div>
-
-        <label class="block border-4 border-primary p-3 mb-3 font-label-bold text-label-bold uppercase cursor-pointer hover:bg-surface-container">
-          <span class="block mb-2">Upload Excel files</span>
-          <input id="rosterFilesInput" type="file" accept=".xlsx,.xls,.csv" multiple class="block w-full text-sm font-normal" />
-        </label>
-
-        <div class="grid grid-cols-3 gap-2">
-          <button type="button" id="uploadRosterBtn" class="bg-surface-container-lowest border-4 border-primary py-2 px-base font-label-bold text-label-bold uppercase hover:bg-surface-container-high transition-colors active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-1">
-            <span class="material-symbols-outlined text-sm">upload_file</span> Import
-          </button>
-          <button type="button" id="setupRosterBtn" class="bg-surface-container-lowest border-4 border-primary py-2 px-base font-label-bold text-label-bold uppercase hover:bg-surface-container-high transition-colors active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-1">
-            <span class="material-symbols-outlined text-sm">download</span> Get
-          </button>
-          <button type="button" id="loadDemoBtn" class="bg-surface-container-lowest border-4 border-primary py-2 px-base font-label-bold text-label-bold uppercase hover:bg-surface-container-high transition-colors active:translate-x-1 active:translate-y-1 flex items-center justify-center gap-1">
-            <span class="material-symbols-outlined text-sm">play_circle</span> Demo
-          </button>
-        </div>
-        <div id="rosterStatus" class="hidden mt-3 p-3 border-4 font-label-bold text-label-bold text-center"></div>
-      </div>
     </div>
 
     <!-- System Info -->
