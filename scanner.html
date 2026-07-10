@@ -250,7 +250,7 @@ function initScanner() {
         isScanning = true;
         readerEl.innerHTML = '';
       }).catch(function(err) {
-        readerEl.innerHTML = '<span class="text-red-500">Camera error</span>';
+        if (err.name !== 'AbortError') console.error(err);
       });
     } catch(err) {
       console.error(err);
@@ -275,6 +275,8 @@ function initScanner() {
         isScanning = true;
         var btn = document.getElementById('launchScannerBtnDesktop');
         if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
+      }).catch(function(err) {
+        if (err.name !== 'AbortError') console.error(err);
       });
     } catch(err) {
       panel.innerHTML = '<div class="text-red-600 p-4">Camera unavailable</div>';
