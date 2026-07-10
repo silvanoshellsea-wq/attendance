@@ -671,6 +671,13 @@ async function clearAllData() {
   localStorage.removeItem('officerInfo');
 }
 
+/**
+ * Clear only attendance records (for testing)
+ */
+async function clearAttendanceRecords() {
+  await db.outbox.clear();
+}
+
 // ==========================================
 // Initialize
 // ==========================================
@@ -709,6 +716,7 @@ if (typeof window !== 'undefined') {
     mockSyncAttendanceRecords,
     formatTime,
     showMessage,
-    clearAllData
+    clearAllData,
+    clearAttendanceRecords
   };
 }

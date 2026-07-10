@@ -378,10 +378,15 @@
           </select>
         </div>
 
-        <!-- Upload Button -->
-        <button id="syncBtnMobileScanner" class="w-full bg-primary text-on-primary py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-primary neo-shadow active-press mb-3">
-          UPLOAD RECORDS
-        </button>
+        <!-- Upload & Reset Buttons -->
+        <div class="flex gap-2 mb-3">
+          <button id="syncBtnMobileScanner" class="flex-1 bg-primary text-on-primary py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-primary neo-shadow active-press">
+            UPLOAD RECORDS
+          </button>
+          <button id="resetRecordsBtn" class="flex-1 bg-red-600 text-white py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-red-600 neo-shadow active-press">
+            RESET
+          </button>
+        </div>
 
         <!-- Records List -->
         <div class="bg-surface border-4 border-primary">
@@ -870,6 +875,14 @@
         }
 
         await loadRecordsTabData();
+      });
+
+      // Reset records button handler
+      document.getElementById('resetRecordsBtn').addEventListener('click', async function() {
+        if (!confirm('Reset all attendance records? This cannot be undone.')) return;
+        await window.App.clearAttendanceRecords();
+        await loadRecordsTabData();
+        alert('Records reset!');
       });
 
       // Section filter change handler
