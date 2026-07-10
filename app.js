@@ -25,7 +25,7 @@ const CONFIG = {
     code: 'OFFICER123',
     pin: '0000',
     name: 'John Smith',
-    section: 'Section-B'  // This officer is assigned to Section-B
+    section: 'Section-B'
   },
   // API endpoints (for mock)
   api: {
@@ -75,7 +75,6 @@ function getOfficerInfo() {
  * @returns {boolean}
  */
 function login(officerCode, pin) {
-  // Check against demo credentials
   if (officerCode === CONFIG.officer.code && pin === CONFIG.officer.pin) {
     const officerInfo = {
       code: CONFIG.officer.code,
@@ -95,7 +94,6 @@ function login(officerCode, pin) {
 function logout() {
   localStorage.removeItem('officerLoggedIn');
   localStorage.removeItem('officerInfo');
-  // Redirect to login page
   window.location.href = 'index.html';
 }
 
@@ -137,9 +135,7 @@ function isRosterCached() {
 async function fetchRosterFromServer() {
   try {
     const response = await fetch(CONFIG.api.roster);
-    if (!response.ok) {
-      throw new Error('Server error');
-    }
+    if (!response.ok) throw new Error('Server error');
     return await response.json();
   } catch (error) {
     console.error('Failed to fetch roster:', error);
@@ -152,7 +148,7 @@ async function fetchRosterFromServer() {
  * @param {Array} roster
  */
 async function saveRosterToDb(roster) {
-  await db.students.clear(); // Clear existing data
+  await db.students.clear();
   await db.students.bulkPut(roster);
   localStorage.setItem('rosterCached', 'true');
 }
@@ -163,11 +159,7 @@ async function saveRosterToDb(roster) {
  * @returns {string}
  */
 function normalizeHeader(value) {
-  return String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
 const HEADER_ALIASES = {
@@ -182,10 +174,7 @@ const HEADER_ALIASES = {
  * @returns {string}
  */
 function normalizeStudentId(value) {
-  return String(value || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '');
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
 /**
@@ -248,10 +237,7 @@ function hasRecognizedHeaders(row) {
  */
 function inferSectionFromStudentId(studentId, fallbackSection = '') {
   const normalized = String(studentId || '').trim().toUpperCase();
-  if (!normalized) {
-    return fallbackSection;
-  }
-
+  if (!normalized) return fallbackSection;
   const sectionPatterns = [
     [/SECTION[-_\s]*([A-Z0-9]+)/, 'Section-$1'],
     [/SEC[-_\s]*([A-Z0-9]+)/, 'Section-$1'],
@@ -259,21 +245,15 @@ function inferSectionFromStudentId(studentId, fallbackSection = '') {
     [/^([A-Z]{1,3})\d+/, '$1'],
     [/([A-Z])\d+$/, '$1']
   ];
-
   for (const [pattern, template] of sectionPatterns) {
     const match = normalized.match(pattern);
     if (match) {
       const token = match[1] ? match[1].replace(/[^A-Z0-9]+/g, '') : '';
-      if (!token) {
-        continue;
-      }
-      if (template === 'Section-$1') {
-        return `Section-${token}`;
-      }
+      if (!token) continue;
+      if (template === 'Section-$1') return `Section-${token}`;
       return token;
     }
   }
-
   return fallbackSection;
 }
 
@@ -286,24 +266,17 @@ function inferSectionFromStudentId(studentId, fallbackSection = '') {
 function extractStudentsFromWorkbook(workbook, file) {
   const students = [];
   const fallbackSection = file.name.replace(/\.(xlsx|xls|csv)$/i, '').replace(/[_-]+/g, ' ').trim() || (workbook && workbook.SheetNames && workbook.SheetNames[0] ? workbook.SheetNames[0] : 'Imported Section');
-
-  if (!workbook || !workbook.SheetNames || !workbook.SheetNames.length) {
-    return students;
-  }
-
+  if (!workbook || !workbook.SheetNames || !workbook.SheetNames.length) return students;
   workbook.SheetNames.forEach((sheetName) => {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) return;
-
     let rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false, blankrows: false }) || [];
-
     if (!rows.length || !hasRecognizedHeaders(rows[0])) {
       const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }) || [];
       const headerRowIndex = rawRows.findIndex((row) => Array.isArray(row) && row.some((cell) => {
         const text = String(cell || '').trim().toLowerCase();
         return ['student', 'name', 'id', 'section', 'number', 'program'].some((keyword) => text.includes(keyword));
       }));
-
       if (headerRowIndex >= 0) {
         const headerRow = rawRows[headerRowIndex];
         const dataRows = rawRows.slice(headerRowIndex + 1);
@@ -316,24 +289,14 @@ function extractStudentsFromWorkbook(workbook, file) {
         });
       }
     }
-
-    const headersRecognized = rows.length && hasRecognizedHeaders(rows[0]);
-
     rows.forEach((row, index) => {
       const normalizedRow = mapRowToNormalizedObject(row);
-      const rowValues = Object.values(row)
-        .filter((value) => value !== undefined && value !== null && String(value).trim() !== '')
-        .map((value) => String(value).trim());
-
+      const rowValues = Object.values(row).filter((value) => value !== undefined && value !== null && String(value).trim() !== '').map((value) => String(value).trim());
       const idValue = findRowValue(normalizedRow, HEADER_ALIASES.studentId) || rowValues.find(looksLikeStudentId) || '';
       const nameValue = findRowValue(normalizedRow, HEADER_ALIASES.studentName) || rowValues.find((value) => !looksLikeStudentId(value) && !looksLikeSection(value) && value.length > 2) || '';
       const sectionValue = findRowValue(normalizedRow, HEADER_ALIASES.section) || '';
       const inferredSection = inferSectionFromStudentId(idValue, '');
-
-      if (!nameValue && !idValue) {
-        return;
-      }
-
+      if (!nameValue && !idValue) return;
       students.push({
         id: String(idValue || `${fallbackSection}-${index + 1}`).trim(),
         name: String(nameValue || 'Unnamed Student').trim(),
@@ -341,7 +304,6 @@ function extractStudentsFromWorkbook(workbook, file) {
       });
     });
   });
-
   return students;
 }
 
@@ -351,10 +313,7 @@ function extractStudentsFromWorkbook(workbook, file) {
  * @returns {Promise<ArrayBuffer|Uint8Array|string>}
  */
 async function readFileContents(file) {
-  if (file.arrayBuffer) {
-    return await file.arrayBuffer();
-  }
-
+  if (file.arrayBuffer) return await file.arrayBuffer();
   return await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
@@ -371,10 +330,7 @@ async function readFileContents(file) {
 function parseCsvText(text) {
   const rows = [];
   const lines = text.split(/\r?\n/).filter((line) => line.trim() !== '');
-  if (!lines.length) {
-    return rows;
-  }
-
+  if (!lines.length) return rows;
   const headers = lines[0].split(',').map((header) => header.trim().replace(/^"|"$/g, ''));
   lines.slice(1).forEach((line) => {
     const values = line.split(',').map((value) => value.trim().replace(/^"|"$/g, ''));
@@ -384,7 +340,6 @@ function parseCsvText(text) {
     });
     rows.push(record);
   });
-
   return rows;
 }
 
@@ -396,21 +351,13 @@ function parseCsvText(text) {
  */
 async function importRosterFromFiles(files) {
   const selectedFiles = Array.from(files || []);
-  if (selectedFiles.length === 0) {
-    throw new Error('Select at least one Excel file to import.');
-  }
-
+  if (selectedFiles.length === 0) throw new Error('Select at least one Excel file to import.');
   const importedStudents = [];
   const seenIds = new Set();
-
   for (const file of selectedFiles) {
-    if (!file || !file.name) {
-      continue;
-    }
-
+    if (!file || !file.name) continue;
     const fileName = file.name.toLowerCase();
     let studentsFromFile = [];
-
     if (fileName.endsWith('.csv')) {
       const text = await file.text();
       const rows = parseCsvText(text);
@@ -420,30 +367,17 @@ async function importRosterFromFiles(files) {
         section: row['Section'] || row.section || row.class || ''
       })).filter((student) => student.id || student.name);
     } else {
-      if (typeof XLSX === 'undefined') {
-        throw new Error('Excel support is not available in this browser.');
-      }
-
+      if (typeof XLSX === 'undefined') throw new Error('Excel support is not available in this browser.');
       const fileContents = await readFileContents(file);
       const workbook = XLSX.read(fileContents, { type: 'array' });
       studentsFromFile = extractStudentsFromWorkbook(workbook, file);
     }
-
-    if (!studentsFromFile.length) {
-      throw new Error(`No student rows were found in ${file.name}.`);
-    }
-
+    if (!studentsFromFile.length) throw new Error(`No student rows were found in ${file.name}.`);
     studentsFromFile.forEach((student, index) => {
       let studentId = String(student.id || '').trim();
-      if (!studentId) {
-        studentId = `${student.section || 'Imported'}-${index + 1}`;
-      }
-
-      if (seenIds.has(studentId)) {
-        studentId = `${studentId}-${index + 1}`;
-      }
+      if (!studentId) studentId = `${student.section || 'Imported'}-${index + 1}`;
+      if (seenIds.has(studentId)) studentId = `${studentId}-${index + 1}`;
       seenIds.add(studentId);
-
       importedStudents.push({
         id: studentId,
         name: String(student.name || 'Unnamed Student').trim(),
@@ -451,16 +385,31 @@ async function importRosterFromFiles(files) {
       });
     });
   }
-
-  if (!importedStudents.length) {
-    throw new Error('No students were imported.');
-  }
-
+  if (!importedStudents.length) throw new Error('No students were imported.');
   await saveRosterToDb(importedStudents);
-  return {
-    count: importedStudents.length,
-    files: selectedFiles.length
-  };
+  return { count: importedStudents.length, files: selectedFiles.length };
+}
+
+/**
+ * Load roster from a static Excel file located in the project root.
+ * @param {string} filePath - path to the file (default: '/attendance.xlsx')
+ * @returns {Promise<object>}
+ */
+async function importRosterFromFile(filePath = '/attendance.xlsx') {
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) throw new Error(`File not found (${response.status})`);
+    const arrayBuffer = await response.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const fileObj = { name: filePath };
+    const students = extractStudentsFromWorkbook(workbook, fileObj);
+    if (!students.length) throw new Error('No student rows found');
+    await saveRosterToDb(students);
+    return { count: students.length, file: filePath };
+  } catch (error) {
+    console.error('Error loading roster from file:', error);
+    throw error;
+  }
 }
 
 /**
@@ -469,20 +418,14 @@ async function importRosterFromFiles(files) {
  * @returns {Promise<boolean>}
  */
 async function setupRoster(onProgress) {
-  if (!navigator.onLine) {
-    throw new Error('No internet connection. Please reconnect and try again.');
-  }
-
+  if (!navigator.onLine) throw new Error('No internet connection. Please reconnect and try again.');
   if (onProgress) onProgress('Connecting to server...');
-
   try {
-    // Try to fetch from server
     const roster = await fetchRosterFromServer();
     if (onProgress) onProgress('Saving roster...');
     await saveRosterToDb(roster);
     return true;
   } catch (error) {
-    // Server not available, throw error
     throw new Error('Server unavailable. Please try again later or use demo roster.');
   }
 }
@@ -511,15 +454,9 @@ async function getAllStudents() {
  */
 async function getStudentById(studentId) {
   const normalizedInput = String(studentId || '').trim();
-  if (!normalizedInput) {
-    return null;
-  }
-
+  if (!normalizedInput) return null;
   const directMatch = await db.students.get(normalizedInput);
-  if (directMatch) {
-    return directMatch;
-  }
-
+  if (directMatch) return directMatch;
   const allStudents = await db.students.toArray();
   const normalizedInputValue = normalizeStudentId(normalizedInput);
   const fallbackMatches = allStudents.filter((student) => {
@@ -528,11 +465,7 @@ async function getStudentById(studentId) {
     const candidateSection = normalizeStudentId(student.section);
     return candidateId === normalizedInputValue || candidateId.includes(normalizedInputValue) || normalizedInputValue.includes(candidateId) || candidateAlt.includes(normalizedInputValue) || candidateSection.includes(normalizedInputValue);
   });
-
-  if (fallbackMatches.length > 0) {
-    return fallbackMatches[0];
-  }
-
+  if (fallbackMatches.length > 0) return fallbackMatches[0];
   return null;
 }
 
@@ -542,6 +475,21 @@ async function getStudentById(studentId) {
  */
 async function debugGetAllStudents() {
   return await db.students.toArray();
+}
+
+/**
+ * Add a new student to the roster (local database)
+ * @param {string} id - student ID
+ * @param {string} name - full name
+ * @param {string} section - section
+ * @returns {Promise<void>}
+ */
+async function addStudent(id, name, section) {
+  const student = { id, name, section };
+  const existing = await db.students.get(id);
+  if (existing) throw new Error('Student ID already exists');
+  await db.students.add(student);
+  localStorage.setItem('rosterCached', 'true');
 }
 
 // ==========================================
@@ -556,9 +504,6 @@ async function debugGetAllStudents() {
  */
 async function recordAttendance(studentId, officerCode) {
   const timestamp = new Date().toISOString();
-
-
-  // Record the attendance
   const student = await getStudentById(studentId);
   const record = {
     studentId,
@@ -566,11 +511,9 @@ async function recordAttendance(studentId, officerCode) {
     studentSection: student ? student.section : '',
     officerCode,
     timestamp,
-    synced: false   // boolean – safe, but we avoid .equals(false) queries later
+    synced: false
   };
-
   await db.outbox.add(record);
-
   return { success: true, record };
 }
 
@@ -582,7 +525,6 @@ async function recordAttendance(studentId, officerCode) {
 async function getPendingRecords() {
   try {
     const all = await db.outbox.toArray();
-    // Treat synced: false, undefined, null, 0 as pending
     return all.filter(record => !record.synced);
   } catch (error) {
     console.error('Error fetching pending records:', error);
@@ -638,34 +580,19 @@ async function getAllAttendanceRecordsWithNames() {
  * @returns {Promise<boolean>}
  */
 async function syncAttendanceRecords() {
-  if (!navigator.onLine) {
-    throw new Error('No internet connection. Please reconnect and try again.');
-  }
-
+  if (!navigator.onLine) throw new Error('No internet connection. Please reconnect and try again.');
   const pendingRecords = await getPendingRecords();
-  if (pendingRecords.length === 0) {
-    return true;
-  }
-
+  if (pendingRecords.length === 0) return true;
   try {
-    // Mock API call - assume server accepts and processes
     const response = await fetch(CONFIG.api.upload, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(pendingRecords)
     });
-
-    if (!response.ok) {
-      throw new Error('Server error');
-    }
-
-    // Mark all records as synced
+    if (!response.ok) throw new Error('Server error');
     for (const record of pendingRecords) {
       await db.outbox.update(record.id, { synced: true });
     }
-
     return true;
   } catch (error) {
     console.error('Sync failed:', error);
@@ -680,19 +607,11 @@ async function syncAttendanceRecords() {
  */
 async function mockSyncAttendanceRecords() {
   const pendingRecords = await getPendingRecords();
-
-  if (pendingRecords.length === 0) {
-    return true;
-  }
-
-  // Simulate network delay
+  if (pendingRecords.length === 0) return true;
   await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // Mark all records as synced
   for (const record of pendingRecords) {
     await db.outbox.update(record.id, { synced: true });
   }
-
   return true;
 }
 
@@ -719,11 +638,7 @@ function initOnlineStatusListener() {
  */
 function formatTime(isoString) {
   const date = new Date(isoString);
-  return date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
 /**
@@ -733,29 +648,16 @@ function formatTime(isoString) {
  * @param {number} duration - ms, 0 = permanent
  */
 function showMessage(message, type = 'info', duration = 3000) {
-  // Remove existing messages
   const existingMessages = document.querySelectorAll('.message');
   existingMessages.forEach(msg => msg.remove());
-
   const messageEl = document.createElement('div');
   messageEl.className = `message message--${type}`;
   messageEl.textContent = message;
-
-  // Insert after header or at top of container
   const container = document.querySelector('.container');
   const firstCard = container?.querySelector('.card');
-  if (firstCard) {
-    container.insertBefore(messageEl, firstCard);
-  } else {
-    container?.prepend(messageEl);
-  }
-
-  // Auto remove after duration
-  if (duration > 0) {
-    setTimeout(() => {
-      messageEl.remove();
-    }, duration);
-  }
+  if (firstCard) container.insertBefore(messageEl, firstCard);
+  else container?.prepend(messageEl);
+  if (duration > 0) setTimeout(() => messageEl.remove(), duration);
 }
 
 /**
@@ -773,7 +675,6 @@ async function clearAllData() {
 // Initialize
 // ==========================================
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   initOnlineStatusListener();
 });
@@ -792,10 +693,12 @@ if (typeof window !== 'undefined') {
     isRosterCached,
     setupRoster,
     importRosterFromFiles,
+    importRosterFromFile,    // <-- NEW
     loadDemoRoster,
     getAllStudents,
     debugGetAllStudents,
     getStudentById,
+    addStudent,              // <-- NEW
     recordAttendance,
     getPendingRecords,
     getPendingCount,
