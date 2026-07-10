@@ -327,7 +327,7 @@
         <!-- Mobile Scanner (always visible) -->
         <section class="bg-surface border-4 border-primary neo-shadow p-4">
           <h3 class="font-headline-md text-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
-          <div class="relative border-4 border-primary bg-black h-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
+          <div class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
             <div class="text-on-primary text-center">Starting camera...</div>
           </div>
           <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center bg-surface-container border-4 border-primary"></div>
@@ -443,7 +443,7 @@
         scannerSection.id = 'mobileScannerActive';
         scannerSection.className = 'bg-surface border-4 border-primary neo-shadow p-4 mt-4';
         scannerSection.innerHTML = `
-          <div class="relative border-4 border-primary bg-black h-72 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
+          <div class="relative border-4 border-primary bg-black h-72 w-72 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
             <div class="scan-line"></div>
             <div class="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-white m-2"></div>
             <div class="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-white m-2"></div>
@@ -456,11 +456,30 @@
       }
 
       // --- Shared QR processing ---
+      var lastScannedId = null;
+      var scanCooldown = false;
+
       function onScanSuccess(text) {
+        // Skip if in cooldown (prevents rapid duplicate scans)
+        if (scanCooldown) return;
+
         var studentId = text.trim().toUpperCase();
+
+        // Skip if same ID scanned consecutively
+        if (studentId === lastScannedId) return;
+
         // Determine which result element to use
         var resultEl = document.getElementById('scan-result-desktop') || document.getElementById('scan-result-mobile');
         if (!resultEl) return;
+
+        // Set cooldown to prevent duplicate scans
+        lastScannedId = studentId;
+        scanCooldown = true;
+        setTimeout(function() {
+          lastScannedId = null;
+          scanCooldown = false;
+        }, 3000);
+
         processScan(studentId, resultEl);
       }
 
@@ -497,13 +516,10 @@
           resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-red-600">cancel</span><p class="font-headline-md mt-2 text-red-600 uppercase">' + message + '</p>';
         }
 
-        if (html5QrCode && isScanning) {
-          html5QrCode.pause();
-          setTimeout(() => {
-            resultEl.classList.add('hidden');
-            html5QrCode.resume();
-          }, 2000);
-        }
+        // Hide result after 2 seconds but keep scanning active
+        setTimeout(function() {
+          if (resultEl) resultEl.classList.add('hidden');
+        }, 2000);
       }
 
       // --- DESKTOP scanner ---
@@ -551,8 +567,8 @@
         try {
           html5QrCode = new Html5Qrcode('qr-reader-desktop');
           html5QrCode.start(
-            { facingMode: 'environment' },
-            { fps: 25, qrbox: { width: 300, height: 300 }, disableFlip: false },
+            { facingMode: 'environment', focusMode: 'continuous' },
+            { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
           );
@@ -593,8 +609,8 @@
         try {
           html5QrCode = new Html5Qrcode('qr-reader-mobile');
           html5QrCode.start(
-            { facingMode: 'environment' },
-            { fps: 25, qrbox: { width: 280, height: 280 }, disableFlip: false },
+            { facingMode: 'environment', focusMode: 'continuous' },
+            { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
           );
