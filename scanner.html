@@ -211,7 +211,7 @@
 </div>
 
 <!-- Mobile Overlay (outside both tabs) -->
-<div id="mobile-overlay" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/70">
+<div id="mobile-overlay" class="fixed inset-0 flex items-center justify-center" style="display:none;z-index:99999;background:rgba(0,0,0,0.8);">
   <div id="mobile-overlay-content" class="bg-white border-4 border-black p-6 text-center max-w-sm mx-4">
     <span id="overlay-icon" class="material-symbols-outlined text-6xl"></span>
     <p id="overlay-message" class="font-bold text-lg mt-2 uppercase"></p>
@@ -239,22 +239,17 @@ function initScanner() {
     var readerEl = document.getElementById('qr-reader-mobile');
     if (!readerEl || isScanning) return;
 
-    try {
-      html5QrCode = new Html5Qrcode('qr-reader-mobile');
-      html5QrCode.start(
-        { facingMode: 'environment' },
-        { fps: 20, qrbox: { width: 200, height: 200 } },
-        onScanSuccess,
-        function(err) {}
-      ).then(function() {
-        isScanning = true;
-        readerEl.innerHTML = '';
-      }).catch(function(err) {
-        if (err.name !== 'AbortError') console.error(err);
-      });
-    } catch(err) {
-      console.error(err);
-    }
+    html5QrCode = new Html5Qrcode('qr-reader-mobile');
+    html5QrCode.start(
+      { facingMode: 'environment' },
+      { fps: 20, qrbox: { width: 200, height: 200 } },
+      onScanSuccess,
+      function(err) {}
+    ).then(function() {
+      isScanning = true;
+    }).catch(function(e) {
+      // Ignore AbortError
+    });
   }
 
   // ==================== DESKTOP ====================
@@ -264,23 +259,19 @@ function initScanner() {
 
     panel.innerHTML = '<div id="qr-reader-desktop" class="w-full h-full relative"></div><div id="scan-result-desktop" class="hidden absolute inset-0 bg-white/90 flex items-center justify-center"></div>';
 
-    try {
-      html5QrCode = new Html5Qrcode('qr-reader-desktop');
-      html5QrCode.start(
-        { facingMode: 'environment' },
-        { fps: 20, qrbox: { width: 250, height: 250 } },
-        onScanSuccess,
-        function(err) {}
-      ).then(function() {
-        isScanning = true;
-        var btn = document.getElementById('launchScannerBtnDesktop');
-        if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
-      }).catch(function(err) {
-        if (err.name !== 'AbortError') console.error(err);
-      });
-    } catch(err) {
-      panel.innerHTML = '<div class="text-red-600 p-4">Camera unavailable</div>';
-    }
+    html5QrCode = new Html5Qrcode('qr-reader-desktop');
+    html5QrCode.start(
+      { facingMode: 'environment' },
+      { fps: 20, qrbox: { width: 250, height: 250 } },
+      onScanSuccess,
+      function(err) {}
+    ).then(function() {
+      isScanning = true;
+      var btn = document.getElementById('launchScannerBtnDesktop');
+      if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
+    }).catch(function(e) {
+      // Ignore AbortError
+    });
   }
 
   // ==================== SHARED ====================
@@ -298,7 +289,6 @@ function initScanner() {
 
   async function processScan(studentId) {
     var student = await window.App.getStudentById(studentId);
-    var isMobile = !window.matchMedia('(min-width: 768px)').matches;
 
     if (!student) {
       showOverlay(false, 'NOT IN ROSTER');
@@ -331,10 +321,10 @@ function initScanner() {
     msg.textContent = message;
     msg.className = 'font-bold text-lg mt-2 uppercase ' + (success ? 'text-green-600' : 'text-red-600');
 
-    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
     if (navigator.vibrate) navigator.vibrate(100);
 
-    setTimeout(function() { overlay.classList.add('hidden'); }, 2500);
+    setTimeout(function() { overlay.style.display = 'none'; }, 2500);
   }
 
   // ==================== INIT ====================
