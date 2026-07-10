@@ -330,7 +330,7 @@
           <div class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
             <div class="text-on-primary text-center">Starting camera...</div>
           </div>
-          <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center bg-surface-container border-4 border-primary"></div>
+          <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center bg-surface-container border-4 border-primary z-50 relative"></div>
         </section>
 
         <!-- Manual Entry Form -->
@@ -450,7 +450,7 @@
             <div class="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-white m-2"></div>
             <div class="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-white m-2"></div>
           </div>
-          <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center"></div>
+          <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center z-50 relative"></div>
         `;
         return scannerSection;
       }
@@ -568,7 +568,7 @@
           html5QrCode = new Html5Qrcode('qr-reader-desktop');
           html5QrCode.start(
             { facingMode: 'environment', focusMode: 'continuous' },
-            { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false },
+            { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false, verbose: false },
             onScanSuccess,
             onScanFailure
           );
@@ -610,7 +610,7 @@
           html5QrCode = new Html5Qrcode('qr-reader-mobile');
           html5QrCode.start(
             { facingMode: 'environment', focusMode: 'continuous' },
-            { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false },
+            { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false, verbose: false },
             onScanSuccess,
             onScanFailure
           );
