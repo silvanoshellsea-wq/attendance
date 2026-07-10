@@ -489,37 +489,58 @@
         var student = await window.App.getStudentById(studentId);
 
         if (!student) {
-          showResult(resultEl, 'error', 'NOT IN ROSTER');
+          showResult(resultEl, 'error', 'NOT IN ROSTER', '');
           return;
         }
 
-        // No section check – record everything
+        // Check if student already has a record for today
+        var today = new Date().toISOString().split('T')[0];
+        var allRecords = await window.App.getAllAttendanceRecords();
+        var todayRecords = allRecords.filter(function(r) {
+          return r.studentId === studentId && r.timestamp.startsWith(today);
+        });
+
+        // Determine IN or OUT based on whether there's already a record today
+        var isIn = todayRecords.length === 0;
+        var status = isIn ? 'IN' : 'OUT';
+
+        // Record the attendance
         var result = await window.App.recordAttendance(studentId, officer.code);
 
         if (result.success) {
-          showResult(resultEl, 'success', student.name + ' - ' + student.section);
-        } else if (result.reason === 'duplicate') {
-          showResult(resultEl, 'warning', 'ALREADY CHECKED IN: ' + student.name);
+          showResult(resultEl, 'success', student.name, student.section, status);
         } else {
-          showResult(resultEl, 'error', 'SCAN FAILED');
+          showResult(resultEl, 'error', 'SCAN FAILED', '');
         }
       }
 
-      function showResult(resultEl, type, message) {
+      function showResult(resultEl, type, name, section, status) {
         if (!resultEl) return;
         resultEl.classList.remove('hidden');
+
+        var statusBadge = '';
+        var statusColor = '';
+        var statusIcon = '';
+
         if (type === 'success') {
-          resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-green-600">check_circle</span><p class="font-headline-md mt-2 text-green-600 uppercase">' + message + '</p>';
-        } else if (type === 'warning') {
-          resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-yellow-600">warning</span><p class="font-headline-md mt-2 text-yellow-600 uppercase">' + message + '</p>';
-        } else {
-          resultEl.innerHTML = '<span class="material-symbols-outlined text-5xl text-red-600">cancel</span><p class="font-headline-md mt-2 text-red-600 uppercase">' + message + '</p>';
+          if (status === 'IN') {
+            statusBadge = '<span class="bg-green-600 text-white px-3 py-1 text-sm font-bold uppercase rounded">IN</span>';
+            statusIcon = '<span class="material-symbols-outlined text-5xl text-green-600">login</span>';
+          } else {
+            statusBadge = '<span class="bg-orange-600 text-white px-3 py-1 text-sm font-bold uppercase rounded">OUT</span>';
+            statusIcon = '<span class="material-symbols-outlined text-5xl text-orange-600">logout</span>';
+          }
+        } else if (type === 'error') {
+          statusBadge = '';
+          statusIcon = '<span class="material-symbols-outlined text-5xl text-red-600">cancel</span>';
         }
 
-        // Hide result after 2 seconds but keep scanning active
-        setTimeout(function() {
-          if (resultEl) resultEl.classList.add('hidden');
-        }, 2000);
+        var message = name;
+        if (section) message += '<br><span class="text-sm text-on-surface-variant">' + section + '</span>';
+
+        resultEl.innerHTML = '<div class="flex flex-col items-center">' + statusIcon + '<p class="font-headline-md mt-2 text-primary uppercase text-center">' + message + '</p>' + statusBadge + '</div>';
+
+        // Result stays visible until next scan (so user knows IN/OUT status)
       }
 
       // --- DESKTOP scanner ---
@@ -567,14 +588,28 @@
         try {
           html5QrCode = new Html5Qrcode('qr-reader-desktop');
           html5QrCode.start(
-            { facingMode: 'environment', focusMode: 'continuous' },
-            { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false, verbose: false },
+            { facingMode: 'environment' },
+            { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
-          );
-          isScanning = true;
-          var btn = document.getElementById('launchScannerBtnDesktop');
-          if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
+          ).then(function() {
+            isScanning = true;
+            var btn = document.getElementById('launchScannerBtnDesktop');
+            if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
+            // Try to enable continuous focus after starting
+            try {
+              html5QrCode.applyVideoConstraints({ advanced: [{ focusMode: 'continuous' }] });
+            } catch(e) { /* focus mode not supported on this device */ }
+          }).catch(function(err) {
+            console.error('Scanner error:', err);
+            panel.innerHTML = `
+              <div class="flex flex-col items-center justify-center h-full text-red-600 p-4">
+                <span class="material-symbols-outlined text-6xl">error</span>
+                <p class="font-headline-md mt-2">Camera unavailable</p>
+                <p class="text-xs mt-1">` + err.message + `</p>
+              </div>
+            `;
+          });
         } catch (err) {
           console.error(err);
           panel.innerHTML = `
@@ -609,12 +644,21 @@
         try {
           html5QrCode = new Html5Qrcode('qr-reader-mobile');
           html5QrCode.start(
-            { facingMode: 'environment', focusMode: 'continuous' },
-            { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false, verbose: false },
+            { facingMode: 'environment' },
+            { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
-          );
-          isScanning = true;
+          ).then(function() {
+            isScanning = true;
+            // Try to enable continuous focus after starting
+            try {
+              html5QrCode.applyVideoConstraints({ advanced: [{ focusMode: 'continuous' }] });
+            } catch(e) { /* focus mode not supported on this device */ }
+          }).catch(function(err) {
+            console.error('Mobile scanner error:', err);
+            var resultEl = document.getElementById('scan-result-mobile');
+            if (resultEl) showResult(resultEl, 'error', 'Camera: ' + err.message);
+          });
         } catch (err) {
           console.error(err);
           var resultEl = document.getElementById('scan-result-mobile');
