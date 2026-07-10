@@ -329,8 +329,8 @@
           <h3 class="font-headline-md text-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
           <div class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
             <div class="text-on-primary text-center">Starting camera...</div>
+            <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50"></div>
           </div>
-          <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center bg-surface-container border-4 border-primary z-50 relative"></div>
         </section>
 
         <!-- Manual Entry Form -->
@@ -454,8 +454,8 @@
             <div class="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-white m-2"></div>
             <div class="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-white m-2"></div>
             <div class="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-white m-2"></div>
+            <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50"></div>
           </div>
-          <div id="scan-result-mobile" class="hidden mt-4 p-4 text-center z-50 relative"></div>
         `;
         return scannerSection;
       }
@@ -523,29 +523,16 @@
         if (!resultEl) return;
         resultEl.classList.remove('hidden');
 
-        var statusBadge = '';
-        var statusColor = '';
-        var statusIcon = '';
-
-        if (type === 'success') {
-          if (status === 'IN') {
-            statusBadge = '<span class="bg-green-600 text-white px-3 py-1 text-sm font-bold uppercase rounded">IN</span>';
-            statusIcon = '<span class="material-symbols-outlined text-5xl text-green-600">login</span>';
-          } else {
-            statusBadge = '<span class="bg-orange-600 text-white px-3 py-1 text-sm font-bold uppercase rounded">OUT</span>';
-            statusIcon = '<span class="material-symbols-outlined text-5xl text-orange-600">logout</span>';
-          }
-        } else if (type === 'error') {
-          statusBadge = '';
-          statusIcon = '<span class="material-symbols-outlined text-5xl text-red-600">cancel</span>';
+        var text = '';
+        if (type === 'error') {
+          text = 'STUDENT NOT IN ROSTER';
+        } else {
+          text = name + ', ' + section + ' - ' + status;
         }
 
-        var message = name;
-        if (section) message += '<br><span class="text-sm text-on-surface-variant">' + section + '</span>';
+        resultEl.innerHTML = '<div class="bg-white/95 border-4 border-primary p-3 text-center w-full"><p class="text-lg font-bold uppercase">' + text + '</p></div>';
 
-        resultEl.innerHTML = '<div class="flex flex-col items-center">' + statusIcon + '<p class="font-headline-md mt-2 text-primary uppercase text-center">' + message + '</p>' + statusBadge + '</div>';
-
-        // Result stays visible until next scan (so user knows IN/OUT status)
+        // Result stays visible until next scan
       }
 
       // --- DESKTOP scanner ---
