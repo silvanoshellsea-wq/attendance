@@ -521,7 +521,6 @@
 
       function showResult(resultEl, type, name, section, status) {
         if (!resultEl) return;
-        resultEl.classList.remove('hidden');
 
         var text = '';
         if (type === 'error') {
@@ -530,9 +529,13 @@
           text = name + ', ' + section + ' - ' + status;
         }
 
-        resultEl.innerHTML = '<div class="bg-white/95 border-4 border-primary p-3 text-center w-full"><p class="text-lg font-bold uppercase">' + text + '</p></div>';
-
-        // Result stays visible until next scan
+        // For mobile - show as overlay on scanner
+        resultEl.innerHTML = '<div class="bg-white border-4 border-black p-2 w-full text-center"><p class="text-sm font-bold uppercase">' + text + '</p></div>';
+        resultEl.style.position = 'absolute';
+        resultEl.style.top = '50%';
+        resultEl.style.left = '50%';
+        resultEl.style.transform = 'translate(-50%, -50%)';
+        resultEl.classList.remove('hidden');
       }
 
       // --- DESKTOP scanner ---
