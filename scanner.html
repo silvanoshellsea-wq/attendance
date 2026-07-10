@@ -5,7 +5,8 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>OFFICER SCAN · Home</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" onerror="(function(){const l=document.createElement('link');l.rel='stylesheet';l.href='fallback.css';document.head.appendChild(l);console.warn('Using fallback CSS');})()"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"
+    onerror="(function(){const l=document.createElement('link');l.rel='stylesheet';l.href='fallback.css';document.head.appendChild(l);console.warn('Using fallback CSS');})()"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;700&family=Inter:wght@400;700&family=Space+Mono&display=swap"
     rel="stylesheet">
@@ -16,24 +17,30 @@
       background: #f9f9f9;
       font-family: 'Inter', sans-serif;
     }
+
     .neo-shadow {
       box-shadow: 4px 4px 0 #000;
     }
+
     .neo-shadow-sm {
       box-shadow: 2px 2px 0 #000;
     }
+
     .active-press:active {
       transform: translate(4px, 4px);
       box-shadow: 0 0 0 #000;
     }
+
     .hatch-pattern {
       background: repeating-linear-gradient(45deg, #000, #000 2px, #fff 2px, #fff 6px);
     }
+
     .halftone-bg {
       background-image: radial-gradient(#000 1px, transparent 0);
       background-size: 8px 8px;
       opacity: 0.06;
     }
+
     .scan-line {
       width: 100%;
       height: 2px;
@@ -41,33 +48,41 @@
       position: absolute;
       animation: scan 3s linear infinite;
     }
+
     @keyframes scan {
       0% {
         top: 0;
       }
+
       100% {
         top: 100%;
       }
     }
+
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
+
     .custom-scrollbar::-webkit-scrollbar {
       width: 8px;
     }
+
     .custom-scrollbar::-webkit-scrollbar-track {
       background: #f9f9f9;
       border-left: 2px solid #000;
     }
+
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #000;
     }
+
     /* Force scanner container to be square */
     #qr-reader-desktop {
       width: 100%;
       height: 100%;
       position: relative;
     }
+
     #qr-reader-desktop video {
       width: 100% !important;
       height: 100% !important;
@@ -114,7 +129,8 @@
       class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-2 bg-background border-b-4 border-primary">
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL'1;">security</span>
-        <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">OFFICER SCAN</h1>
+        <h1 class="font-headline-lg text-headline-lg font-bold text-primary tracking-tighter uppercase">OFFICER SCAN
+        </h1>
       </div>
       <nav class="hidden md:flex gap-4">
         <a class="font-mono-label text-mono-label text-primary uppercase" href="#">System Status: Online</a>
@@ -150,7 +166,8 @@
             <span class="material-symbols-outlined text-[80px] text-primary opacity-20">qr_code_2</span>
             <p class="font-mono-label text-mono-label mt-4">VISUAL_ARRAY_STANDBY</p>
           </div>
-          <div id="scan-result-desktop" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-4"></div>
+          <div id="scan-result-desktop"
+            class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center p-4"></div>
         </div>
       </section>
 
@@ -160,17 +177,21 @@
         <form id="manualEntryForm" class="grid grid-cols-3 gap-4">
           <div>
             <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">STUDENT NAME</label>
-            <input type="text" id="manualName" placeholder="Full Name" class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
+            <input type="text" id="manualName" placeholder="Full Name"
+              class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
           </div>
           <div>
             <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SECTION</label>
-            <input type="text" id="manualSection" placeholder="e.g., 7-A" class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
+            <input type="text" id="manualSection" placeholder="e.g., 7-A"
+              class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
           </div>
           <div>
             <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SCHOOL ID</label>
-            <input type="text" id="manualSchoolId" placeholder="School ID" class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
+            <input type="text" id="manualSchoolId" placeholder="School ID"
+              class="w-full h-10 border-4 border-primary px-3 font-body-md focus:outline-none" required />
           </div>
-          <button type="submit" class="col-span-3 bg-primary text-on-primary py-3 px-6 border-4 border-primary neo-shadow active-press font-label-bold text-label-bold uppercase flex items-center justify-center gap-2">
+          <button type="submit"
+            class="col-span-3 bg-primary text-on-primary py-3 px-6 border-4 border-primary neo-shadow active-press font-label-bold text-label-bold uppercase flex items-center justify-center gap-2">
             <span class="material-symbols-outlined">person_add</span> ADD STUDENT
           </button>
         </form>
@@ -235,7 +256,8 @@
             <span>OPERATIONAL LOG</span>
             <span>LIVE_FEED</span>
           </div>
-          <div class="flex-1 overflow-y-auto p-4 font-mono-label text-mono-label custom-scrollbar space-y-2" id="log-feed">
+          <div class="flex-1 overflow-y-auto p-4 font-mono-label text-mono-label custom-scrollbar space-y-2"
+            id="log-feed">
             <!-- log entries -->
           </div>
         </div>
@@ -297,7 +319,8 @@
       class="w-full top-0 sticky bg-surface border-b-4 border-primary flex justify-between items-center px-6 h-20 z-50">
       <div class="flex items-center gap-4">
         <span class="material-symbols-outlined text-primary" style="font-size:32px;">signal_cellular_alt</span>
-        <h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary uppercase">OFFICER SCAN</h1>
+        <h1 class="font-headline-md text-headline-md font-bold tracking-tighter text-primary uppercase">OFFICER SCAN
+        </h1>
       </div>
       <button class="material-symbols-outlined text-primary">settings_remote</button>
     </header>
@@ -307,10 +330,14 @@
 
       <!-- Mobile Tabs -->
       <div class="flex gap-2 mb-4 border-b-4 border-primary sticky top-20 z-40 bg-surface">
-        <button class="mobile-tab active flex-1 py-3 px-4 bg-primary text-on-primary font-label-bold text-label-bold uppercase border-b-4 border-primary" data-tab="scanner">
+        <button
+          class="mobile-tab active flex-1 py-3 px-4 bg-primary text-on-primary font-label-bold text-label-bold uppercase border-b-4 border-primary"
+          data-tab="scanner">
           SCANNER
         </button>
-        <button class="mobile-tab flex-1 py-3 px-4 bg-surface text-primary font-label-bold text-label-bold uppercase border-primary hover:bg-surface-container" data-tab="records">
+        <button
+          class="mobile-tab flex-1 py-3 px-4 bg-surface text-primary font-label-bold text-label-bold uppercase border-primary hover:bg-surface-container"
+          data-tab="records">
           RECORDS
         </button>
       </div>
@@ -319,7 +346,8 @@
       <div id="scanner-tab" class="mobile-tab-content space-y-4">
         <section class="bg-surface border-4 border-primary neo-shadow p-4 mt-4" id="mobileHeroSection">
           <div class="flex justify-between items-start mb-4">
-            <h2 class="font-headline-xl text-headline-xl uppercase text-primary leading-tight">READY FOR<br>DEPLOYMENT</h2>
+            <h2 class="font-headline-xl text-headline-xl uppercase text-primary leading-tight">READY FOR<br>DEPLOYMENT
+            </h2>
             <div class="bg-primary text-on-primary px-3 py-1 font-mono-label border-2 border-primary">V.04.22</div>
           </div>
         </section>
@@ -327,7 +355,9 @@
         <!-- Mobile Scanner (always visible) -->
         <section class="bg-surface border-4 border-primary neo-shadow p-4">
           <h3 class="font-headline-md text-headline-md uppercase text-primary mb-3">QR CODE SCANNER</h3>
-          <div class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
+          <div
+            class="relative border-4 border-primary bg-black h-80 w-80 flex items-center justify-center overflow-hidden"
+            id="qr-reader-mobile">
             <div class="text-on-primary text-center">Starting camera...</div>
             <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50"></div>
           </div>
@@ -339,17 +369,21 @@
           <form id="manualEntryForm" class="space-y-3">
             <div>
               <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">STUDENT NAME</label>
-              <input type="text" id="manualName" placeholder="Full Name" class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
+              <input type="text" id="manualName" placeholder="Full Name"
+                class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
             </div>
             <div>
               <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SECTION</label>
-              <input type="text" id="manualSection" placeholder="e.g., 7-A" class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
+              <input type="text" id="manualSection" placeholder="e.g., 7-A"
+                class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
             </div>
             <div>
               <label class="font-label-bold text-label-bold text-primary uppercase block mb-2">SCHOOL ID</label>
-              <input type="text" id="manualSchoolId" placeholder="School ID" class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
+              <input type="text" id="manualSchoolId" placeholder="School ID"
+                class="w-full h-10 border-4 border-primary px-2 font-body-md focus:outline-none" required />
             </div>
-            <button type="submit" class="w-full bg-primary text-on-primary py-3 px-4 border-4 border-primary neo-shadow active-press font-label-bold uppercase">
+            <button type="submit"
+              class="w-full bg-primary text-on-primary py-3 px-4 border-4 border-primary neo-shadow active-press font-label-bold uppercase">
               <span class="material-symbols-outlined" style="vertical-align:middle;">person_add</span> ADD STUDENT
             </button>
           </form>
@@ -372,18 +406,22 @@
 
         <!-- Section Filter -->
         <div class="mb-3">
-          <label for="sectionFilterMobileScanner" class="font-mono-label uppercase text-primary text-xs block mb-2">Filter by Section:</label>
-          <select id="sectionFilterMobileScanner" class="w-full border-4 border-primary bg-surface px-3 py-2 font-mono-label text-primary focus:outline-none">
+          <label for="sectionFilterMobileScanner"
+            class="font-mono-label uppercase text-primary text-xs block mb-2">Filter by Section:</label>
+          <select id="sectionFilterMobileScanner"
+            class="w-full border-4 border-primary bg-surface px-3 py-2 font-mono-label text-primary focus:outline-none">
             <option value="ALL">All Sections</option>
           </select>
         </div>
 
         <!-- Upload & Reset Buttons -->
         <div class="flex gap-2 mb-3">
-          <button id="syncBtnMobileScanner" class="flex-1 bg-primary text-on-primary py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-primary neo-shadow active-press">
+          <button id="syncBtnMobileScanner"
+            class="flex-1 bg-primary text-on-primary py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-primary neo-shadow active-press">
             UPLOAD RECORDS
           </button>
-          <button id="resetRecordsBtn" class="flex-1 bg-red-600 text-white py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-red-600 neo-shadow active-press">
+          <button id="resetRecordsBtn"
+            class="flex-1 bg-red-600 text-white py-3 px-4 font-label-bold text-label-bold uppercase border-4 border-red-600 neo-shadow active-press">
             RESET
           </button>
         </div>
@@ -394,7 +432,8 @@
             <span>RECORDS</span>
             <span id="mobileCurrentDate">TODAY</span>
           </div>
-          <div id="mobileRecordsList" class="divide-y-2 divide-primary max-h-96 overflow-y-auto p-3 font-mono-label text-xs">
+          <div id="mobileRecordsList"
+            class="divide-y-2 divide-primary max-h-96 overflow-y-auto p-3 font-mono-label text-xs">
             <div class="text-center text-on-surface-variant py-8">No records to display</div>
           </div>
         </div>
@@ -406,11 +445,13 @@
         <span class="material-symbols-outlined">qr_code_scanner</span>
         <span class="font-mono-label uppercase mt-1 text-xs">SCANNER</span>
       </a>
-      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="records.html">
+      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6"
+        href="records.html">
         <span class="material-symbols-outlined">database</span>
         <span class="font-mono-label uppercase mt-1 text-xs">RECORDS</span>
       </a>
-      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6" href="#">
+      <a class="flex flex-col items-center justify-center text-on-surface hover:bg-surface-container h-full px-6"
+        href="#">
         <span class="material-symbols-outlined">account_circle</span>
         <span class="font-mono-label uppercase mt-1 text-xs">PROFILE</span>
       </a>
@@ -448,15 +489,13 @@
         scannerSection.id = 'mobileScannerActive';
         scannerSection.className = 'bg-surface border-4 border-primary neo-shadow p-4 mt-4';
         scannerSection.innerHTML = `
-          <div class="relative border-4 border-primary bg-black h-72 w-72 flex items-center justify-center overflow-hidden" id="qr-reader-mobile">
-            <div class="scan-line"></div>
-            <div class="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-white m-2"></div>
-            <div class="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-white m-2"></div>
-            <div class="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-white m-2"></div>
-            <div class="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-white m-2"></div>
-            <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50"></div>
-          </div>
-        `;
+    <div class="relative border-4 border-primary bg-black h-72 w-72 flex items-center justify-center overflow-hidden mx-auto" id="qr-reader-mobile-wrapper">
+      <!-- This div will be taken over by the scanner library -->
+      <div id="qr-reader-mobile" class="w-full h-full"></div>
+      <!-- Overlay sits outside the scanner div, but is absolutely positioned over the wrapper -->
+      <div id="scan-result-mobile" class="hidden absolute inset-0 flex items-center justify-center z-50 pointer-events-none"></div>
+    </div>
+  `;
         return scannerSection;
       }
 
@@ -480,7 +519,7 @@
         // Set cooldown to prevent duplicate scans
         lastScannedId = studentId;
         scanCooldown = true;
-        setTimeout(function() {
+        setTimeout(function () {
           lastScannedId = null;
           scanCooldown = false;
         }, 3000);
@@ -501,7 +540,7 @@
         // Check if student already has a record for today
         var today = new Date().toISOString().split('T')[0];
         var allRecords = await window.App.getAllAttendanceRecords();
-        var todayRecords = allRecords.filter(function(r) {
+        var todayRecords = allRecords.filter(function (r) {
           return r.studentId === studentId && r.timestamp.startsWith(today);
         });
 
@@ -522,33 +561,61 @@
       function showResult(resultEl, type, name, section, status) {
         if (!resultEl) return;
 
+        // Vibration
+        if (navigator.vibrate) {
+          navigator.vibrate(type === 'error' ? 300 : 100);
+        }
+
+        // Determine icon and message
+        var icon, color, label;
+        if (type === 'error') {
+          icon = 'cancel';
+          color = 'text-red-600';
+          label = 'NOT IN ROSTER';
+        } else if (type === 'warning') {
+          icon = 'warning';
+          color = 'text-yellow-600';
+          label = 'ALREADY CHECKED IN';
+        } else {
+          icon = 'check_circle';
+          color = 'text-green-600';
+          label = name + ', ' + section + ' – ' + status;
+        }
+
+        // Build overlay content
+        resultEl.innerHTML = `
+    <div class="bg-white border-4 border-black p-4 shadow-2xl text-center max-w-xs mx-auto">
+      <span class="material-symbols-outlined text-6xl ${color}">${icon}</span>
+      <p class="font-headline-md mt-2 ${color} uppercase">${label}</p>
+      <p class="text-xs text-on-surface-variant mt-1">${new Date().toLocaleTimeString()}</p>
+    </div>
+  `;
+
+        // Show the overlay
+        resultEl.classList.remove('hidden');
+        resultEl.style.display = 'flex';
+        resultEl.style.position = 'absolute';
+        resultEl.style.top = '0';
+        resultEl.style.left = '0';
+        resultEl.style.right = '0';
+        resultEl.style.bottom = '0';
+        resultEl.style.zIndex = '9999';
+        resultEl.style.background = 'rgba(0,0,0,0.3)';
+        resultEl.style.pointerEvents = 'none'; // allow tap-through
+
         // Pause scanner
         if (html5QrCode && isScanning) {
-          try { html5QrCode.pause(); } catch(e) {}
+          html5QrCode.pause();
         }
 
-        // Vibrate
-        if (navigator.vibrate) navigator.vibrate(200);
-
-        // Build content
-        var icon = '', msg = '', bg = '';
-        if (type === 'error') {
-          icon = '❌'; msg = 'NOT IN ROSTER'; bg = 'bg-red-500';
-        } else if (status === 'IN') {
-          icon = '✅'; msg = name + ', ' + section + ' - IN'; bg = 'bg-green-500';
-        } else {
-          icon = '⚠️'; msg = name + ', ' + section + ' - OUT'; bg = 'bg-yellow-500';
-        }
-
-        resultEl.innerHTML = '<div class="' + bg + ' border-4 border-black p-4 text-center w-full h-full flex flex-col items-center justify-center"><p class="text-4xl mb-2">' + icon + '</p><p class="text-lg font-bold uppercase text-white">' + msg + '</p></div>';
-        resultEl.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;z-index:9999;';
-        resultEl.classList.remove('hidden');
-
-        // Resume after 2.5s
-        setTimeout(function() {
+        // Hide after 2.5s and resume
+        clearTimeout(window._resultTimer);
+        window._resultTimer = setTimeout(function () {
           resultEl.classList.add('hidden');
+          resultEl.style.display = '';
+          resultEl.style.background = '';
           if (html5QrCode && isScanning) {
-            try { html5QrCode.resume(); } catch(e) {}
+            html5QrCode.resume();
           }
         }, 2500);
       }
@@ -602,11 +669,11 @@
             { fps: 25, qrbox: { width: 250, height: 250 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
-          ).then(function() {
+          ).then(function () {
             isScanning = true;
             var btn = document.getElementById('launchScannerBtnDesktop');
             if (btn) btn.innerHTML = '<span class="material-symbols-outlined">stop</span> STOP SCANNER';
-          }).catch(function(err) {
+          }).catch(function (err) {
             console.error('Scanner error:', err);
             panel.innerHTML = `
               <div class="flex flex-col items-center justify-center h-full text-red-600 p-4">
@@ -654,9 +721,9 @@
             { fps: 25, qrbox: { width: 220, height: 220 }, disableFlip: false },
             onScanSuccess,
             onScanFailure
-          ).then(function() {
+          ).then(function () {
             isScanning = true;
-          }).catch(function(err) {
+          }).catch(function (err) {
             console.error('Mobile scanner error:', err);
             var resultEl = document.getElementById('scan-result-mobile');
             if (resultEl) showResult(resultEl, 'error', 'Camera: ' + err.message);
@@ -688,21 +755,21 @@
       // Manual entry form handler
       var manualForm = document.getElementById('manualEntryForm');
       if (manualForm) {
-        manualForm.addEventListener('submit', function(e) {
+        manualForm.addEventListener('submit', function (e) {
           e.preventDefault();
           var name = document.getElementById('manualName').value.trim();
           var section = document.getElementById('manualSection').value.trim();
           var schoolId = document.getElementById('manualSchoolId').value.trim();
-          
+
           if (!name || !section || !schoolId) {
             alert('Please fill in all fields');
             return;
           }
-          
+
           // Create a fake QR data (school ID)
           var result = window.App.recordAttendance(schoolId);
           var resultEl = document.getElementById('scan-result-mobile');
-          
+
           if (result.success) {
             showResult(resultEl, 'success', name + ' - ' + section);
           } else if (result.reason === 'duplicate') {
@@ -710,7 +777,7 @@
           } else {
             showResult(resultEl, 'error', 'ADD FAILED');
           }
-          
+
           // Clear form
           manualForm.reset();
         });
@@ -719,7 +786,7 @@
       // Auto-start mobile scanner on page load
       var isMobile = !window.matchMedia('(min-width: 768px)').matches;
       if (isMobile) {
-        setTimeout(function() {
+        setTimeout(function () {
           startScannerMobile();
         }, 500);
       }
@@ -727,11 +794,11 @@
       // --- Mobile Tab Handling ---
       var mobileTabs = document.querySelectorAll('.mobile-tab');
       var mobileTabContents = document.querySelectorAll('.mobile-tab-content');
-      
+
       mobileTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
+        tab.addEventListener('click', function () {
           var targetTab = this.getAttribute('data-tab');
-          
+
           // Remove active state from all tabs and hide all content
           mobileTabs.forEach(t => {
             t.classList.remove('bg-primary', 'text-on-primary');
@@ -740,7 +807,7 @@
           mobileTabContents.forEach(content => {
             content.classList.add('hidden');
           });
-          
+
           // Activate clicked tab
           this.classList.add('bg-primary', 'text-on-primary');
           this.classList.remove('bg-surface', 'text-primary', 'hover:bg-surface-container');
@@ -753,7 +820,7 @@
         var allRecords = await window.App.db.outbox.toArray();
         var today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         document.getElementById('mobileCurrentDate').textContent = today.toUpperCase();
-        
+
         document.getElementById('mobileTotalScanned').textContent = allRecords.length;
         var pendingRecords = allRecords.filter(r => !r.synced);
         document.getElementById('mobilePendingCount').textContent = pendingRecords.length;
@@ -778,7 +845,7 @@
       async function renderMobileRecords(allRecords, pendingRecords) {
         var selectedSection = document.getElementById('sectionFilterMobileScanner').value;
         var filteredRecords = allRecords;
-        
+
         if (selectedSection !== 'ALL') {
           var students = await window.App.getAllStudents();
           var studentMap = {};
@@ -852,7 +919,7 @@
       }
 
       // Sync button handler for mobile records tab
-      document.getElementById('syncBtnMobileScanner').addEventListener('click', async function() {
+      document.getElementById('syncBtnMobileScanner').addEventListener('click', async function () {
         var count = await window.App.getPendingCount();
         if (count === 0) return;
 
@@ -862,11 +929,11 @@
         try {
           await window.App.syncAttendanceRecords();
           console.log('Records uploaded successfully');
-        } catch(e) {
+        } catch (e) {
           try {
             await window.App.mockSyncAttendanceRecords();
             console.log('Upload complete (demo)');
-          } catch(e2) {
+          } catch (e2) {
             console.log('Upload failed');
           }
         }
@@ -875,7 +942,7 @@
       });
 
       // Reset records button handler
-      document.getElementById('resetRecordsBtn').addEventListener('click', async function() {
+      document.getElementById('resetRecordsBtn').addEventListener('click', async function () {
         if (!confirm('Reset all attendance records? This cannot be undone.')) return;
         await window.App.clearAttendanceRecords();
         await loadRecordsTabData();
@@ -883,7 +950,7 @@
       });
 
       // Section filter change handler
-      document.getElementById('sectionFilterMobileScanner').addEventListener('change', async function() {
+      document.getElementById('sectionFilterMobileScanner').addEventListener('change', async function () {
         var allRecords = await window.App.db.outbox.toArray();
         var pendingRecords = allRecords.filter(r => !r.synced);
         await renderMobileRecords(allRecords, pendingRecords);
