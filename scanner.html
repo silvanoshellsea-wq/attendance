@@ -522,20 +522,35 @@
       function showResult(resultEl, type, name, section, status) {
         if (!resultEl) return;
 
-        var text = '';
-        if (type === 'error') {
-          text = 'STUDENT NOT IN ROSTER';
-        } else {
-          text = name + ', ' + section + ' - ' + status;
+        // Pause scanner
+        if (html5QrCode && isScanning) {
+          try { html5QrCode.pause(); } catch(e) {}
         }
 
-        // For mobile - show as overlay on scanner
-        resultEl.innerHTML = '<div class="bg-white border-4 border-black p-2 w-full text-center"><p class="text-sm font-bold uppercase">' + text + '</p></div>';
-        resultEl.style.position = 'absolute';
-        resultEl.style.top = '50%';
-        resultEl.style.left = '50%';
-        resultEl.style.transform = 'translate(-50%, -50%)';
+        // Vibrate
+        if (navigator.vibrate) navigator.vibrate(200);
+
+        // Build content
+        var icon = '', msg = '', bg = '';
+        if (type === 'error') {
+          icon = '❌'; msg = 'NOT IN ROSTER'; bg = 'bg-red-500';
+        } else if (status === 'IN') {
+          icon = '✅'; msg = name + ', ' + section + ' - IN'; bg = 'bg-green-500';
+        } else {
+          icon = '⚠️'; msg = name + ', ' + section + ' - OUT'; bg = 'bg-yellow-500';
+        }
+
+        resultEl.innerHTML = '<div class="' + bg + ' border-4 border-black p-4 text-center w-full h-full flex flex-col items-center justify-center"><p class="text-4xl mb-2">' + icon + '</p><p class="text-lg font-bold uppercase text-white">' + msg + '</p></div>';
+        resultEl.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;z-index:9999;';
         resultEl.classList.remove('hidden');
+
+        // Resume after 2.5s
+        setTimeout(function() {
+          resultEl.classList.add('hidden');
+          if (html5QrCode && isScanning) {
+            try { html5QrCode.resume(); } catch(e) {}
+          }
+        }, 2500);
       }
 
       // --- DESKTOP scanner ---
